@@ -72,7 +72,8 @@ describe('Auth Controller', () => {
         _id: '123',
         email: 'test@example.com',
         password: 'hashedPassword',
-        role: 'user'
+        role: 'user',
+        comparePassword: jest.fn().mockResolvedValue(false)
       });
       
       // Mock para bcrypt.compare que retorna false (contraseña incorrecta)
@@ -94,7 +95,10 @@ describe('Auth Controller', () => {
         _id: '123',
         email: 'test@example.com',
         password: 'hashedPassword',
-        role: 'user'
+        role: 'user',
+        ultimoAcceso: undefined,
+        comparePassword: jest.fn().mockResolvedValue(true),
+        save: jest.fn().mockResolvedValue(undefined)
       };
       
       // Mock para User.findOne que retorna un usuario

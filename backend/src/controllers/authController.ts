@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { generateToken } from '../utils/jwt';
 import User from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth';
 
 /**
  * Registrar un nuevo usuario
@@ -82,6 +83,16 @@ export const register = async (req: Request, res: Response) => {
  */
 export const login = async (req: Request, res: Response) => {
   try {
+    const { email, password } = req.body;
+    
+    // Verificar si email o password están presentes
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Se requiere email y password.',
+      });
+    }
+
     // Validar errores de la solicitud
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -91,19 +102,18 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    const { email, password } = req.body;
-
     // Buscar el usuario
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
-        message: 'Credenciales inválidas.',
+        message: 'Usuario no encontrado',
       });
     }
 
     // Verificar si el usuario está activo
-    if (!user.activo) {
+    // Solo verificamos si la propiedad activo existe y es explícitamente false
+    if (user.activo === false) {
       return res.status(403).json({
         success: false,
         message: 'Usuario desactivado. Contacte al administrador.',
@@ -115,7 +125,7 @@ export const login = async (req: Request, res: Response) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Credenciales inválidas.',
+        message: 'Credenciales inválidas',
       });
     }
 
@@ -157,7 +167,7 @@ export const login = async (req: Request, res: Response) => {
  * @route GET /api/auth/me
  * @access Private
  */
-export const getMe = async (req: Request, res: Response) => {
+export const getMe = async (req: AuthenticatedRequest, res: Response) => {
   try {
     // El usuario ya está en req.user gracias al middleware de autenticación
     res.status(200).json({
