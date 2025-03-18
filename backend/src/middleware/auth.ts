@@ -3,7 +3,7 @@ import { verifyToken } from '../utils/jwt';
 import User from '../models/User';
 
 // Extender el tipo Request para incluir el usuario autenticado
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
@@ -59,7 +59,11 @@ export const authenticate = async (
     }
 
     // Añadir el usuario a la solicitud
-    req.user = user;
+    req.user = {
+      id: user.id,
+      email: user.email,
+      rol: user.rol
+    };
 
     // Actualizar el último acceso del usuario
     user.ultimoAcceso = new Date();

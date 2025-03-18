@@ -1,9 +1,10 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions, JwtPayload } from 'jsonwebtoken';
 import { IUser } from '../models/User';
 
 // Obtener la clave secreta del entorno o usar una predeterminada (¡solo para desarrollo!)
-const JWT_SECRET = process.env.JWT_SECRET || 'liga-futbol-jwt-secret-dev';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_SECRET = Buffer.from(process.env.JWT_SECRET || 'liga-futbol-jwt-secret-dev');
+// 7 días en segundos
+const JWT_EXPIRES_IN = 7 * 24 * 60 * 60; // 7 días en segundos
 
 /**
  * Genera un token JWT para el usuario especificado
@@ -17,11 +18,11 @@ export const generateToken = (user: IUser): string => {
     rol: user.rol,
   };
 
-  // Desactivar la regla de eslint para esta línea específica
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return jwt.sign(payload, JWT_SECRET, {
+  const options: SignOptions = {
     expiresIn: JWT_EXPIRES_IN,
-  });
+  };
+
+  return jwt.sign(payload, JWT_SECRET, options);
 };
 
 /**
@@ -29,11 +30,9 @@ export const generateToken = (user: IUser): string => {
  * @param token Token JWT a verificar
  * @returns Payload decodificado o null si el token es inválido
  */
-export const verifyToken = (token: string): jwt.JwtPayload | null => {
+export const verifyToken = (token: string): JwtPayload | null => {
   try {
-    // Desactivar la regla de eslint para esta línea específica
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+    return jwt.verify(token, JWT_SECRET) as JwtPayload;
   } catch (error) {
     return null;
   }
