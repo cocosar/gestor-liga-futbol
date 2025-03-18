@@ -11,19 +11,19 @@
 ## Tareas Específicas
 
 ### 1. Inicializar proyecto React con TypeScript
-- [ ] Crear proyecto con Create React App + TypeScript
-- [ ] Configurar ESLint y Prettier
-- [ ] Configurar estructura de carpetas
-- **Estado:** Pendiente
-- **Notas:** N/A
+- [x] Crear proyecto con Create React App + TypeScript
+- [x] Configurar ESLint y Prettier
+- [x] Configurar estructura de carpetas
+- **Estado:** Completado
+- **Notas:** Configuración básica realizada. Pendiente instalación de dependencias.
 
 ### 2. Configurar proyecto Express con TypeScript
-- [ ] Inicializar proyecto Express
-- [ ] Configurar TypeScript
-- [ ] Configurar estructura de carpetas
-- [ ] Añadir middleware esencial
-- **Estado:** Pendiente
-- **Notas:** N/A
+- [x] Inicializar proyecto Express
+- [x] Configurar TypeScript
+- [x] Configurar estructura de carpetas
+- [x] Añadir middleware esencial
+- **Estado:** Completado
+- **Notas:** Configuración básica realizada. Pendiente instalación de dependencias.
 
 ### 3. Definir esquemas MongoDB iniciales
 - [ ] Diseñar esquema Usuario
@@ -42,16 +42,20 @@
 
 ## Registro Diario
 
-### [Fecha]
+### [18-03-2025]
 - **Avances:**
-  - [Detallar avances del día]
+  - Configurado repositorio Git
+  - Creada estructura básica de carpetas para frontend y backend
+  - Configurados archivos de configuración principales (package.json, tsconfig.json)
+  - Creados archivos básicos para frontend y backend
 - **Problemas encontrados:**
-  - [Listar problemas, si hay]
+  - Ninguno relevante
 - **Plan para mañana:**
-  - [Listar tareas para el día siguiente]
+  - Instalar dependencias y verificar configuración
+  - Comenzar implementación de esquemas MongoDB
 
 ## Métricas del Sprint
-- **Completado:** 0%
+- **Completado:** 15%
 - **Velocidad:** N/A
 - **Calidad de código:** N/A
 
