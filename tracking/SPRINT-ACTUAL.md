@@ -23,15 +23,16 @@
 - [x] Configurar estructura de carpetas
 - [x] Añadir middleware esencial
 - **Estado:** Completado
-- **Notas:** Configuración básica realizada. Pendiente instalación de dependencias.
+- **Notas:** Configuración básica realizada. Dependencias instaladas
 
 ### 3. Definir esquemas MongoDB iniciales
-- [ ] Diseñar esquema Usuario
-- [ ] Diseñar esquema Equipo
-- [ ] Diseñar esquema Jugador
-- [ ] Diseñar esquema Partido
-- **Estado:** Pendiente
-- **Notas:** N/A
+- [x] Diseñar esquema Usuario
+- [x] Diseñar esquema Equipo
+- [x] Diseñar esquema Jugador
+- [x] Diseñar esquema Partido
+- [x] Diseñar esquema Liga (adicional)
+- **Estado:** Completado
+- **Notas:** Se han creado todos los esquemas necesarios, incluyendo un esquema adicional para Liga que no estaba inicialmente previsto pero era necesario para mantener las relaciones entre entidades.
 
 ### 4. Implementar autenticación JWT
 - [ ] Configurar estrategia JWT
@@ -42,7 +43,7 @@
 
 ## Registro Diario
 
-### [18-03-2025]
+### [17-03-2025] | Iteración 1
 - **Avances:**
   - Configurado repositorio Git
   - Creada estructura básica de carpetas para frontend y backend
@@ -56,8 +57,18 @@
   - Instalar dependencias y verificar configuración
   - Comenzar implementación de esquemas MongoDB
 
+### [17-03-2025] | Iteración 2
+- **Avances:**
+  - Implementados todos los esquemas MongoDB iniciales (Usuario, Equipo, Jugador, Partido)
+  - Añadido esquema adicional de Liga para mejorar las relaciones entre entidades
+  - Creado archivo de índice para facilitar la exportación de modelos
+- **Problemas encontrados:**
+  - Ninguno
+- **Plan para mañana:**
+  - Comenzar implementación de autenticación JWT
+
 ## Métricas del Sprint
-- **Completado:** 15%
+- **Completado:** 40%
 - **Velocidad:** N/A
 - **Calidad de código:** N/A
 
