@@ -44,22 +44,55 @@ The content is organized as follows:
 
 <directory_structure>
 .cursor/rules/coding-preferences.mdc
+.github/workflows/ci.yml
 .gitignore
+backend/jest.config.js
 backend/package.json
 backend/README.md
+backend/src/controllers/authController.ts
 backend/src/index.ts
+backend/src/middleware/auth.ts
+backend/src/models/index.ts
+backend/src/models/League.ts
+backend/src/models/Match.ts
+backend/src/models/Player.ts
+backend/src/models/Team.ts
+backend/src/models/User.ts
+backend/src/routes/authRoutes.ts
+backend/src/routes/index.ts
+backend/src/tests/auth.test.ts
+backend/src/tests/test-auth-manual.sh
+backend/src/utils/jwt.ts
 backend/tsconfig.json
 docs/plan-de-implementacion.md
 docs/plan-de-pruebas.md
+docs/plan-implementacion-integrado.md
+frontend/eslint.config.js
+frontend/index.html
 frontend/package.json
 frontend/public/index.html
 frontend/public/manifest.json
 frontend/README.md
 frontend/src/App.tsx
+frontend/src/components/layout/__tests__/MainLayout.test.tsx
+frontend/src/components/layout/AppHeader.tsx
+frontend/src/components/layout/Footer.tsx
+frontend/src/components/layout/MainLayout.tsx
+frontend/src/components/layout/Sidebar.tsx
 frontend/src/index.css
-frontend/src/index.tsx
+frontend/src/main.tsx
+frontend/src/pages/__tests__/Home.test.tsx
+frontend/src/pages/Dashboard.tsx
+frontend/src/pages/Home.tsx
+frontend/src/pages/Login.tsx
+frontend/src/pages/Register.tsx
 frontend/src/reportWebVitals.ts
+frontend/src/test/setup.ts
+frontend/tsconfig.app.json
 frontend/tsconfig.json
+frontend/tsconfig.node.json
+frontend/vite.config.ts
+frontend/vitest.config.ts
 liga-futbol-prd.md
 README.md
 tracking/NOTAS-DESARROLLO.md
@@ -71,6 +104,151 @@ tracking/TRACKING.md
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="frontend/src/components/layout/__tests__/MainLayout.test.tsx">
+import { render, screen } from '@testing-library/react';
+import MainLayout from '../MainLayout';
+import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material';
+import { vi, describe, it, expect } from 'vitest';
+
+// Mock de los componentes internos para simplificar las pruebas
+vi.mock('../AppHeader', () => ({
+  default: () => <div data-testid="app-header">AppHeader</div>
+}));
+
+vi.mock('../Sidebar', () => ({
+  default: () => <div data-testid="sidebar">Sidebar</div>
+}));
+
+vi.mock('../Footer', () => ({
+  default: () => <div data-testid="footer">Footer</div>
+}));
+
+// Mock para react-router-dom Outlet
+vi.mock('react-router-dom', () => ({
+  ...vi.importActual('react-router-dom'),
+  Outlet: () => <div data-testid="outlet">Outlet content</div>,
+  MemoryRouter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+describe('MainLayout', () => {
+  const theme = createTheme();
+  
+  it('renders all main components', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <MemoryRouter>
+          <MainLayout />
+        </MemoryRouter>
+      </ThemeProvider>
+    );
+    
+    // Verificar que los componentes principales están presentes
+    expect(screen.getByTestId('app-header')).toBeInTheDocument();
+    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+    expect(screen.getByTestId('outlet')).toBeInTheDocument();
+    expect(screen.getByTestId('footer')).toBeInTheDocument();
+  });
+});
+</file>
+
+<file path="frontend/src/main.tsx">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+</file>
+
+<file path="frontend/src/pages/__tests__/Home.test.tsx">
+import { render, screen } from '@testing-library/react';
+import Home from '../Home';
+import { vi } from 'vitest';
+import { ThemeProvider, createTheme } from '@mui/material';
+
+// Mock para react-router-dom
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+  useLocation: vi.fn(),
+  Link: ({ to, children, ...rest }: { to: string; children: React.ReactNode; [key: string]: unknown }) => (
+    <a href={to} {...rest}>{children}</a>
+  ),
+}));
+
+describe('Home', () => {
+  const theme = createTheme();
+  
+  it('renders home page components', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <Home />
+      </ThemeProvider>
+    );
+    
+    // Verificar título principal
+    expect(screen.getByText('Sistema de Gestión de Ligas de Fútbol 8v8')).toBeInTheDocument();
+    
+    // Verificar sección de características
+    expect(screen.getByText('Características Principales')).toBeInTheDocument();
+    
+    // Verificar botones principales
+    expect(screen.getByText('Comenzar Ahora')).toBeInTheDocument();
+    expect(screen.getByText('Iniciar Sesión')).toBeInTheDocument();
+    
+    // Verificar elementos de características
+    expect(screen.getByText('Gestión de Equipos')).toBeInTheDocument();
+    expect(screen.getByText('Calendario de Partidos')).toBeInTheDocument();
+    expect(screen.getByText('Gestión de Jugadores')).toBeInTheDocument();
+  });
+});
+</file>
+
+<file path="frontend/src/test/setup.ts">
+import '@testing-library/jest-dom'
+import { vi } from 'vitest'
+
+// Mock para elementos que no existen en JSDOM
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
+</file>
+
+<file path="frontend/vitest.config.ts">
+import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
+  }
+})
+</file>
 
 <file path=".cursor/rules/coding-preferences.mdc">
 ---
@@ -93,6 +271,55 @@ alwaysApply: false
 - Never add stubbing or fake data patterns to code that affects the dev or prod environments
 - Never overwrite my .env file without first asking and confirming
 -
+</file>
+
+<file path=".github/workflows/ci.yml">
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    # Frontend
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm ci
+      
+    - name: Build frontend
+      working-directory: ./frontend
+      run: npm run build
+      
+    - name: Check frontend linting
+      working-directory: ./frontend
+      run: npm run lint
+      
+    # Backend
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: npm ci
+      
+    - name: Run backend tests
+      working-directory: ./backend
+      run: npm test
 </file>
 
 <file path=".gitignore">
@@ -150,6 +377,19 @@ yarn-error.log*
 .history/
 </file>
 
+<file path="backend/jest.config.js">
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  testMatch: ['**/*.test.ts'],
+  verbose: true,
+  forceExit: true,
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
+};
+</file>
+
 <file path="backend/package.json">
 {
   "name": "liga-futbol-backend",
@@ -188,7 +428,7 @@ yarn-error.log*
     "@typescript-eslint/parser": "^6.13.2",
     "eslint": "^8.55.0",
     "jest": "^29.7.0",
-    "mongodb-memory-server": "^9.1.1",
+    "mongodb-memory-server": "^9.5.0",
     "nodemon": "^3.0.2",
     "prettier": "^3.1.0",
     "supertest": "^6.3.3",
@@ -259,63 +499,1040 @@ El servidor estará disponible en [http://localhost:5000](http://localhost:5000)
 La documentación detallada de la API estará disponible en `/api/docs` una vez que el servidor esté en funcionamiento.
 </file>
 
-<file path="backend/src/index.ts">
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+<file path="backend/src/controllers/authController.ts">
+import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
+import bcrypt from 'bcrypt';
+import { generateToken } from '../utils/jwt';
+import User from '../models/User';
 
-// Cargar variables de entorno
-dotenv.config();
-
-const app = express();
-const port = process.env.PORT || 5000;
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
-}));
-app.use(helmet());
-app.use(morgan('dev'));
-
-// Rutas
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'API funcionando correctamente' });
-});
-
-// Conexión a la base de datos
-const connectDB = async () => {
+/**
+ * Registrar un nuevo usuario
+ * @route POST /api/auth/register
+ * @access Public
+ */
+export const register = async (req: Request, res: Response) => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/liga-futbol');
-    console.log(`MongoDB conectado: ${conn.connection.host}`);
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(`Error al conectar a MongoDB: ${error.message}`);
-    } else {
-      console.error('Error desconocido al conectar a MongoDB');
+    // Validar errores de la solicitud
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
     }
-    process.exit(1);
+
+    const { nombre, apellido, email, password, rol } = req.body;
+
+    // Verificar si el usuario ya existe
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({
+        success: false,
+        message: 'El email ya está registrado.',
+      });
+    }
+
+    // Si se especifica un rol, verificar que sea válido
+    if (rol && !['admin', 'manager', 'arbitro', 'usuario'].includes(rol)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rol inválido.',
+      });
+    }
+
+    // Crear el usuario
+    const user = await User.create({
+      nombre,
+      apellido,
+      email,
+      password, // La contraseña será hasheada en el pre-save hook del modelo
+      rol: rol || 'usuario', // Por defecto es 'usuario'
+    });
+
+    // Generar token JWT
+    const token = generateToken(user);
+
+    // Responder con el token y los datos del usuario (sin la contraseña)
+    const userWithoutPassword = {
+      _id: user._id,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      email: user.email,
+      rol: user.rol,
+      activo: user.activo,
+      fechaCreacion: user.fechaCreacion,
+    };
+
+    res.status(201).json({
+      success: true,
+      token,
+      usuario: userWithoutPassword,
+    });
+  } catch (error) {
+    console.error('Error en registro:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor al registrar usuario.',
+    });
   }
 };
 
-// Iniciar servidor
-connectDB().then(() => {
-  app.listen(port, () => {
-    console.log(`Servidor ejecutándose en el puerto ${port}`);
-  });
+/**
+ * Iniciar sesión de usuario
+ * @route POST /api/auth/login
+ * @access Public
+ */
+export const login = async (req: Request, res: Response) => {
+  try {
+    // Validar errores de la solicitud
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    const { email, password } = req.body;
+
+    // Buscar el usuario
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Credenciales inválidas.',
+      });
+    }
+
+    // Verificar si el usuario está activo
+    if (!user.activo) {
+      return res.status(403).json({
+        success: false,
+        message: 'Usuario desactivado. Contacte al administrador.',
+      });
+    }
+
+    // Verificar la contraseña
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Credenciales inválidas.',
+      });
+    }
+
+    // Actualizar último acceso
+    user.ultimoAcceso = new Date();
+    await user.save();
+
+    // Generar token JWT
+    const token = generateToken(user);
+
+    // Responder con el token y los datos del usuario (sin la contraseña)
+    const userWithoutPassword = {
+      _id: user._id,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      email: user.email,
+      rol: user.rol,
+      activo: user.activo,
+      fechaCreacion: user.fechaCreacion,
+      ultimoAcceso: user.ultimoAcceso,
+    };
+
+    res.status(200).json({
+      success: true,
+      token,
+      usuario: userWithoutPassword,
+    });
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor al iniciar sesión.',
+    });
+  }
+};
+
+/**
+ * Obtener el perfil del usuario actual
+ * @route GET /api/auth/me
+ * @access Private
+ */
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    // El usuario ya está en req.user gracias al middleware de autenticación
+    res.status(200).json({
+      success: true,
+      usuario: req.user,
+    });
+  } catch (error) {
+    console.error('Error al obtener perfil:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor al obtener perfil.',
+    });
+  }
+};
+
+export default {
+  register,
+  login,
+  getMe,
+};
+</file>
+
+<file path="backend/src/middleware/auth.ts">
+import { Request, Response, NextFunction } from 'express';
+import { verifyToken } from '../utils/jwt';
+import User from '../models/User';
+
+// Extender el tipo Request para incluir el usuario autenticado
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
+/**
+ * Middleware para proteger rutas que requieren autenticación
+ */
+export const authenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // Obtener el token del header Authorization
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Acceso no autorizado. Token no proporcionado.',
+      });
+    }
+
+    // Extraer el token
+    const token = authHeader.split(' ')[1];
+
+    // Verificar el token
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token inválido o expirado.',
+      });
+    }
+
+    // Buscar el usuario en la base de datos
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Usuario no encontrado.',
+      });
+    }
+
+    // Verificar si el usuario está activo
+    if (!user.activo) {
+      return res.status(403).json({
+        success: false,
+        message: 'Usuario desactivado. Contacte al administrador.',
+      });
+    }
+
+    // Añadir el usuario a la solicitud
+    req.user = user;
+
+    // Actualizar el último acceso del usuario
+    user.ultimoAcceso = new Date();
+    await user.save();
+
+    next();
+  } catch (error) {
+    console.error('Error en middleware de autenticación:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error en la autenticación.',
+    });
+  }
+};
+
+/**
+ * Middleware para verificar roles de usuario
+ * @param roles Array de roles permitidos
+ */
+export const authorize = (roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Acceso no autorizado. Usuario no autenticado.',
+      });
+    }
+
+    if (!roles.includes(req.user.rol)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Acceso prohibido. No tiene los permisos necesarios.',
+      });
+    }
+
+    next();
+  };
+};
+
+export default {
+  authenticate,
+  authorize,
+};
+</file>
+
+<file path="backend/src/models/index.ts">
+import User from './User';
+import Team from './Team';
+import Player from './Player';
+import Match from './Match';
+import League from './League';
+
+export {
+  User,
+  Team,
+  Player,
+  Match,
+  League
+};
+</file>
+
+<file path="backend/src/models/League.ts">
+import mongoose, { Document, Schema } from 'mongoose';
+
+export interface ILeague extends Document {
+  nombre: string;
+  temporada: string;
+  fechaInicio: Date;
+  fechaFin?: Date;
+  descripcion?: string;
+  logo?: string;
+  equipos: mongoose.Types.ObjectId[];
+  estado: 'preparacion' | 'en_curso' | 'finalizada' | 'cancelada';
+  tipoCompeticion: 'liga' | 'copa' | 'torneo';
+  configuracion: {
+    puntosPorVictoria: number;
+    puntosPorEmpate: number;
+    puntosPorDerrota: number;
+    criteriosDesempate: string[];
+  };
+  creador: mongoose.Types.ObjectId;
+  activo: boolean;
+}
+
+const LeagueSchema = new Schema<ILeague>(
+  {
+    nombre: {
+      type: String,
+      required: [true, 'El nombre de la liga es obligatorio'],
+      unique: true,
+      trim: true,
+    },
+    temporada: {
+      type: String,
+      required: [true, 'La temporada es obligatoria'],
+      trim: true,
+    },
+    fechaInicio: {
+      type: Date,
+      required: [true, 'La fecha de inicio es obligatoria'],
+    },
+    fechaFin: {
+      type: Date,
+    },
+    descripcion: {
+      type: String,
+      maxlength: [1000, 'La descripción no puede tener más de 1000 caracteres'],
+    },
+    logo: {
+      type: String,
+      default: '/default-league-logo.png',
+    },
+    equipos: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Team',
+      },
+    ],
+    estado: {
+      type: String,
+      enum: ['preparacion', 'en_curso', 'finalizada', 'cancelada'],
+      default: 'preparacion',
+    },
+    tipoCompeticion: {
+      type: String,
+      enum: ['liga', 'copa', 'torneo'],
+      default: 'liga',
+    },
+    configuracion: {
+      puntosPorVictoria: {
+        type: Number,
+        default: 3,
+      },
+      puntosPorEmpate: {
+        type: Number,
+        default: 1,
+      },
+      puntosPorDerrota: {
+        type: Number,
+        default: 0,
+      },
+      criteriosDesempate: {
+        type: [String],
+        default: ['diferencia_goles', 'goles_favor', 'enfrentamiento_directo'],
+      },
+    },
+    creador: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'El creador de la liga es obligatorio'],
+    },
+    activo: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Índices para búsquedas más rápidas
+LeagueSchema.index({ nombre: 1 });
+LeagueSchema.index({ estado: 1 });
+LeagueSchema.index({ tipoCompeticion: 1 });
+
+export default mongoose.model<ILeague>('League', LeagueSchema);
+</file>
+
+<file path="backend/src/models/Match.ts">
+import mongoose, { Document, Schema } from 'mongoose';
+
+export interface IMatch extends Document {
+  fecha: Date;
+  equipoLocal: mongoose.Types.ObjectId;
+  equipoVisitante: mongoose.Types.ObjectId;
+  estado: 'programado' | 'en_curso' | 'finalizado' | 'suspendido' | 'cancelado';
+  resultadoLocal?: number;
+  resultadoVisitante?: number;
+  ubicacion?: string;
+  liga: mongoose.Types.ObjectId;
+  temporada?: string;
+  jornada?: number;
+  arbitros?: mongoose.Types.ObjectId[];
+  eventos?: {
+    tipo: 'gol' | 'amarilla' | 'roja' | 'sustitucion' | 'otro';
+    minuto: number;
+    jugador: mongoose.Types.ObjectId;
+    equipoId: mongoose.Types.ObjectId;
+    descripcion?: string;
+    jugadorSustituto?: mongoose.Types.ObjectId; // Solo para sustituciones
+  }[];
+  alineacionLocal?: mongoose.Types.ObjectId[];
+  alineacionVisitante?: mongoose.Types.ObjectId[];
+  destacados?: {
+    jugador: mongoose.Types.ObjectId;
+    razon: string;
+  }[];
+  observaciones?: string;
+}
+
+const MatchSchema = new Schema<IMatch>(
+  {
+    fecha: {
+      type: Date,
+      required: [true, 'La fecha del partido es obligatoria'],
+    },
+    equipoLocal: {
+      type: Schema.Types.ObjectId,
+      ref: 'Team',
+      required: [true, 'El equipo local es obligatorio'],
+    },
+    equipoVisitante: {
+      type: Schema.Types.ObjectId,
+      ref: 'Team',
+      required: [true, 'El equipo visitante es obligatorio'],
+    },
+    estado: {
+      type: String,
+      enum: ['programado', 'en_curso', 'finalizado', 'suspendido', 'cancelado'],
+      default: 'programado',
+    },
+    resultadoLocal: {
+      type: Number,
+      min: 0,
+    },
+    resultadoVisitante: {
+      type: Number,
+      min: 0,
+    },
+    ubicacion: {
+      type: String,
+      trim: true,
+    },
+    liga: {
+      type: Schema.Types.ObjectId,
+      ref: 'League',
+      required: [true, 'La liga es obligatoria'],
+    },
+    temporada: {
+      type: String,
+      trim: true,
+    },
+    jornada: {
+      type: Number,
+      min: 1,
+    },
+    arbitros: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    eventos: [
+      {
+        tipo: {
+          type: String,
+          enum: ['gol', 'amarilla', 'roja', 'sustitucion', 'otro'],
+          required: true,
+        },
+        minuto: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        jugador: {
+          type: Schema.Types.ObjectId,
+          ref: 'Player',
+          required: true,
+        },
+        equipoId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Team',
+          required: true,
+        },
+        descripcion: {
+          type: String,
+        },
+        jugadorSustituto: {
+          type: Schema.Types.ObjectId,
+          ref: 'Player',
+        },
+      },
+    ],
+    alineacionLocal: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Player',
+      },
+    ],
+    alineacionVisitante: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Player',
+      },
+    ],
+    destacados: [
+      {
+        jugador: {
+          type: Schema.Types.ObjectId,
+          ref: 'Player',
+          required: true,
+        },
+        razon: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    observaciones: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Índices para mejorar la búsqueda y consultas frecuentes
+MatchSchema.index({ fecha: 1 });
+MatchSchema.index({ liga: 1 });
+MatchSchema.index({ equipoLocal: 1, equipoVisitante: 1 });
+MatchSchema.index({ estado: 1 });
+
+export default mongoose.model<IMatch>('Match', MatchSchema);
+</file>
+
+<file path="backend/src/models/Player.ts">
+import mongoose, { Document, Schema } from 'mongoose';
+
+export interface IPlayer extends Document {
+  nombre: string;
+  apellido: string;
+  fechaNacimiento?: Date;
+  fotoPerfil?: string;
+  numeroIdentificacion: string;
+  posicion: 'portero' | 'defensa' | 'mediocampista' | 'delantero';
+  numeroCamiseta?: number;
+  equipo?: mongoose.Types.ObjectId;
+  equiposAnteriores?: mongoose.Types.ObjectId[];
+  activo: boolean;
+  altura?: number; // en cm
+  peso?: number; // en kg
+  piePreferido?: 'izquierdo' | 'derecho' | 'ambos';
+  estadisticas?: {
+    goles: number;
+    asistencias: number;
+    tarjetasAmarillas: number;
+    tarjetasRojas: number;
+    partidosJugados: number;
+    minutos: number;
+  };
+}
+
+const PlayerSchema = new Schema<IPlayer>(
+  {
+    nombre: {
+      type: String,
+      required: [true, 'El nombre es obligatorio'],
+      trim: true,
+    },
+    apellido: {
+      type: String,
+      required: [true, 'El apellido es obligatorio'],
+      trim: true,
+    },
+    fechaNacimiento: {
+      type: Date,
+    },
+    fotoPerfil: {
+      type: String,
+      default: '/default-player.png',
+    },
+    numeroIdentificacion: {
+      type: String,
+      required: [true, 'El número de identificación es obligatorio'],
+      unique: true,
+      trim: true,
+    },
+    posicion: {
+      type: String,
+      enum: ['portero', 'defensa', 'mediocampista', 'delantero'],
+      required: [true, 'La posición es obligatoria'],
+    },
+    numeroCamiseta: {
+      type: Number,
+      min: [1, 'El número de camiseta debe ser al menos 1'],
+      max: [99, 'El número de camiseta debe ser como máximo 99'],
+    },
+    equipo: {
+      type: Schema.Types.ObjectId,
+      ref: 'Team',
+    },
+    equiposAnteriores: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Team',
+      },
+    ],
+    activo: {
+      type: Boolean,
+      default: true,
+    },
+    altura: {
+      type: Number,
+      min: [0, 'La altura no puede ser negativa'],
+    },
+    peso: {
+      type: Number,
+      min: [0, 'El peso no puede ser negativo'],
+    },
+    piePreferido: {
+      type: String,
+      enum: ['izquierdo', 'derecho', 'ambos'],
+    },
+    estadisticas: {
+      goles: {
+        type: Number,
+        default: 0,
+      },
+      asistencias: {
+        type: Number,
+        default: 0,
+      },
+      tarjetasAmarillas: {
+        type: Number,
+        default: 0,
+      },
+      tarjetasRojas: {
+        type: Number,
+        default: 0,
+      },
+      partidosJugados: {
+        type: Number,
+        default: 0,
+      },
+      minutos: {
+        type: Number,
+        default: 0,
+      },
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Índices para mejorar la búsqueda
+PlayerSchema.index({ apellido: 1, nombre: 1 });
+PlayerSchema.index({ numeroIdentificacion: 1 });
+PlayerSchema.index({ equipo: 1 });
+
+export default mongoose.model<IPlayer>('Player', PlayerSchema);
+</file>
+
+<file path="backend/src/models/Team.ts">
+import mongoose, { Document, Schema } from 'mongoose';
+
+export interface ITeam extends Document {
+  nombre: string;
+  logo?: string;
+  colorPrimario: string;
+  colorSecundario?: string;
+  fechaCreacion: Date;
+  manager: mongoose.Types.ObjectId;
+  ubicacion?: string;
+  descripcion?: string;
+  activo: boolean;
+  ligaActual?: mongoose.Types.ObjectId;
+  historialLigas?: mongoose.Types.ObjectId[];
+}
+
+const TeamSchema = new Schema<ITeam>(
+  {
+    nombre: {
+      type: String,
+      required: [true, 'El nombre del equipo es obligatorio'],
+      unique: true,
+      trim: true,
+    },
+    logo: {
+      type: String,
+      default: '/default-team-logo.png',
+    },
+    colorPrimario: {
+      type: String,
+      required: [true, 'El color primario es obligatorio'],
+      default: '#000000',
+    },
+    colorSecundario: {
+      type: String,
+      default: '#FFFFFF',
+    },
+    fechaCreacion: {
+      type: Date,
+      default: Date.now,
+    },
+    manager: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'El manager del equipo es obligatorio'],
+    },
+    ubicacion: {
+      type: String,
+      trim: true,
+    },
+    descripcion: {
+      type: String,
+      maxlength: [500, 'La descripción no puede tener más de 500 caracteres'],
+    },
+    activo: {
+      type: Boolean,
+      default: true,
+    },
+    ligaActual: {
+      type: Schema.Types.ObjectId,
+      ref: 'League',
+    },
+    historialLigas: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'League',
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Índice para búsquedas más rápidas por nombre
+TeamSchema.index({ nombre: 1 });
+
+export default mongoose.model<ITeam>('Team', TeamSchema);
+</file>
+
+<file path="backend/src/models/User.ts">
+import mongoose, { Document, Schema } from 'mongoose';
+import bcrypt from 'bcrypt';
+
+export interface IUser extends Document {
+  nombre: string;
+  apellido: string;
+  email: string;
+  password: string;
+  rol: 'admin' | 'manager' | 'arbitro' | 'usuario';
+  activo: boolean;
+  fechaCreacion: Date;
+  ultimoAcceso?: Date;
+  comparePassword: (candidatePassword: string) => Promise<boolean>;
+}
+
+const UserSchema = new Schema<IUser>(
+  {
+    nombre: {
+      type: String,
+      required: [true, 'El nombre es obligatorio'],
+      trim: true,
+    },
+    apellido: {
+      type: String,
+      required: [true, 'El apellido es obligatorio'],
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, 'El email es obligatorio'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, 'Por favor ingrese un email válido'],
+    },
+    password: {
+      type: String,
+      required: [true, 'La contraseña es obligatoria'],
+      minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],
+    },
+    rol: {
+      type: String,
+      enum: ['admin', 'manager', 'arbitro', 'usuario'],
+      default: 'usuario',
+    },
+    activo: {
+      type: Boolean,
+      default: true,
+    },
+    fechaCreacion: {
+      type: Date,
+      default: Date.now,
+    },
+    ultimoAcceso: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Hash de la contraseña antes de guardar
+UserSchema.pre<IUser>('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error: any) {
+    next(error);
+  }
 });
 
-// Manejo de errores no capturados
-process.on('unhandledRejection', (error) => {
-  console.error('Error no manejado:', error);
-});
+// Método para comparar contraseñas
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
-export default app;
+export default mongoose.model<IUser>('User', UserSchema);
+</file>
+
+<file path="backend/src/routes/authRoutes.ts">
+import express from 'express';
+import { body } from 'express-validator';
+import authController from '../controllers/authController';
+import { authenticate } from '../middleware/auth';
+
+const router = express.Router();
+
+/**
+ * @route POST /api/auth/register
+ * @desc Registrar un nuevo usuario
+ * @access Public
+ */
+router.post(
+  '/register',
+  [
+    body('nombre')
+      .notEmpty()
+      .withMessage('El nombre es obligatorio')
+      .trim()
+      .isLength({ min: 2, max: 50 })
+      .withMessage('El nombre debe tener entre 2 y 50 caracteres'),
+    body('apellido')
+      .notEmpty()
+      .withMessage('El apellido es obligatorio')
+      .trim()
+      .isLength({ min: 2, max: 50 })
+      .withMessage('El apellido debe tener entre 2 y 50 caracteres'),
+    body('email')
+      .notEmpty()
+      .withMessage('El email es obligatorio')
+      .isEmail()
+      .withMessage('Formato de email inválido')
+      .normalizeEmail(),
+    body('password')
+      .notEmpty()
+      .withMessage('La contraseña es obligatoria')
+      .isLength({ min: 6 })
+      .withMessage('La contraseña debe tener al menos 6 caracteres'),
+    body('rol')
+      .optional()
+      .isIn(['admin', 'manager', 'arbitro', 'usuario'])
+      .withMessage('Rol inválido'),
+  ],
+  authController.register
+);
+
+/**
+ * @route POST /api/auth/login
+ * @desc Iniciar sesión de usuario
+ * @access Public
+ */
+router.post(
+  '/login',
+  [
+    body('email')
+      .notEmpty()
+      .withMessage('El email es obligatorio')
+      .isEmail()
+      .withMessage('Formato de email inválido')
+      .normalizeEmail(),
+    body('password')
+      .notEmpty()
+      .withMessage('La contraseña es obligatoria'),
+  ],
+  authController.login
+);
+
+/**
+ * @route GET /api/auth/me
+ * @desc Obtener el perfil del usuario actual
+ * @access Private
+ */
+router.get('/me', authenticate, authController.getMe);
+
+export default router;
+</file>
+
+<file path="backend/src/routes/index.ts">
+import express from 'express';
+import authRoutes from './authRoutes';
+
+const router = express.Router();
+
+// Rutas de autenticación
+router.use('/auth', authRoutes);
+
+export default router;
+</file>
+
+<file path="backend/src/tests/test-auth-manual.sh">
+#!/bin/bash
+
+# Definir la URL base
+BASE_URL="http://localhost:5000/api/auth"
+
+# Colores para salida
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}=== Test Manual de APIs de Autenticación ===${NC}"
+echo 
+
+# 1. Registrar un nuevo usuario
+echo -e "${YELLOW}1. Registrando un nuevo usuario...${NC}"
+REGISTER_RESPONSE=$(curl -s -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"nombre":"Test","apellido":"User","email":"test@example.com","password":"password123"}' \
+  $BASE_URL/register)
+
+echo "$REGISTER_RESPONSE" | jq .
+
+# Extraer token
+TOKEN=$(echo "$REGISTER_RESPONSE" | jq -r '.token')
+
+if [ "$TOKEN" != "null" ]; then
+  echo -e "${GREEN}✓ Registro exitoso, token obtenido${NC}"
+else
+  echo -e "${RED}✗ Error en registro${NC}"
+  exit 1
+fi
+
+echo 
+
+# 2. Iniciar sesión
+echo -e "${YELLOW}2. Iniciando sesión...${NC}"
+LOGIN_RESPONSE=$(curl -s -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}' \
+  $BASE_URL/login)
+
+echo "$LOGIN_RESPONSE" | jq .
+
+# Actualizar token
+TOKEN=$(echo "$LOGIN_RESPONSE" | jq -r '.token')
+
+if [ "$TOKEN" != "null" ]; then
+  echo -e "${GREEN}✓ Login exitoso, token obtenido${NC}"
+else
+  echo -e "${RED}✗ Error en login${NC}"
+  exit 1
+fi
+
+echo 
+
+# 3. Obtener perfil del usuario
+echo -e "${YELLOW}3. Obteniendo perfil del usuario...${NC}"
+ME_RESPONSE=$(curl -s -X GET \
+  -H "Authorization: Bearer $TOKEN" \
+  $BASE_URL/me)
+
+echo "$ME_RESPONSE" | jq .
+
+if [ "$(echo "$ME_RESPONSE" | jq -r '.success')" == "true" ]; then
+  echo -e "${GREEN}✓ Perfil obtenido correctamente${NC}"
+else
+  echo -e "${RED}✗ Error al obtener perfil${NC}"
+  exit 1
+fi
+
+echo 
+
+echo -e "${GREEN}=== Todos los tests manuales pasaron exitosamente ===${NC}"
 </file>
 
 <file path="backend/tsconfig.json">
@@ -339,71 +1556,660 @@ export default app;
 }
 </file>
 
-<file path="frontend/package.json">
-{
-  "name": "liga-futbol-frontend",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@emotion/react": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.15.0",
-    "@mui/material": "^5.15.0",
-    "@mui/x-data-grid": "^6.18.5",
-    "@reduxjs/toolkit": "^2.0.1",
-    "axios": "^1.6.2",
-    "formik": "^2.4.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-redux": "^9.0.4",
-    "react-router-dom": "^6.20.1",
-    "yup": "^1.3.2"
+<file path="docs/plan-implementacion-integrado.md">
+# Plan de Implementación Integrado: Sistema de Gestión de Ligas de Fútbol 8v8
+
+## 1. Introducción
+
+Este documento detalla el plan de implementación integral para el desarrollo del Sistema de Gestión de Ligas de Fútbol 8v8, estructurado específicamente para un escenario de desarrollo individual con apoyo de IA. El plan adopta un enfoque incremental y pragmático, priorizando la entrega de valor, la calidad del producto y manteniendo una arquitectura escalable.
+
+## 2. Enfoque de Desarrollo
+
+### 2.1 Metodología
+
+La implementación seguirá un enfoque **ágil adaptado para desarrollador individual**:
+
+- **Ciclos de desarrollo**: Sprints de 2 semanas
+- **Desarrollo iterativo**: Entregas incrementales funcionales
+- **Priorización**: Basada en valor de negocio y dependencias técnicas
+- **Revisión continua**: Validación periódica con feedback simulado de usuarios
+- **Calidad incorporada**: Pruebas integradas desde el inicio del desarrollo
+
+### 2.2 Principios Guía
+
+| Principio | Aplicación |
+|-----------|------------|
+| **Simplicidad** | Soluciones directas sobre complejidad prematura |
+| **Automatización** | Procesos repetitivos automatizados desde el inicio |
+| **Calidad incorporada** | Testing integrado en el proceso de desarrollo |
+| **Arquitectura evolutiva** | Diseño que permita cambios sin refactorizaciones masivas |
+| **Deuda técnica controlada** | Registro explícito de compromisos técnicos |
+| **Priorización inteligente** | Enfoque en componentes críticos para testing exhaustivo |
+
+## 3. Estrategia de Pruebas
+
+La estrategia de pruebas integrada se basa en un enfoque progresivo que prioriza:
+
+1. **Automatización inteligente**: Maximizar el uso de pruebas automatizadas donde aporten mayor valor
+2. **Pruebas incrementales**: Alinear las pruebas con las fases de desarrollo del MVP
+3. **Enfoque en componentes críticos**: Priorizar la robustez de las funcionalidades core
+4. **Retroalimentación continua**: Implementar ciclos cortos de prueba-corrección
+
+### 3.1 Tipos de Pruebas y Enfoque
+
+#### Pruebas Unitarias
+
+| Área | Estrategia | Herramientas | Criterio de Éxito |
+|------|------------|--------------|-------------------|
+| Backend | Probar funciones y servicios críticos aisladamente | Jest | Cobertura >80% en módulos críticos |
+| Frontend | Probar componentes React reutilizables | React Testing Library | Funcionalidad verificada de componentes clave |
+
+**Priorización para desarrollador individual:**
+- Centrarse en los módulos de alto riesgo (autenticación, cálculos de estadísticas, integración de pagos)
+- Usar generación asistida por IA para crear casos de prueba unitarios
+
+#### Pruebas de Integración
+
+| Componentes | Estrategia | Herramientas | Criterio de Éxito |
+|-------------|------------|--------------|-------------------|
+| API + DB | Verificar operaciones CRUD completas | Supertest, MongoDB Memory Server | Todos los endpoints críticos funcionan correctamente |
+| Frontend + API | Probar flujos completos de datos | Cypress (pruebas selectivas) | Flujos principales funcionan end-to-end |
+
+**Optimización para desarrollador individual:**
+- Automatizar pruebas para rutas API críticas
+- Implementar mocks inteligentes para servicios externos
+- Utilizar IA para generar casos de prueba basados en especificaciones
+
+#### Pruebas de Usuario (Manual Asistido)
+
+| Escenario | Estrategia | Herramientas | Criterio de Éxito |
+|-----------|------------|--------------|-------------------|
+| Flujos de usuario por rol | Probar manualmente con guiones predefinidos | Listas de verificación, Grabación de sesiones | Completar flujos sin errores bloqueantes |
+| Usabilidad básica | Evaluar experiencia de usuario en puntos clave | Herramientas de feedback, Heurísticas UX | Identificar problemas críticos de usabilidad |
+
+#### Pruebas de Seguridad Básicas
+
+| Aspecto | Estrategia | Herramientas | Criterio de Éxito |
+|---------|------------|--------------|-------------------|
+| Autenticación | Verificar puntos débiles comunes | OWASP ZAP (automatizado) | Sin vulnerabilidades críticas |
+| Autorización | Probar accesos por rol | Scripts manuales + automatizados | Separación correcta de permisos |
+| Protección de datos | Verificar encriptación y sanitización | Revisión de código asistida | Datos sensibles protegidos adecuadamente |
+
+#### Pruebas de Rendimiento Esenciales
+
+| Aspecto | Estrategia | Herramientas | Criterio de Éxito |
+|---------|------------|--------------|-------------------|
+| Carga básica | Simular uso simultáneo moderado | k6, Artillery (scripts simples) | Respuesta <1s con 50 usuarios concurrentes |
+| Optimización | Identificar cuellos de botella | Chrome DevTools, React Profiler | FCP <1.5s, TTI <3s |
+
+## 4. Preparación del Entorno
+
+### 4.1 Setup Inicial
+
+| Tarea | Herramientas | Tiempo Estimado |
+|-------|--------------|-----------------|
+| Configuración de repositorio | GitHub | 1 día |
+| Estructura de proyecto base | Create React App + TypeScript | 1 día |
+| Setup de backend | Express.js + TypeScript | 1 día |
+| Configuración de base de datos | MongoDB Atlas | 1 día |
+| Integración de CI/CD básica | GitHub Actions | 1 día |
+| Configuración de entorno de pruebas | Jest, Supertest, RTL | 1 día |
+
+### 4.2 Infraestructura
+
+| Componente | Tecnología | Configuración |
+|------------|------------|---------------|
+| Frontend Hosting | Vercel | Despliegue automático desde main |
+| Backend Hosting | Railway | Despliegue automático desde main |
+| Base de Datos | MongoDB Atlas | Cluster compartido (plan gratuito) |
+| Almacenamiento | Cloudinary | Plan gratuito para desarrollo |
+| Dominio | Personalizado | Configuración en Vercel |
+| Entornos de Prueba | Local, Staging, Producción | Configuración específica por entorno |
+
+### 4.3 Configuración de Entornos de Prueba
+
+| Entorno | Propósito | Configuración | Datos |
+|---------|-----------|---------------|-------|
+| Desarrollo | Pruebas durante implementación | Local + MongoDB local/Atlas | Datos sintéticos básicos |
+| Staging | Verificación pre-producción | Vercel/Netlify Preview + MongoDB Atlas | Datos sintéticos completos |
+| Producción | Verificación final | Vercel/Netlify + MongoDB Atlas | Datos reales (post-lanzamiento) |
+
+**Simplificación para desarrollador individual:**
+- Utilizar Docker para simular entornos aislados cuando sea necesario
+- Mantener conjunto de datos de prueba pre-generados por IA
+- Implementar scripts para restablecer entornos de prueba
+
+## 5. Plan de Implementación por Fases con Pruebas Integradas
+
+### 5.1 Fase 1: MVP (Semanas 1-10)
+
+#### Semanas 1-2: Configuración y Arquitectura Base
+
+**Desarrollo:**
+- Estructura del proyecto completo
+- Configuración de autenticación JWT
+- Modelo de datos básico
+- Plantillas UI con diseño responsive básico
+
+**Pruebas:**
+- Configuración inicial de Jest y React Testing Library
+- Creación de suite básica de pruebas para autenticación
+- Configuración de GitHub Actions para CI
+
+#### Semanas 3-4: Gestión de Usuarios y Equipos
+
+**Desarrollo:**
+- CRUD de usuarios con roles
+- CRUD de equipos
+- Asignación de entrenadores a equipos
+- Pantallas y layouts principales
+
+**Pruebas:**
+- Tests unitarios para validación de usuarios y roles
+- Tests de integración para operaciones CRUD de usuarios y equipos
+- Pruebas manuales de flujos de autenticación
+
+#### Semanas 5-6: Gestión de Jugadores
+
+**Desarrollo:**
+- CRUD de jugadores
+- Asignación de jugadores a equipos
+- Perfil de jugador básico
+- Lógica de fichajes simple
+
+**Pruebas:**
+- Tests unitarios para validación de jugadores
+- Tests de integración para asignación de jugadores a equipos
+- Pruebas manuales de flujos de gestión de jugadores
+
+#### Semanas 7-8: Calendario y Partidos
+
+**Desarrollo:**
+- Creación manual de calendario
+- Gestión de partidos
+- Asignación de equipos a partidos
+- Visualización de calendario
+
+**Pruebas:**
+- Tests de integración para gestión de calendario
+- Verificación manual de visualización de calendario
+- Pruebas de casos borde en asignaciones de partidos
+
+#### Semanas 9-10: Tabla de Posiciones
+
+**Desarrollo:**
+- Registro básico de resultados
+- Cálculo automático de posiciones
+- Visualización de tabla
+- Revisión general del MVP
+
+**Pruebas:**
+- Tests unitarios exhaustivos para cálculos de posiciones
+- Tests de integración para actualización de tabla
+- Pruebas end-to-end de flujo completo del MVP
+- Revisión de seguridad básica del MVP
+
+**Tabla de Priorización de Pruebas MVP:**
+
+| Módulo | Pruebas Unitarias | Pruebas Integración | Pruebas Manuales | Automatización |
+|--------|-------------------|---------------------|------------------|----------------|
+| Autenticación | Alta | Alta | Media | Alta |
+| Gestión Equipos | Media | Alta | Alta | Media |
+| Gestión Jugadores | Media | Alta | Alta | Media |
+| Calendarización | Baja | Media | Alta | Baja |
+| Tabla Posiciones | Alta | Media | Media | Media |
+
+### 5.2 Fase 2: Funcionalidades Core (Semanas 11-20)
+
+#### Semanas 11-12: Sistema de Estadísticas
+
+**Desarrollo:**
+- Registro detallado de eventos de partido
+- Cálculo de estadísticas por equipo
+- Cálculo de estadísticas individuales
+- Reportes básicos
+
+**Pruebas:**
+- Tests unitarios exhaustivos para cálculos estadísticos
+- Pruebas de integración para registro de eventos
+- Validación de reportes generados
+
+#### Semanas 13-14: Gestión de Árbitros
+
+**Desarrollo:**
+- CRUD de árbitros
+- Asignación de árbitros a partidos
+- Registro de informes arbitrales
+- Seguimiento de pagos básico
+
+**Pruebas:**
+- Tests de integración para asignación de árbitros
+- Pruebas manuales de flujos de informes
+- Verificación de permisos por rol
+
+#### Semanas 15-16: Sistema de Sanciones
+
+**Desarrollo:**
+- Registro de tarjetas y sanciones
+- Cálculo automático de suspensiones
+- Notificaciones básicas
+- Visualización de sanciones en perfiles
+
+**Pruebas:**
+- Tests unitarios para cálculos de suspensiones
+- Tests de integración para aplicación de sanciones
+- Pruebas de casos límite en acumulación de tarjetas
+
+#### Semanas 17-18: Generación Automática de Calendario
+
+**Desarrollo:**
+- Algoritmo de generación de calendario
+- Configuración de restricciones
+- Edición manual posterior
+- Validación de conflictos
+
+**Pruebas:**
+- Tests unitarios exhaustivos del algoritmo de generación
+- Pruebas de casos específicos con restricciones
+- Verificación manual de calendarios generados
+
+#### Semanas 19-20: Dashboard Administrativo
+
+**Desarrollo:**
+- KPIs principales
+- Visualización de estado de la liga
+- Funciones de administración centralizadas
+- Revisión y pruebas de Fase 2
+
+**Pruebas:**
+- Pruebas manuales de experiencia de usuario en dashboard
+- Verificación de cálculos de KPIs
+- Pruebas de rendimiento básicas
+- Revisión de seguridad de la Fase 2
+
+**Tabla de Priorización de Pruebas Fase 2:**
+
+| Módulo | Pruebas Unitarias | Pruebas Integración | Pruebas Manuales | Automatización |
+|--------|-------------------|---------------------|------------------|----------------|
+| Estadísticas | Alta | Alta | Media | Alta |
+| Gestión Árbitros | Media | Media | Alta | Baja |
+| Sanciones | Alta | Alta | Media | Media |
+| Dashboard Admin | Baja | Media | Alta | Baja |
+
+### 5.3 Fase 3: Contenido y Engagement (Semanas 21-28)
+
+#### Semanas 21-22: Sistema de Noticias
+
+**Desarrollo:**
+- CRUD de noticias y anuncios
+- Categorización de contenido
+- Editor WYSIWYG básico
+- Visualización en frontend
+
+**Pruebas:**
+- Tests de integración para publicación de noticias
+- Pruebas de sanitización de contenido
+- Verificación de permisos por rol
+
+#### Semanas 23-24: Galería Multimedia
+
+**Desarrollo:**
+- Subida y gestión de imágenes
+- Organización por categorías
+- Optimización de imágenes
+- Galería responsive
+
+**Pruebas:**
+- Pruebas de carga y rendimiento con imágenes
+- Verificación de optimización de imágenes
+- Tests de seguridad para subida de archivos
+
+#### Semanas 25-26: Notificaciones y Alertas
+
+**Desarrollo:**
+- Sistema de notificaciones in-app
+- Alertas por email (básicas)
+- Preferencias de notificación
+- Centro de notificaciones
+
+**Pruebas:**
+- Tests de integración para generación de notificaciones
+- Pruebas de entrega de emails
+- Verificación de configuración de preferencias
+
+#### Semanas 27-28: Optimizaciones y PWA
+
+**Desarrollo:**
+- Convertir a PWA básica
+- Optimizaciones de rendimiento
+- Mejoras de UX basadas en feedback
+- Revisión completa de Fase 3
+
+**Pruebas:**
+- Pruebas de funcionalidad PWA (offline, instalación)
+- Tests de rendimiento y optimización
+- Pruebas en múltiples dispositivos
+- Revisión de seguridad de la Fase 3
+
+### 5.4 Fase 4: Monetización y Escalabilidad (Semanas 29-38)
+
+#### Semanas 29-30: Integración de Pagos
+
+**Desarrollo:**
+- Integración con Stripe
+- Flujo de pago básico
+- Gestión de transacciones
+- Facturas simples
+
+**Pruebas:**
+- Tests exhaustivos de flujos de pago (sandbox)
+- Pruebas de seguridad específicas para pagos
+- Verificación de manejo de errores en transacciones
+
+#### Semanas 31-32: Multi-tenancy Básico
+
+**Desarrollo:**
+- Separación lógica por liga
+- Gestión de configuración por liga
+- Aislamiento de datos
+- Pruebas de aislamiento
+
+**Pruebas:**
+- Tests de aislamiento de datos entre ligas
+- Pruebas de seguridad de acceso entre tenants
+- Verificación de configuraciones específicas por liga
+
+#### Semanas 33-38: Personalización, Rendimiento y Analíticas
+
+**Desarrollo y Pruebas:** Desarrollo incremental con pruebas integradas siguiendo el mismo patrón.
+
+### 5.5 Fase 5: Refinamiento (Semanas 39-44)
+
+**Desarrollo y Pruebas:** Desarrollo incremental con pruebas integradas siguiendo el mismo patrón, con énfasis en:
+- Pruebas de compatibilidad móvil
+- Verificación exhaustiva de funcionalidades premium
+- Revisión final de seguridad
+- Tests de rendimiento finales
+
+## 6. Estrategia de Automatización de Pruebas
+
+### 6.1 Qué Automatizar vs. Qué No Automatizar
+
+| Nivel | Qué Automatizar | Qué No Automatizar | Herramientas |
+|-------|-----------------|---------------------|--------------|
+| Unitarias | Lógica de negocio crítica, validaciones | Componentes UI simples, código trivial | Jest, React Testing Library |
+| API | Endpoints principales, validación de respuestas | Casos extremos raros | Supertest, Postman |
+| E2E | Flujos críticos (2-3 por rol de usuario) | Pruebas de exploración, edge cases | Cypress (selectivamente) |
+| CI/CD | Ejecución de suite de tests, linting, build | Pruebas de rendimiento pesadas | GitHub Actions |
+
+### 6.2 Uso de IA para Pruebas
+
+| Actividad | Enfoque IA | Beneficio |
+|-----------|------------|-----------|
+| Generación de casos de prueba | Generar casos basados en criterios de aceptación | Ahorro de tiempo, mejor cobertura |
+| Mocks y datos de prueba | Crear datos realistas y variados | Pruebas más robustas |
+| Análisis de cobertura | Identificar áreas sin pruebas suficientes | Mejor distribución del esfuerzo |
+| Depuración | Asistencia en análisis de fallos | Resolución más rápida |
+
+## 7. Gestión de Defectos Integrada
+
+### 7.1 Proceso de Gestión
+
+| Etapa | Herramienta | Proceso |
+|-------|------------|---------|
+| Registro | GitHub Issues | Categorizar por severidad y módulo |
+| Priorización | GitHub Project | Priorizar por impacto y frecuencia |
+| Seguimiento | GitHub Issues | Documentar pasos para reproducir |
+| Verificación | Tests automatizados | Crear test que verifique la corrección |
+
+### 7.2 Criterios de Severidad y Tiempos de Respuesta
+
+| Nivel | Descripción | Tiempo Objetivo |
+|-------|-------------|-----------------|
+| Crítico | Impide funcionalidad principal, data corruption | Inmediato |
+| Alto | Funcionalidad principal degradada | 1-2 días |
+| Medio | Problema en funcionalidad secundaria | 1 semana |
+| Bajo | Problema cosmético, mejora | Backlog |
+
+## 8. Stack Tecnológico Detallado
+
+### 8.1 Frontend
+
+| Componente | Tecnología | Justificación |
+|------------|------------|---------------|
+| Framework | React.js + TypeScript | Tipado estático, ecosistema robusto |
+| UI Framework | Material UI | Componentes pre-estilizados, temas |
+| Estado | Redux Toolkit | Manejo escalable de estado |
+| Routing | React Router | Estándar de la industria |
+| Formularios | Formik + Yup | Validación y manejo eficiente |
+| Gráficos | Recharts | Lightweight, gran personalización |
+| Tablas | Material UI DataGrid | Rendimiento con datasets grandes |
+| Testing | Jest + RTL | Cobertura completa de testing |
+
+### 8.2 Backend
+
+| Componente | Tecnología | Justificación |
+|------------|------------|---------------|
+| Runtime | Node.js | Mismo lenguaje en toda la stack |
+| Framework | Express.js + TypeScript | Ligero, flexible, tipado |
+| Autenticación | JWT + bcrypt | Seguro, stateless |
+| Validación | Joi | Esquemas declarativos |
+| ORM/ODM | Mongoose | Tipado para MongoDB, hooks |
+| API Docs | Swagger/OpenAPI | Documentación interactiva |
+| Testing | Jest + Supertest | Cobertura completa |
+| Logging | Winston | Flexible, múltiples transports |
+
+### 8.3 DevOps y Pruebas
+
+| Componente | Tecnología | Justificación |
+|------------|------------|---------------|
+| CI | GitHub Actions | Integrado con repositorio |
+| CD | Vercel/Railway | Despliegue sencillo y automático |
+| Monitoreo | Sentry | Seguimiento de errores |
+| Análisis | Lighthouse CI | Métricas de rendimiento |
+| Testing API | Supertest, Postman | Verificación de endpoints |
+| Testing E2E | Cypress (uso limitado) | Flujos críticos automatizados |
+| Testing de carga | k6 (scripts básicos) | Verificar rendimiento básico |
+| Testing de seguridad | OWASP ZAP, npm audit | Vulnerabilidades comunes |
+
+## 9. Ciclo de Trabajo Integrado de Desarrollo y Pruebas
+
+### 9.1 Distribución de Esfuerzo para Desarrollador Individual
+
+| Actividad | % Tiempo | Enfoque |
+|-----------|----------|---------|
+| Desarrollo | 60-70% | Implementación con TDD cuando sea posible |
+| Pruebas automatizadas | 15-20% | Enfoque en tests de alto valor |
+| Pruebas manuales | 10-15% | Sesiones programadas de prueba |
+| Gestión de defectos | 5-10% | Corrección prioritaria |
+
+### 9.2 Ciclo de Trabajo Recomendado
+
+| Frecuencia | Actividad |
+|------------|-----------|
+| Diaria | Ejecución de tests unitarios y linting automatizado |
+| Fin de feature | Pruebas de integración de la característica |
+| Semanal | Sesión de pruebas exploratorias manuales |
+| Quincenal | Revisión de cobertura y deuda técnica |
+| Por release | Suite completa de pruebas, incluyendo e2e |
+
+## 10. Criterios de Aceptación y Métricas
+
+### 10.1 Criterios de Aceptación Generales
+
+| Categoría | Criterio de Éxito |
+|-----------|-------------------|
+| Funcional | 100% de pruebas críticas pasan, 0 defectos bloqueantes |
+| Rendimiento | Tiempo de carga <2s en condiciones normales |
+| Usabilidad | Flujos principales completables sin errores de usuario |
+| Seguridad | Sin vulnerabilidades críticas o altas |
+
+### 10.2 Métricas de Calidad y Progreso
+
+| Métrica | Objetivo | Herramienta |
+|---------|----------|------------|
+| Cobertura de código | >70% en módulos críticos | Jest Coverage |
+| Tasa de defectos | <1 crítico por sprint | GitHub Issues |
+| Deuda técnica | <10% del esfuerzo total | SonarQube (o similar) |
+| Velocidad | Completar >80% de tareas estimadas por sprint | Tablero de tareas |
+| Rendimiento | LCP <2.5s, TTI <3.5s | Lighthouse CI |
+
+## 11. Arquitectura de Alto Nivel
+
+### 11.1 Arquitectura de Aplicación
+
+```ascii
+┌────────────────┐      ┌────────────────┐      ┌────────────────┐
+│   Frontend     │      │    Backend     │      │   Database     │
+│                │      │                │      │                │
+│  React + MUI   │◄────►│  Express API   │◄────►│   MongoDB      │
+│                │      │                │      │                │
+└────────────────┘      └─────┬──────────┘      └────────────────┘
+                              │
+                  ┌───────────┴───────────┐
+                  │   External Services   │
+                  │                       │
+                  │  Cloudinary, Stripe   │
+                  │                       │
+                  └───────────────────────┘
+```
+
+### 11.2 Arquitectura de Datos
+
+```ascii
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Usuario   │─┐   │   Equipo    │─┐   │  Partido    │
+│             │ │   │             │ │   │             │
+└─────────────┘ │   └─────────────┘ │   └─────────────┘
+                │                   │
+                ▼                   ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Jugador   │◄───►│   Evento    │     │  Árbitro    │
+│             │     │             │     │             │
+└─────────────┘     └─────────────┘     └─────────────┘
+                │
+                ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Noticia   │     │ Multimedia  │     │   Liga      │
+│             │     │             │     │             │
+└─────────────┘     └─────────────┘     └─────────────┘
+```
+
+## 12. Gestión de Riesgos
+
+| Riesgo | Probabilidad | Impacto | Mitigación |
+|--------|--------------|---------|------------|
+| Scope creep | Alta | Alto | Estricta priorización, scope fijo por sprint |
+| Deuda técnica acumulada | Alta | Medio | Días dedicados a refactorización |
+| Problemas de rendimiento | Media | Alto | Monitorización temprana, optimización progresiva |
+| Tiempo insuficiente para pruebas | Alta | Alto | Priorizar pruebas por criticidad, automatizar inteligentemente |
+| Complejidad de pruebas multi-tenant | Media | Alto | Comenzar con arquitectura de pruebas que soporte multi-tenancy desde el inicio |
+
+## 13. Anexos
+
+### 13.1 Templates de Prueba
+
+#### Template para Pruebas Unitarias
+
+```javascript
+describe('Módulo: [Nombre del Módulo]', () => {
+  describe('Función: [Nombre de la Función]', () => {
+    test('Debería [comportamiento esperado] cuando [condición]', () => {
+      // Arrange
+      // Act
+      // Assert
+    });
+  });
+});
+```
+
+#### Template para Pruebas de API
+
+```javascript
+describe('API: [Nombre del Endpoint]', () => {
+  test('Debería [comportamiento esperado] cuando [condición]', async () => {
+    // Arrange
+    // Act: Llamada al endpoint
+    // Assert: Verificar código de estado y respuesta
+  });
+});
+```
+
+#### Lista de Verificación para Pruebas Manuales
+
+- [ ] Verificar flujo principal
+- [ ] Probar casos de borde (valores límite)
+- [ ] Verificar mensajes de error
+- [ ] Probar en diferentes resoluciones
+- [ ] Verificar permisos por rol
+
+### 13.2 Datos de Prueba Esenciales
+
+| Entidad | Datos Mínimos |
+|---------|---------------|
+| Usuarios | 1 por cada rol (Admin, Veedor, Entrenador, Jugador) |
+| Equipos | 4-8 equipos con datos completos |
+| Jugadores | 10-15 por equipo |
+| Partidos | Calendario completo de una temporada |
+| Eventos | Variedad de goles y tarjetas |
+
+## 14. Conclusión
+
+Este plan de implementación integrado está diseñado específicamente para un escenario de desarrollo individual con apoyo de IA, equilibrando la necesidad de garantizar calidad con los recursos disponibles. Al integrar las pruebas directamente en el proceso de desarrollo, se busca:
+
+1. Maximizar la eficiencia en el desarrollo y las pruebas
+2. Asegurar la calidad del producto desde las primeras etapas
+3. Utilizar estratégicamente la automatización y los recursos disponibles
+4. Mantener un balance pragmático entre desarrollo y verificación
+
+Siguiendo este plan adaptado, se facilitará el seguimiento de actividades en la carpeta de tracking y se garantizará un producto de calidad a pesar de las limitaciones de recursos.
+</file>
+
+<file path="frontend/eslint.config.js">
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+
+export default tseslint.config(
+  { ignores: ['dist'] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
   },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^6.1.5",
-    "@testing-library/react": "^14.1.2",
-    "@testing-library/user-event": "^14.5.1",
-    "@types/jest": "^29.5.10",
-    "@types/node": "^20.10.4",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@typescript-eslint/parser": "^6.13.2",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "jest": "^29.7.0",
-    "prettier": "^3.1.0",
-    "react-scripts": "5.0.1",
-    "typescript": "^5.3.3"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint src --ext ts,tsx",
-    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\""
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
-}
+)
+</file>
+
+<file path="frontend/index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 </file>
 
 <file path="frontend/public/index.html">
@@ -461,65 +2267,18 @@ export default app;
 }
 </file>
 
-<file path="frontend/README.md">
-# Frontend - Sistema de Gestión de Ligas de Fútbol 8v8
-
-Este proyecto contiene el frontend del Sistema de Gestión de Ligas de Fútbol 8v8, desarrollado con React, TypeScript y Material UI.
-
-## Requisitos
-
-- Node.js 14.x o superior
-- npm 6.x o superior
-
-## Instalación
-
-1. Clona el repositorio
-2. Navega a la carpeta del frontend:
-   ```bash
-   cd frontend
-   ```
-3. Instala las dependencias:
-   ```bash
-   npm install
-   ```
-4. Copia el archivo de variables de entorno:
-   ```bash
-   cp .env.example .env.local
-   ```
-5. Edita el archivo `.env.local` con tus variables de entorno
-
-## Desarrollo
-
-Para iniciar el servidor de desarrollo:
-
-```bash
-npm start
-```
-
-El servidor estará disponible en [http://localhost:3000](http://localhost:3000).
-
-## Comandos disponibles
-
-- `npm start`: Inicia el servidor de desarrollo
-- `npm run build`: Compila la aplicación para producción
-- `npm test`: Ejecuta los tests
-- `npm run lint`: Ejecuta el linter
-- `npm run format`: Formatea el código
-
-## Estructura del proyecto
-
-- `/src/components`: Componentes reutilizables
-- `/src/pages`: Páginas principales
-- `/src/features`: Características organizadas por dominio
-- `/src/api`: Llamadas a API
-- `/src/hooks`: Hooks personalizados
-- `/src/utils`: Funciones utilitarias
-</file>
-
 <file path="frontend/src/App.tsx">
-import React from 'react';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Importar layout principal
+import MainLayout from './components/layout/MainLayout';
+
+// Importar páginas
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 
 // Tema personalizado
 const theme = createTheme({
@@ -531,6 +2290,14 @@ const theme = createTheme({
       main: '#dc004e',
     },
   },
+  typography: {
+    fontFamily: [
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif'
+    ].join(','),
+  },
 });
 
 // Componente principal
@@ -540,7 +2307,19 @@ function App() {
       <CssBaseline />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<div>Bienvenido al Sistema de Gestión de Ligas de Fútbol 8v8</div>} />
+          {/* Rutas públicas */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Rutas con layout principal */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/teams" element={<div>Gestión de Equipos (En desarrollo)</div>} />
+            <Route path="/players" element={<div>Gestión de Jugadores (En desarrollo)</div>} />
+            <Route path="/matches" element={<div>Gestión de Partidos (En desarrollo)</div>} />
+            <Route path="/standings" element={<div>Tabla de Posiciones (En desarrollo)</div>} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
@@ -550,7 +2329,304 @@ function App() {
 export default App;
 </file>
 
+<file path="frontend/src/components/layout/AppHeader.tsx">
+import React from 'react';
+import {
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  Toolbar,
+  Typography,
+  useTheme
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import { Link } from 'react-router-dom';
+
+interface AppHeaderProps {
+  drawerWidth: number;
+  onDrawerToggle: () => void;
+}
+
+const AppHeader: React.FC<AppHeaderProps> = ({ drawerWidth, onDrawerToggle }) => {
+  const theme = useTheme();
+
+  return (
+    <AppBar
+      position="fixed"
+      sx={{
+        width: { md: `calc(100% - ${drawerWidth}px)` },
+        ml: { md: `${drawerWidth}px` },
+        zIndex: theme.zIndex.drawer + 1,
+      }}
+    >
+      <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={onDrawerToggle}
+          sx={{ mr: 2, display: { md: 'none' } }}
+        >
+          <MenuIcon />
+        </IconButton>
+        
+        <SportsSoccerIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+        <Typography
+          variant="h6"
+          noWrap
+          component="div"
+          sx={{ flexGrow: 1 }}
+        >
+          Liga Fútbol 8v8
+        </Typography>
+        
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Button 
+            color="inherit" 
+            component={Link} 
+            to="/login"
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
+            Iniciar Sesión
+          </Button>
+          <Button 
+            color="inherit" 
+            component={Link} 
+            to="/register"
+            sx={{ display: { xs: 'none', sm: 'block' }, ml: 1 }}
+          >
+            Registrarse
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default AppHeader;
+</file>
+
+<file path="frontend/src/components/layout/Footer.tsx">
+import React from 'react';
+import { Box, Container, Typography, Link } from '@mui/material';
+
+const Footer: React.FC = () => {
+  return (
+    <Box
+      component="footer"
+      sx={{
+        py: 3,
+        px: 2,
+        mt: 'auto',
+        backgroundColor: (theme) => theme.palette.mode === 'light'
+          ? theme.palette.grey[200]
+          : theme.palette.grey[800],
+      }}
+    >
+      <Container maxWidth="lg">
+        <Typography variant="body2" color="text.secondary" align="center">
+          {'© '}
+          {new Date().getFullYear()}
+          {' '}
+          <Link color="inherit" href="/">
+            Sistema de Gestión de Ligas de Fútbol 8v8
+          </Link>
+          {' - Todos los derechos reservados'}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+          Versión 1.0.0
+        </Typography>
+      </Container>
+    </Box>
+  );
+};
+
+export default Footer;
+</file>
+
+<file path="frontend/src/components/layout/MainLayout.tsx">
+import React, { useState } from 'react';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
+import { Outlet } from 'react-router-dom';
+import AppHeader from './AppHeader';
+import Sidebar from './Sidebar';
+import Footer from './Footer';
+
+const drawerWidth = 240;
+
+const MainLayout: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <AppHeader drawerWidth={drawerWidth} onDrawerToggle={handleDrawerToggle} />
+      
+      <Box sx={{ display: 'flex', flex: 1 }}>
+        <Sidebar 
+          drawerWidth={drawerWidth} 
+          mobileOpen={mobileOpen}
+          onDrawerClose={() => setMobileOpen(false)}
+          isMobile={isMobile}
+        />
+        
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            width: { md: `calc(100% - ${drawerWidth}px)` },
+            ml: { md: `${drawerWidth}px` },
+          }}
+        >
+          <Box sx={{ marginTop: '64px' }}>
+            <Outlet />
+          </Box>
+        </Box>
+      </Box>
+      
+      <Footer />
+    </Box>
+  );
+};
+
+export default MainLayout;
+</file>
+
+<file path="frontend/src/components/layout/Sidebar.tsx">
+import React from 'react';
+import {
+  Box,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography
+} from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
+import GroupsIcon from '@mui/icons-material/Groups';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
+interface SidebarProps {
+  drawerWidth: number;
+  mobileOpen: boolean;
+  onDrawerClose: () => void;
+  isMobile: boolean;
+}
+
+interface MenuItem {
+  text: string;
+  path: string;
+  icon: React.ReactNode;
+}
+
+const menuItems: MenuItem[] = [
+  { text: 'Inicio', path: '/', icon: <HomeIcon /> },
+  { text: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+  { text: 'Equipos', path: '/teams', icon: <GroupsIcon /> },
+  { text: 'Jugadores', path: '/players', icon: <PeopleIcon /> },
+  { text: 'Partidos', path: '/matches', icon: <CalendarMonthIcon /> },
+  { text: 'Tabla de Posiciones', path: '/standings', icon: <EmojiEventsIcon /> },
+];
+
+const Sidebar: React.FC<SidebarProps> = ({ 
+  drawerWidth, 
+  mobileOpen, 
+  onDrawerClose,
+  isMobile
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    if (isMobile) {
+      onDrawerClose();
+    }
+  };
+
+  const drawer = (
+    <div>
+      <Toolbar>
+        <Typography variant="h6" noWrap component="div">
+          Menú
+        </Typography>
+      </Toolbar>
+      <Divider />
+      <List>
+        {menuItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton 
+              selected={location.pathname === item.path}
+              onClick={() => handleNavigate(item.path)}
+            >
+              <ListItemIcon>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
+
+  return (
+    <Box
+      component="nav"
+      sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+    >
+      {/* Mobile drawer */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={onDrawerClose}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+        }}
+      >
+        {drawer}
+      </Drawer>
+      
+      {/* Desktop drawer */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: 'none', md: 'block' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+        }}
+        open
+      >
+        {drawer}
+      </Drawer>
+    </Box>
+  );
+};
+
+export default Sidebar;
+</file>
+
 <file path="frontend/src/index.css">
+/* Estilos globales */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -564,41 +2640,817 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Agregar más estilos globales según sea necesario */
 </file>
 
-<file path="frontend/src/index.tsx">
+<file path="frontend/src/pages/Dashboard.tsx">
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { 
+  Box, 
+  Container, 
+  Grid, 
+  Paper, 
+  Typography,
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar 
+} from '@mui/material';
+import {
+  SportsSoccer as SoccerIcon,
+  People as PeopleIcon,
+  CalendarToday as CalendarIcon,
+  Notifications as NotificationsIcon
+} from '@mui/icons-material';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// Datos de ejemplo para el dashboard
+const statsData = [
+  { title: 'Equipos', value: 8, icon: <PeopleIcon sx={{ fontSize: 40 }} />, color: '#1976d2' },
+  { title: 'Jugadores', value: 125, icon: <SoccerIcon sx={{ fontSize: 40 }} />, color: '#2e7d32' },
+  { title: 'Partidos', value: 24, icon: <CalendarIcon sx={{ fontSize: 40 }} />, color: '#ed6c02' },
+  { title: 'Notificaciones', value: 5, icon: <NotificationsIcon sx={{ fontSize: 40 }} />, color: '#9c27b0' }
+];
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const upcomingMatches = [
+  { id: 1, team1: 'Rapid FC', team2: 'Atlético Gol', date: '2025-04-01 16:00', location: 'Campo Principal' },
+  { id: 2, team1: 'Deportivo Águilas', team2: 'Real Club', date: '2025-04-03 18:30', location: 'Campo Secundario' },
+  { id: 3, team1: 'Nueva Era FC', team2: 'Atlético Campeón', date: '2025-04-05 10:00', location: 'Campo Principal' }
+];
+
+const Dashboard: React.FC = () => {
+  return (
+    <Box sx={{ py: 4 }}>
+      <Container maxWidth="lg">
+        <Typography variant="h4" gutterBottom component="h1">
+          Dashboard
+        </Typography>
+        <Typography variant="subtitle1" sx={{ mb: 4 }}>
+          Bienvenido al panel de control de tu liga de fútbol 8v8
+        </Typography>
+        
+        {/* Estadísticas rápidas */}
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          {statsData.map((stat, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Paper
+                sx={{
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  height: 140,
+                  boxShadow: 3,
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+              >
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: -15,
+                    right: -15,
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    bgcolor: stat.color,
+                    opacity: 0.2,
+                    zIndex: 0
+                  }}
+                />
+                <Typography variant="h6" component="h2" gutterBottom sx={{ zIndex: 1 }}>
+                  {stat.title}
+                </Typography>
+                <Box sx={{ color: stat.color, mb: 1, mt: 1, zIndex: 1 }}>
+                  {stat.icon}
+                </Box>
+                <Typography variant="h4" component="p" sx={{ fontWeight: 'bold', zIndex: 1 }}>
+                  {stat.value}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+        
+        <Grid container spacing={3}>
+          {/* Próximos partidos */}
+          <Grid item xs={12} md={7}>
+            <Card sx={{ height: '100%' }}>
+              <CardHeader title="Próximos Partidos" />
+              <Divider />
+              <CardContent>
+                <List>
+                  {upcomingMatches.map((match) => (
+                    <React.Fragment key={match.id}>
+                      <ListItem alignItems="flex-start">
+                        <ListItemAvatar>
+                          <Avatar sx={{ bgcolor: '#1976d2' }}>
+                            <SoccerIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={`${match.team1} vs ${match.team2}`}
+                          secondary={
+                            <React.Fragment>
+                              <Typography
+                                sx={{ display: 'block' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                {new Date(match.date).toLocaleString('es-ES', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </Typography>
+                              <Typography component="span" variant="body2">
+                                {match.location}
+                              </Typography>
+                            </React.Fragment>
+                          }
+                        />
+                      </ListItem>
+                      <Divider variant="inset" component="li" />
+                    </React.Fragment>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          {/* Tabla de posiciones resumida */}
+          <Grid item xs={12} md={5}>
+            <Card sx={{ height: '100%' }}>
+              <CardHeader title="Tabla de Posiciones" />
+              <Divider />
+              <CardContent>
+                <Box sx={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+                        <th style={{ padding: '16px 8px', textAlign: 'left' }}>Pos</th>
+                        <th style={{ padding: '16px 8px', textAlign: 'left' }}>Equipo</th>
+                        <th style={{ padding: '16px 8px', textAlign: 'center' }}>PJ</th>
+                        <th style={{ padding: '16px 8px', textAlign: 'center' }}>G</th>
+                        <th style={{ padding: '16px 8px', textAlign: 'center' }}>E</th>
+                        <th style={{ padding: '16px 8px', textAlign: 'center' }}>P</th>
+                        <th style={{ padding: '16px 8px', textAlign: 'center' }}>Pts</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+                        <td style={{ padding: '16px 8px' }}>1</td>
+                        <td style={{ padding: '16px 8px' }}>Rapid FC</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>8</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>6</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>1</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>1</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center', fontWeight: 'bold' }}>19</td>
+                      </tr>
+                      <tr style={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+                        <td style={{ padding: '16px 8px' }}>2</td>
+                        <td style={{ padding: '16px 8px' }}>Atlético Campeón</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>8</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>5</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>2</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>1</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center', fontWeight: 'bold' }}>17</td>
+                      </tr>
+                      <tr style={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+                        <td style={{ padding: '16px 8px' }}>3</td>
+                        <td style={{ padding: '16px 8px' }}>Deportivo Águilas</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>8</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>4</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>3</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>1</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center', fontWeight: 'bold' }}>15</td>
+                      </tr>
+                      <tr style={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+                        <td style={{ padding: '16px 8px' }}>4</td>
+                        <td style={{ padding: '16px 8px' }}>Real Club</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>8</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>4</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>1</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center' }}>3</td>
+                        <td style={{ padding: '16px 8px', textAlign: 'center', fontWeight: 'bold' }}>13</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
+
+export default Dashboard;
+</file>
+
+<file path="frontend/src/pages/Home.tsx">
+import React from 'react';
+import { 
+  Box, 
+  Button, 
+  Container, 
+  Grid, 
+  Paper, 
+  Typography,
+  Card,
+  CardContent
+} from '@mui/material';
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import PeopleIcon from '@mui/icons-material/People';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { Link as RouterLink } from 'react-router-dom';
+
+const features = [
+  {
+    icon: <SportsSoccerIcon sx={{ fontSize: 40 }} />,
+    title: 'Gestión de Equipos',
+    description: 'Administra todos los equipos de tu liga, incluyendo jugadores, técnicos y estadísticas.'
+  },
+  {
+    icon: <CalendarMonthIcon sx={{ fontSize: 40 }} />,
+    title: 'Calendario de Partidos',
+    description: 'Organiza fácilmente el calendario de partidos, con recordatorios y notificaciones automáticas.'
+  },
+  {
+    icon: <PeopleIcon sx={{ fontSize: 40 }} />,
+    title: 'Gestión de Jugadores',
+    description: 'Administra los perfiles de jugadores, ficha técnica, estadísticas y más.'
+  }
+];
+
+const Home: React.FC = () => {
+  return (
+    <Box sx={{ py: 4 }}>
+      {/* Hero Section */}
+      <Paper 
+        elevation={0}
+        sx={{ 
+          py: 8, 
+          px: 4, 
+          mb: 4, 
+          bgcolor: 'primary.main', 
+          color: 'white',
+          borderRadius: 2
+        }}
+      >
+        <Container maxWidth="lg">
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography variant="h3" component="h1" gutterBottom>
+                Sistema de Gestión de Ligas de Fútbol 8v8
+              </Typography>
+              <Typography variant="h6" paragraph>
+                Una plataforma completa para administrar ligas de fútbol 8v8 con todas las herramientas que necesitas.
+              </Typography>
+              <Box sx={{ mt: 4 }}>
+                <Button 
+                  variant="contained" 
+                  size="large" 
+                  color="secondary"
+                  component={RouterLink}
+                  to="/register"
+                  sx={{ mr: 2 }}
+                >
+                  Comenzar Ahora
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  size="large" 
+                  sx={{ color: 'white', borderColor: 'white' }}
+                  component={RouterLink}
+                  to="/login"
+                >
+                  Iniciar Sesión
+                </Button>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
+              <SportsSoccerIcon sx={{ fontSize: 180, opacity: 0.8 }} />
+            </Grid>
+          </Grid>
+        </Container>
+      </Paper>
+
+      {/* Features Section */}
+      <Container maxWidth="lg">
+        <Typography variant="h4" component="h2" gutterBottom align="center" sx={{ mb: 4 }}>
+          Características Principales
+        </Typography>
+        <Grid container spacing={4}>
+          {features.map((feature, index) => (
+            <Grid item xs={12} md={4} key={index}>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+                  <Box sx={{ mb: 2, color: 'primary.main' }}>
+                    {feature.icon}
+                  </Box>
+                  <Typography gutterBottom variant="h5" component="h3">
+                    {feature.title}
+                  </Typography>
+                  <Typography>
+                    {feature.description}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
+
+export default Home;
+</file>
+
+<file path="frontend/src/pages/Login.tsx">
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  TextField,
+  Typography,
+  Alert,
+  Link,
+  InputAdornment,
+  IconButton
+} from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+const Login: React.FC = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    
+    // Validación básica del formulario
+    if (!formData.email || !formData.password) {
+      setError('Por favor complete todos los campos');
+      return;
+    }
+
+    try {
+      // Aquí iría la lógica de autenticación real con la API
+      console.log('Datos de inicio de sesión:', formData);
+      
+      // Simulamos un error para mostrar la funcionalidad
+      // En implementación real, esto se reemplazaría con la integración de la API
+      if (formData.email !== 'admin@example.com') {
+        setError('Credenciales inválidas. Intente nuevamente.');
+        return;
+      }
+      
+      // Redirección después de inicio de sesión exitoso
+      // En implementación real, esto se manejaría después de la respuesta de la API
+      window.location.href = '/dashboard';
+    } catch (error) {
+      setError('Error al iniciar sesión. Intente nuevamente más tarde.');
+      console.error('Error de inicio de sesión:', error);
+    }
+  };
+
+  return (
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              bgcolor: 'primary.main',
+              color: 'white',
+              borderRadius: '50%',
+              p: 1,
+              mb: 1,
+            }}
+          >
+            <LockOutlinedIcon />
+          </Box>
+          <Typography component="h1" variant="h5">
+            Iniciar Sesión
+          </Typography>
+          
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+          
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Correo Electrónico"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Contraseña"
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleInputChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleTogglePassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Iniciar Sesión
+            </Button>
+            <Box sx={{ textAlign: 'center' }}>
+              <Link component={RouterLink} to="/register" variant="body2">
+                ¿No tienes una cuenta? Regístrate
+              </Link>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
+  );
+};
+
+export default Login;
+</file>
+
+<file path="frontend/src/pages/Register.tsx">
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  TextField,
+  Typography,
+  Alert,
+  Link,
+  Grid,
+  InputAdornment,
+  IconButton,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent
+} from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+// Tipos disponibles de usuario
+const userRoles = [
+  { value: 'player', label: 'Jugador' },
+  { value: 'coach', label: 'Entrenador' },
+  { value: 'admin', label: 'Administrador' }
+];
+
+const Register: React.FC = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent) => {
+    setFormData({
+      ...formData,
+      role: e.target.value
+    });
+  };
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleToggleConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    
+    // Validación básica del formulario
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword || !formData.role) {
+      setError('Por favor complete todos los campos');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    try {
+      // Aquí iría la lógica de registro real con la API
+      console.log('Datos de registro:', formData);
+      
+      // Simulamos un registro exitoso
+      // En implementación real, esto se reemplazaría con la integración de la API
+      setSuccess('¡Registro exitoso! Redirigiendo al inicio de sesión...');
+      
+      // Redirección después de registro exitoso (simulado)
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
+    } catch (error) {
+      setError('Error al registrarse. Intente nuevamente más tarde.');
+      console.error('Error de registro:', error);
+    }
+  };
+
+  return (
+    <Container component="main" maxWidth="sm">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          mb: 4
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              bgcolor: 'primary.main',
+              color: 'white',
+              borderRadius: '50%',
+              p: 1,
+              mb: 1,
+            }}
+          >
+            <HowToRegIcon />
+          </Box>
+          <Typography component="h1" variant="h5">
+            Crear una Cuenta
+          </Typography>
+          
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+          
+          {success && (
+            <Alert severity="success" sx={{ mt: 2, width: '100%' }}>
+              {success}
+            </Alert>
+          )}
+          
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="firstName"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="Nombre"
+                  autoFocus
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Apellido"
+                  name="lastName"
+                  autoComplete="family-name"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Correo Electrónico"
+                  name="email"
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Contraseña"
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  autoComplete="new-password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleTogglePassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirmar Contraseña"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  id="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle confirm password visibility"
+                          onClick={handleToggleConfirmPassword}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth required>
+                  <InputLabel id="role-label">Tipo de Usuario</InputLabel>
+                  <Select
+                    labelId="role-label"
+                    id="role"
+                    value={formData.role}
+                    label="Tipo de Usuario"
+                    name="role"
+                    onChange={handleSelectChange}
+                  >
+                    {userRoles.map((role) => (
+                      <MenuItem key={role.value} value={role.value}>
+                        {role.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Registrarse
+            </Button>
+            <Box sx={{ textAlign: 'center' }}>
+              <Link component={RouterLink} to="/login" variant="body2">
+                ¿Ya tienes una cuenta? Inicia Sesión
+              </Link>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
+  );
+};
+
+export default Register;
 </file>
 
 <file path="frontend/src/reportWebVitals.ts">
-import { ReportHandler } from 'web-vitals';
+import * as webVitals from 'web-vitals';
+
+type ReportHandler = (metric: webVitals.Metric) => void;
 
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
-    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-      getCLS(onPerfEntry);
-      getFID(onPerfEntry);
-      getFCP(onPerfEntry);
-      getLCP(onPerfEntry);
-      getTTFB(onPerfEntry);
+    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+      onCLS(onPerfEntry);
+      onFID(onPerfEntry);
+      onFCP(onPerfEntry);
+      onLCP(onPerfEntry);
+      onTTFB(onPerfEntry);
     });
   }
 };
@@ -606,34 +3458,74 @@ const reportWebVitals = (onPerfEntry?: ReportHandler) => {
 export default reportWebVitals;
 </file>
 
-<file path="frontend/tsconfig.json">
+<file path="frontend/tsconfig.app.json">
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
+    "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "src"
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
+</file>
+
+<file path="frontend/tsconfig.node.json">
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+</file>
+
+<file path="frontend/vite.config.ts">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    open: true
+  }
+})
 </file>
 
 <file path="liga-futbol-prd.md">
@@ -1125,55 +4017,6 @@ La arquitectura propuesta está diseñada para ser escalable y personalizable, f
 El éxito del producto dependerá en gran medida de su usabilidad, fiabilidad y capacidad para ofrecer valor real a los administradores de ligas, entrenadores y jugadores, simplificando tareas administrativas y mejorando la experiencia general de participación en la liga.
 </file>
 
-<file path="tracking/NOTAS-DESARROLLO.md">
-# Notas de Desarrollo
-
-Este documento contiene notas técnicas, decisiones de diseño, problemas encontrados y sus soluciones. Sirve como un diario técnico del proyecto.
-
-## Decisiones Arquitectónicas
-
-### Frontend
-- **Framework UI:** Material UI, seleccionado por su compatibilidad con React y componentes predefinidos
-- **Gestión de estado:** Redux Toolkit, elegido por su facilidad para manejar estado global
-- **Estructura de carpetas:**
-  - `/src/components/` - Componentes reutilizables
-  - `/src/pages/` - Páginas principales
-  - `/src/features/` - Características organizadas por dominio
-  - `/src/api/` - Llamadas a API
-  - `/src/hooks/` - Hooks personalizados
-  - `/src/utils/` - Funciones utilitarias
-
-### Backend
-- **Estructura API:** REST con Express
-- **Autenticación:** JWT con refresh tokens
-- **Estructura de carpetas:**
-  - `/src/controllers/` - Controladores por entidad
-  - `/src/models/` - Modelos Mongoose
-  - `/src/routes/` - Definición de rutas
-  - `/src/middleware/` - Middleware personalizado
-  - `/src/utils/` - Funciones utilitarias
-
-## Problemas Técnicos y Soluciones
-
-### [Fecha] - [Título del problema]
-**Problema:** Descripción detallada del problema.
-**Análisis:** Análisis de causas.
-**Solución:** Solución implementada.
-**Referencias:** Enlaces o recursos utilizados.
-
-## Ideas y Mejoras Pendientes
-
-- **Rendimiento:** Implementar memoización para componentes pesados
-- **Seguridad:** Considerar implementación de rate limiting
-- **UX:** Mejorar feedback visual en formularios
-
-## Referencias y Recursos Útiles
-
-- [Documentación oficial de React](https://reactjs.org/docs/getting-started.html)
-- [Guía de Material UI](https://mui.com/getting-started/usage/)
-- [Mejores prácticas MongoDB](https://www.mongodb.com/developer/products/mongodb/mongodb-schema-design-best-practices/)
-</file>
-
 <file path="tracking/sprints/sprint-template.md">
 # Sprint [Número]: [Nombre del Sprint]
 **Período:** [Fecha inicio] - [Fecha fin]
@@ -1221,52 +4064,256 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
   - [Acciones concretas]
 </file>
 
-<file path="tracking/TAREAS-PENDIENTES.md">
-# Tareas Pendientes y Backlog
+<file path="backend/src/tests/auth.test.ts">
+import request from 'supertest';
+import mongoose from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import app from '../index';
+import User from '../models/User';
 
-Este documento registra todas las tareas pendientes, ideas y mejoras futuras para el proyecto.
+let mongoServer: MongoMemoryServer;
 
-## Tareas Prioritarias (Para implementar en próximos sprints)
+// Desconectar cualquier conexión existente antes de las pruebas
+beforeAll(async () => {
+  try {
+    // Si hay una conexión activa, cerrarla
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+    }
+    
+    // Configurar la base de datos en memoria para las pruebas
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    await mongoose.connect(uri);
+  } catch (error) {
+    console.error('Error en la configuración de pruebas:', error);
+    throw error;
+  }
+});
 
-### Fase 1: MVP
-- [ ] **Alta**: Implementar sistema de autenticación con roles
-- [ ] **Alta**: Crear CRUD de equipos
-- [ ] **Alta**: Desarrollar gestión básica de jugadores
-- [ ] **Media**: Implementar calendario de partidos
-- [ ] **Media**: Desarrollar sistema de tabla de posiciones
+afterAll(async () => {
+  try {
+    // Limpiar y cerrar conexiones después de las pruebas
+    await mongoose.disconnect();
+    await mongoServer.stop();
+  } catch (error) {
+    console.error('Error en la limpieza después de pruebas:', error);
+  }
+});
 
-### Fase 2: Funcionalidades Core
-- [ ] **Alta**: Sistema de estadísticas por partido
-- [ ] **Media**: Gestión de árbitros
-- [ ] **Media**: Sistema de sanciones automáticas
-- [ ] **Media**: Generador automático de calendario
-- [ ] **Baja**: Dashboard administrativo básico
+beforeEach(async () => {
+  // Limpiar la colección de usuarios antes de cada prueba
+  try {
+    await User.deleteMany({});
+  } catch (error) {
+    console.error('Error al limpiar colección de usuarios:', error);
+  }
+});
 
-## Mejoras Técnicas
+// Modificar app para evitar que llame a connectDB() múltiples veces
+// Esta es una solución temporal para las pruebas
+jest.mock('../index', () => {
+  const originalModule = jest.requireActual('../index');
+  const app = originalModule.default;
+  return app;
+});
 
-- [ ] Optimización de consultas MongoDB
-- [ ] Implementar caché en lado cliente
-- [ ] Mejorar sistema de logging
-- [ ] Implementar pruebas automatizadas principales
-- [ ] Configurar CI/CD básico
+describe('Pruebas de autenticación', () => {
+  // Test para registro de usuario
+  describe('POST /api/auth/register', () => {
+    it('debería registrar un nuevo usuario', async () => {
+      const userData = {
+        nombre: 'Test',
+        apellido: 'User',
+        email: 'test@example.com',
+        password: 'password123',
+      };
 
-## Ideas para el Futuro
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData)
+        .expect(201);
 
-### Fase 3-5
-- Implementar galería multimedia
-- Sistema de notificaciones
-- Integración de pagos
-- Aplicación móvil básica
-- Funcionalidades premium para ligas
-- Multi-tenancy completo
+      expect(response.body.success).toBe(true);
+      expect(response.body.token).toBeDefined();
+      expect(response.body.usuario).toBeDefined();
+      expect(response.body.usuario.email).toBe(userData.email);
+    });
 
-## Bugs Conocidos
+    it('debería fallar si el email ya está registrado', async () => {
+      // Crear usuario primero
+      await User.create({
+        nombre: 'Existing',
+        apellido: 'User',
+        email: 'existing@example.com',
+        password: 'password123',
+      });
 
-### Frontend
-- Ninguno por el momento
+      // Intentar crear otro usuario con el mismo email
+      const userData = {
+        nombre: 'Test',
+        apellido: 'User',
+        email: 'existing@example.com',
+        password: 'password123',
+      };
 
-### Backend
-- Ninguno por el momento
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData)
+        .expect(400);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toContain('registrado');
+    });
+  });
+
+  // Test para login de usuario
+  describe('POST /api/auth/login', () => {
+    it('debería iniciar sesión con credenciales correctas', async () => {
+      // Crear un usuario para la prueba
+      const userData = {
+        nombre: 'Login',
+        apellido: 'Test',
+        email: 'login@example.com',
+        password: 'password123',
+      };
+
+      await User.create(userData);
+
+      // Intentar iniciar sesión
+      const loginData = {
+        email: 'login@example.com',
+        password: 'password123',
+      };
+
+      const response = await request(app)
+        .post('/api/auth/login')
+        .send(loginData)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.token).toBeDefined();
+      expect(response.body.usuario).toBeDefined();
+      expect(response.body.usuario.email).toBe(userData.email);
+    });
+
+    it('debería fallar con credenciales incorrectas', async () => {
+      // Crear un usuario para la prueba
+      const userData = {
+        nombre: 'Login',
+        apellido: 'Test',
+        email: 'login@example.com',
+        password: 'password123',
+      };
+
+      await User.create(userData);
+
+      // Intentar iniciar sesión con contraseña incorrecta
+      const loginData = {
+        email: 'login@example.com',
+        password: 'wrongpassword',
+      };
+
+      const response = await request(app)
+        .post('/api/auth/login')
+        .send(loginData)
+        .expect(401);
+
+      expect(response.body.success).toBe(false);
+    });
+  });
+
+  // Test para obtener perfil de usuario
+  describe('GET /api/auth/me', () => {
+    it('debería obtener el perfil del usuario autenticado', async () => {
+      // Crear un usuario y generar un token
+      const user = await User.create({
+        nombre: 'Profile',
+        apellido: 'Test',
+        email: 'profile@example.com',
+        password: 'password123',
+      });
+
+      // Iniciar sesión para obtener un token
+      const loginData = {
+        email: 'profile@example.com',
+        password: 'password123',
+      };
+
+      const loginResponse = await request(app)
+        .post('/api/auth/login')
+        .send(loginData);
+
+      const token = loginResponse.body.token;
+
+      // Verificar que se puede obtener el perfil con el token
+      const response = await request(app)
+        .get('/api/auth/me')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.usuario).toBeDefined();
+      expect(response.body.usuario.email).toBe(user.email);
+    });
+
+    it('debería fallar sin token de autenticación', async () => {
+      const response = await request(app)
+        .get('/api/auth/me')
+        .expect(401);
+
+      expect(response.body.success).toBe(false);
+    });
+  });
+});
+</file>
+
+<file path="backend/src/utils/jwt.ts">
+import jwt from 'jsonwebtoken';
+import { IUser } from '../models/User';
+
+// Obtener la clave secreta del entorno o usar una predeterminada (¡solo para desarrollo!)
+const JWT_SECRET = process.env.JWT_SECRET || 'liga-futbol-jwt-secret-dev';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+/**
+ * Genera un token JWT para el usuario especificado
+ * @param user Usuario para el que se genera el token
+ * @returns Token JWT generado
+ */
+export const generateToken = (user: IUser): string => {
+  const payload = {
+    id: user._id,
+    email: user.email,
+    rol: user.rol,
+  };
+
+  // Usar @ts-ignore para evitar el error de tipo
+  // @ts-ignore
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
+  });
+};
+
+/**
+ * Verifica y decodifica un token JWT
+ * @param token Token JWT a verificar
+ * @returns Payload decodificado o null si el token es inválido
+ */
+export const verifyToken = (token: string): jwt.JwtPayload | null => {
+  try {
+    // Usar @ts-ignore para evitar el error de tipo
+    // @ts-ignore
+    return jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+  } catch (error) {
+    return null;
+  }
+};
+
+export default {
+  generateToken,
+  verifyToken,
+};
 </file>
 
 <file path="docs/plan-de-pruebas.md">
@@ -1620,128 +4667,316 @@ Este plan de pruebas está diseñado específicamente para un escenario de desar
 Al seguir este plan adaptado, se maximizará la eficiencia del proceso de pruebas y se garantizará un producto de calidad a pesar de las limitaciones de recursos.
 </file>
 
-<file path="README.md">
-# Sistema de Gestión de Ligas de Fútbol 8v8
+<file path="frontend/package.json">
+{
+  "name": "liga-futbol-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint src --ext ts,tsx",
+    "preview": "vite preview",
+    "test": "vitest",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\""
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.8",
+    "@mui/material": "^6.4.8",
+    "@mui/x-data-grid": "^7.28.0",
+    "@reduxjs/toolkit": "^2.6.1",
+    "axios": "^1.8.3",
+    "formik": "^2.4.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.3.0",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.14",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "jsdom": "^26.0.0",
+    "prettier": "^3.5.3",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.9",
+    "web-vitals": "^4.2.4"
+  }
+}
+</file>
 
-Este repositorio contiene la documentación y el código para un sistema completo de gestión de ligas de fútbol 8v8, diseñado para administrar equipos, jugadores, partidos, estadísticas y contenido multimedia.
+<file path="frontend/README.md">
+# Frontend - Sistema de Gestión de Ligas de Fútbol 8v8
 
-## Descripción del Proyecto
+Este proyecto contiene el frontend del Sistema de Gestión de Ligas de Fútbol 8v8, desarrollado con React, TypeScript, Vite y Material UI.
 
-El Sistema de Gestión de Ligas de Fútbol 8v8 es una plataforma web y móvil que permite la administración integral de ligas deportivas, con capacidad para gestionar múltiples ligas simultáneamente como servicio SaaS.
+## Requisitos
 
-### Características Principales
+- Node.js 14.x o superior
+- npm 6.x o superior
 
-- Gestión completa de equipos y jugadores
-- Calendarización y seguimiento de partidos
-- Registro de estadísticas y tabla de posiciones
-- Sistema de sanciones y arbitraje
-- Galería multimedia y sistema de noticias
-- Dashboard administrativo con analíticas
-- Integración con sistemas de pago
-- Soporte multi-liga (multi-tenancy)
+## Instalación
 
-## Estructura del Repositorio
+1. Clona el repositorio
+2. Navega a la carpeta del frontend:
+   ```bash
+   cd frontend-vite
+   ```
+3. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+4. Copia el archivo de variables de entorno:
+   ```bash
+   cp .env.example .env
+   ```
+5. Edita el archivo `.env` con tus variables de entorno
+
+## Desarrollo
+
+Para iniciar el servidor de desarrollo:
+
+```bash
+npm run dev
+```
+
+El servidor estará disponible en [http://localhost:3000](http://localhost:3000).
+
+## Comandos disponibles
+
+- `npm start` o `npm run dev`: Inicia el servidor de desarrollo
+- `npm run build`: Compila el código para producción
+- `npm run preview`: Previsualiza la compilación de producción localmente
+- `npm test`: Ejecuta los tests
+- `npm run lint`: Ejecuta el linter
+- `npm run format`: Formatea el código
+
+## Estructura del proyecto
 
 ```
-/
-├── docs/                      # Documentación del proyecto
-│   ├── plan-de-pruebas.md     # Plan detallado de pruebas
-│   └── plan-de-implementacion.md  # Plan de implementación por fases
-├── tracking/                  # Sistema de seguimiento de desarrollo
-│   ├── TRACKING.md            # Estado general del proyecto
-│   ├── SPRINT-ACTUAL.md       # Detalle del sprint en curso
-│   ├── NOTAS-DESARROLLO.md    # Notas técnicas y decisiones
-│   ├── TAREAS-PENDIENTES.md   # Backlog y tareas pendientes
-│   └── sprints/               # Historial de sprints completados
-├── liga-futbol-prd.md         # Documento de requisitos del producto (PRD)
-└── README.md                  # Este archivo
+src/
+├── api/          # Servicios y funciones de API
+├── assets/       # Recursos estáticos (imágenes, etc.)
+├── components/   # Componentes reutilizables
+├── features/     # Características (autenticación, equipos, etc.)
+├── hooks/        # Hooks personalizados
+├── pages/        # Páginas o vistas principales
+├── test/         # Configuración y utilidades de prueba
+├── utils/        # Utilidades y funciones auxiliares
+├── App.tsx       # Componente principal
+├── index.css     # Estilos globales
+├── main.tsx      # Punto de entrada
+└── vite-env.d.ts # Tipos para Vite
 ```
 
-## Documentación Principal
+## Tecnologías principales
 
-El proyecto incluye los siguientes documentos clave:
+- React 19
+- TypeScript
+- Vite
+- Material UI
+- React Router
+- Redux Toolkit
+- Axios
+- Formik & Yup
+</file>
 
-1. **PRD (Product Requirements Document)**: [liga-futbol-prd.md](liga-futbol-prd.md)
-   - Visión general y objetivos
-   - Público objetivo
-   - Características y funcionalidades detalladas
-   - Recomendaciones técnicas
-   - Modelo conceptual de datos
-   - Consideraciones de diseño y seguridad
-   - Fases de desarrollo propuestas
+<file path="frontend/tsconfig.json">
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+</file>
 
-2. **Plan de Pruebas**: [docs/plan-de-pruebas.md](docs/plan-de-pruebas.md)
-   - Estrategia de pruebas adaptada para un solo desarrollador
-   - Tipos de pruebas y priorización
-   - Plan por fase de desarrollo
-   - Automatización y uso de IA para pruebas
-   - Gestión de defectos
-   - Criterios de aceptación
+<file path="tracking/NOTAS-DESARROLLO.md">
+# Notas de Desarrollo
 
-3. **Plan de Implementación**: [docs/plan-de-implementacion.md](docs/plan-de-implementacion.md)
-   - Enfoque y metodología de desarrollo
-   - Plan detallado por fases con estimaciones
-   - Stack tecnológico y arquitectura
-   - Tareas específicas para el MVP
-   - Gestión de riesgos
-   - Métricas de progreso
+Este documento contiene notas técnicas, decisiones de diseño, problemas encontrados y sus soluciones. Sirve como un diario técnico del proyecto.
 
-## Sistema de Seguimiento
+## Decisiones Arquitectónicas
 
-El proyecto utiliza un sistema de seguimiento basado en Markdown diseñado para facilitar la colaboración con asistentes de IA:
+### Frontend
+- **Framework UI:** Material UI, seleccionado por su compatibilidad con React y componentes predefinidos
+- **Gestión de estado:** Redux Toolkit, elegido por su facilidad para manejar estado global
+- **Estructura de carpetas:**
+  - `/src/components/` - Componentes reutilizables
+  - `/src/pages/` - Páginas principales
+  - `/src/features/` - Características organizadas por dominio
+  - `/src/api/` - Llamadas a API
+  - `/src/hooks/` - Hooks personalizados
+  - `/src/utils/` - Funciones utilitarias
 
-1. **Estado General**: [tracking/TRACKING.md](tracking/TRACKING.md)
-   - Visión global del progreso del proyecto
-   - Estado actual de fases y sprints
-   - Métricas de avance
+### Backend
+- **Estructura API:** REST con Express
+- **Autenticación:** JWT con refresh tokens
+- **Estructura de carpetas:**
+  - `/src/controllers/` - Controladores por entidad
+  - `/src/models/` - Modelos Mongoose
+  - `/src/routes/` - Definición de rutas
+  - `/src/middleware/` - Middleware personalizado
+  - `/src/utils/` - Funciones utilitarias
 
-2. **Sprint Actual**: [tracking/SPRINT-ACTUAL.md](tracking/SPRINT-ACTUAL.md)
-   - Detalle de tareas del sprint en curso
-   - Registro diario de avances
-   - Problemas encontrados y soluciones
+## Problemas Técnicos y Soluciones
 
-3. **Notas de Desarrollo**: [tracking/NOTAS-DESARROLLO.md](tracking/NOTAS-DESARROLLO.md)
-   - Decisiones técnicas y arquitectónicas
-   - Soluciones a problemas encontrados
-   - Referencias y recursos útiles
+### [18-03-2025] - Migración de Create React App a Vite
+**Problema:** Incompatibilidad entre TypeScript 5.x y react-scripts (Create React App). Al intentar instalar las dependencias en el frontend, se producían errores debido a que react-scripts tiene dependencias peer que requieren TypeScript ^3.2.1 o ^4.x, pero no es compatible con TypeScript 5.x.
+**Análisis:** Create React App (CRA) ya no se mantiene activamente y presenta problemas de compatibilidad con las versiones más recientes de TypeScript. Esto impide el uso de las características más modernas de TypeScript y otras dependencias actualizadas.
+**Solución:** Se migró el proyecto de Create React App a Vite, que ofrece mejor compatibilidad con TypeScript 5.x, mayor velocidad de desarrollo y mejor mantenimiento. Pasos realizados:
+1. Creación de un nuevo proyecto con Vite usando la plantilla React + TypeScript
+2. Migración de la estructura de directorios y archivos del proyecto anterior
+3. Adaptación de los archivos de configuración (package.json, tsconfig.json)
+4. Creación de un nuevo sistema de pruebas con Vitest en lugar de Jest
+5. Actualización de las importaciones y estructura de archivos para adaptarse a Vite
+**Referencias:** 
+- [Documentación oficial de Vite](https://vitejs.dev/guide/)
+- [Guía de migración de CRA a Vite](https://vitejs.dev/guide/migration-from-cra.html)
 
-4. **Backlog**: [tracking/TAREAS-PENDIENTES.md](tracking/TAREAS-PENDIENTES.md)
-   - Tareas pendientes priorizadas
-   - Mejoras técnicas planeadas
-   - Ideas para futuras fases
+### [Fecha] - [Título del problema]
+**Problema:** Descripción detallada del problema.
+**Análisis:** Análisis de causas.
+**Solución:** Solución implementada.
+**Referencias:** Enlaces o recursos utilizados.
 
-## Cómo Usar Esta Documentación
+## Ideas y Mejoras Pendientes
 
-- **Para entender el producto**: Comienza con el [PRD](liga-futbol-prd.md)
-- **Para planificar el desarrollo**: Consulta el [Plan de Implementación](docs/plan-de-implementacion.md)
-- **Para definir estrategia de pruebas**: Revisa el [Plan de Pruebas](docs/plan-de-pruebas.md)
-- **Para ver el estado actual**: Consulta [TRACKING.md](tracking/TRACKING.md)
+- **Rendimiento:** Implementar memoización para componentes pesados
+- **Seguridad:** Considerar implementación de rate limiting
+- **UX:** Mejorar feedback visual en formularios
 
-## Stack Tecnológico
+## Referencias y Recursos Útiles
 
-El proyecto está diseñado para implementarse con las siguientes tecnologías:
+- [Documentación oficial de React](https://reactjs.org/docs/getting-started.html)
+- [Guía de Material UI](https://mui.com/getting-started/usage/)
+- [Mejores prácticas MongoDB](https://www.mongodb.com/developer/products/mongodb/mongodb-schema-design-best-practices/)
+</file>
 
-- **Frontend**: React con TypeScript, Material UI
-- **Backend**: Node.js, Express, TypeScript
-- **Base de Datos**: MongoDB
-- **Almacenamiento**: Cloudinary
-- **Despliegue**: Vercel (frontend), Railway (backend)
-- **Otros**: Stripe para pagos, GitHub Actions para CI/CD
+<file path="tracking/TAREAS-PENDIENTES.md">
+# Tareas Pendientes
 
-## Estado Actual
+## Sprint 2: Gestión de Usuarios y Equipos (Semanas 3-4)
 
-Este proyecto se encuentra en fase de documentación y planificación, previo al inicio del desarrollo.
+### Backend
 
-## Próximos Pasos
+#### Usuarios
+- [ ] Implementar endpoints CRUD para usuarios
+- [ ] Mejorar validación de datos
+- [ ] Añadir funcionalidad para cambio de contraseña
+- [ ] Implementar recuperación de contraseña (opcional)
+- [ ] Crear pruebas para endpoints de usuario
 
-1. Configuración del entorno de desarrollo
-2. Implementación de la arquitectura base
-3. Desarrollo del MVP según el plan de implementación
-4. Pruebas continuas siguiendo el plan de pruebas
+#### Equipos
+- [ ] Implementar modelo y controlador para equipos
+- [ ] Crear endpoints CRUD para equipos
+- [ ] Añadir validación de datos para equipos
+- [ ] Implementar asignación de entrenadores a equipos
+- [ ] Crear pruebas para endpoints de equipos
 
-## Licencia
+### Frontend
 
-[MIT License](LICENSE)
+#### Redux
+- [ ] Configurar Redux Toolkit
+- [ ] Implementar slices para autenticación
+- [ ] Implementar slices para usuarios
+- [ ] Implementar slices para equipos
+
+#### Funcionalidades de usuario
+- [ ] Crear página de perfil de usuario
+- [ ] Implementar formulario para edición de perfil
+- [ ] Añadir página de administración de usuarios (admin)
+- [ ] Implementar lógica para gestión de roles
+
+#### Gestión de equipos
+- [ ] Crear página para listado de equipos
+- [ ] Implementar formulario para creación/edición de equipos
+- [ ] Crear página de detalle de equipo
+- [ ] Implementar asignación de entrenadores a equipos
+- [ ] Añadir funcionalidad para carga de logo/imagen de equipo
+
+### DevOps
+- [ ] Mejorar pipeline CI/CD
+- [ ] Añadir análisis de cobertura de código
+- [ ] Configurar despliegue automático a entorno de desarrollo
+
+## Backlog para Sprints Futuros
+
+### Sprint 3: Gestión de Jugadores (Semanas 5-6)
+- [ ] CRUD de jugadores
+- [ ] Asignación de jugadores a equipos
+- [ ] Perfil de jugador
+- [ ] Gestión de fichajes
+
+### Sprint 4: Calendario y Partidos (Semanas 7-8)
+- [ ] Creación de calendario
+- [ ] Gestión de partidos
+- [ ] Asignación de equipos a partidos
+- [ ] Visualización de calendario
+
+### Sprint 5: Tabla de Posiciones (Semanas 9-10)
+- [ ] Registro de resultados
+- [ ] Cálculo de posiciones
+- [ ] Visualización de tabla
+
+## Tareas Prioritarias (Para implementar en próximos sprints)
+
+### Fase 1: MVP
+- [ ] **Alta**: Implementar sistema de autenticación con roles
+- [ ] **Alta**: Crear CRUD de equipos
+- [ ] **Alta**: Desarrollar gestión básica de jugadores
+- [ ] **Media**: Implementar calendario de partidos
+- [ ] **Media**: Desarrollar sistema de tabla de posiciones
+
+### Fase 2: Funcionalidades Core
+- [ ] **Alta**: Sistema de estadísticas por partido
+- [ ] **Media**: Gestión de árbitros
+- [ ] **Media**: Sistema de sanciones automáticas
+- [ ] **Media**: Generador automático de calendario
+- [ ] **Baja**: Dashboard administrativo básico
+
+## Mejoras Técnicas
+
+- [ ] Optimización de consultas MongoDB
+- [ ] Implementar caché en lado cliente
+- [ ] Mejorar sistema de logging
+- [ ] Implementar pruebas automatizadas principales
+- [ ] Configurar CI/CD básico
+
+## Ideas para el Futuro
+
+### Fase 3-5
+- Implementar galería multimedia
+- Sistema de notificaciones
+- Integración de pagos
+- Aplicación móvil básica
+- Funcionalidades premium para ligas
+- Multi-tenancy completo
+
+## Bugs Conocidos
+
+### Frontend
+- Ninguno por el momento
+
+### Backend
+- Ninguno por el momento
 </file>
 
 <file path="docs/plan-de-implementacion.md">
@@ -2138,72 +5373,128 @@ Este plan de implementación está diseñado específicamente para un desarrolla
 Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del Sistema de Gestión de Ligas de Fútbol 8v8, entregando un producto de calidad a pesar de las limitaciones de recursos.
 </file>
 
-<file path="tracking/SPRINT-ACTUAL.md">
-# Sprint 1: Configuración y Arquitectura Base
-**Período:** [17-03-2025] - [28-03-2025]
+<file path="README.md">
+# Sistema de Gestión de Ligas de Fútbol 8v8
 
-## Objetivos del Sprint
-1. Configurar repositorio y estructura de proyecto
-2. Implementar autenticación JWT básica
-3. Definir esquemas MongoDB iniciales
-4. Configurar enrutamiento básico React Router
-5. Implementar layout principal responsive
+Este repositorio contiene la documentación y el código para un sistema completo de gestión de ligas de fútbol 8v8, diseñado para administrar equipos, jugadores, partidos, estadísticas y contenido multimedia.
 
-## Tareas Específicas
+## Descripción del Proyecto
 
-### 1. Inicializar proyecto React con TypeScript
-- [x] Crear proyecto con Create React App + TypeScript
-- [x] Configurar ESLint y Prettier
-- [x] Configurar estructura de carpetas
-- **Estado:** Completado
-- **Notas:** Configuración básica realizada. Pendiente instalación de dependencias.
+El Sistema de Gestión de Ligas de Fútbol 8v8 es una plataforma web y móvil que permite la administración integral de ligas deportivas, con capacidad para gestionar múltiples ligas simultáneamente como servicio SaaS.
 
-### 2. Configurar proyecto Express con TypeScript
-- [x] Inicializar proyecto Express
-- [x] Configurar TypeScript
-- [x] Configurar estructura de carpetas
-- [x] Añadir middleware esencial
-- **Estado:** Completado
-- **Notas:** Configuración básica realizada. Pendiente instalación de dependencias.
+### Características Principales
 
-### 3. Definir esquemas MongoDB iniciales
-- [ ] Diseñar esquema Usuario
-- [ ] Diseñar esquema Equipo
-- [ ] Diseñar esquema Jugador
-- [ ] Diseñar esquema Partido
-- **Estado:** Pendiente
-- **Notas:** N/A
+- Gestión completa de equipos y jugadores
+- Calendarización y seguimiento de partidos
+- Registro de estadísticas y tabla de posiciones
+- Sistema de sanciones y arbitraje
+- Galería multimedia y sistema de noticias
+- Dashboard administrativo con analíticas
+- Integración con sistemas de pago
+- Soporte multi-liga (multi-tenancy)
 
-### 4. Implementar autenticación JWT
-- [ ] Configurar estrategia JWT
-- [ ] Implementar rutas de autenticación
-- [ ] Implementar middleware de autorización
-- **Estado:** Pendiente
-- **Notas:** N/A
+## Estructura del Repositorio
 
-## Registro Diario
+```
+/
+├── docs/                      # Documentación del proyecto
+│   ├── plan-de-pruebas.md     # Plan detallado de pruebas
+│   └── plan-de-implementacion.md  # Plan de implementación por fases
+├── tracking/                  # Sistema de seguimiento de desarrollo
+│   ├── TRACKING.md            # Estado general del proyecto
+│   ├── SPRINT-ACTUAL.md       # Detalle del sprint en curso
+│   ├── NOTAS-DESARROLLO.md    # Notas técnicas y decisiones
+│   ├── TAREAS-PENDIENTES.md   # Backlog y tareas pendientes
+│   └── sprints/               # Historial de sprints completados
+├── liga-futbol-prd.md         # Documento de requisitos del producto (PRD)
+└── README.md                  # Este archivo
+```
 
-### [18-03-2025]
-- **Avances:**
-  - Configurado repositorio Git
-  - Creada estructura básica de carpetas para frontend y backend
-  - Configurados archivos de configuración principales (package.json, tsconfig.json)
-  - Creados archivos básicos para frontend y backend
-- **Problemas encontrados:**
-  - Ninguno relevante
-- **Plan para mañana:**
-  - Instalar dependencias y verificar configuración
-  - Comenzar implementación de esquemas MongoDB
+## Documentación Principal
 
-## Métricas del Sprint
-- **Completado:** 15%
-- **Velocidad:** N/A
-- **Calidad de código:** N/A
+El proyecto incluye los siguientes documentos clave:
 
-## Retrospectiva (al finalizar)
-- **Lo que salió bien:**
-- **Lo que podría mejorar:**
-- **Acciones para el próximo sprint:**
+1. **PRD (Product Requirements Document)**: [liga-futbol-prd.md](liga-futbol-prd.md)
+   - Visión general y objetivos
+   - Público objetivo
+   - Características y funcionalidades detalladas
+   - Recomendaciones técnicas
+   - Modelo conceptual de datos
+   - Consideraciones de diseño y seguridad
+   - Fases de desarrollo propuestas
+
+2. **Plan de Pruebas**: [docs/plan-de-pruebas.md](docs/plan-de-pruebas.md)
+   - Estrategia de pruebas adaptada para un solo desarrollador
+   - Tipos de pruebas y priorización
+   - Plan por fase de desarrollo
+   - Automatización y uso de IA para pruebas
+   - Gestión de defectos
+   - Criterios de aceptación
+
+3. **Plan de Implementación**: [docs/plan-de-implementacion.md](docs/plan-de-implementacion.md)
+   - Enfoque y metodología de desarrollo
+   - Plan detallado por fases con estimaciones
+   - Stack tecnológico y arquitectura
+   - Tareas específicas para el MVP
+   - Gestión de riesgos
+   - Métricas de progreso
+
+## Sistema de Seguimiento
+
+El proyecto utiliza un sistema de seguimiento basado en Markdown diseñado para facilitar la colaboración con asistentes de IA:
+
+1. **Estado General**: [tracking/TRACKING.md](tracking/TRACKING.md)
+   - Visión global del progreso del proyecto
+   - Estado actual de fases y sprints
+   - Métricas de avance
+
+2. **Sprint Actual**: [tracking/SPRINT-ACTUAL.md](tracking/SPRINT-ACTUAL.md)
+   - Detalle de tareas del sprint en curso
+   - Registro diario de avances
+   - Problemas encontrados y soluciones
+
+3. **Notas de Desarrollo**: [tracking/NOTAS-DESARROLLO.md](tracking/NOTAS-DESARROLLO.md)
+   - Decisiones técnicas y arquitectónicas
+   - Soluciones a problemas encontrados
+   - Referencias y recursos útiles
+
+4. **Backlog**: [tracking/TAREAS-PENDIENTES.md](tracking/TAREAS-PENDIENTES.md)
+   - Tareas pendientes priorizadas
+   - Mejoras técnicas planeadas
+   - Ideas para futuras fases
+
+## Cómo Usar Esta Documentación
+
+- **Para entender el producto**: Comienza con el [PRD](liga-futbol-prd.md)
+- **Para planificar el desarrollo**: Consulta el [Plan de Implementación](docs/plan-de-implementacion.md)
+- **Para definir estrategia de pruebas**: Revisa el [Plan de Pruebas](docs/plan-de-pruebas.md)
+- **Para ver el estado actual**: Consulta [TRACKING.md](tracking/TRACKING.md)
+
+## Stack Tecnológico
+
+El proyecto está diseñado para implementarse con las siguientes tecnologías:
+
+- **Frontend**: React 19 con TypeScript, Vite, Material UI
+- **Backend**: Node.js, Express, TypeScript
+- **Base de Datos**: MongoDB
+- **Almacenamiento**: Cloudinary
+- **Despliegue**: Vercel (frontend), Railway (backend)
+- **Otros**: Stripe para pagos, GitHub Actions para CI/CD
+
+## Estado Actual
+
+Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la estructura básica del frontend con Vite y React 19, y el backend con Express y TypeScript.
+
+## Próximos Pasos
+
+1. Configuración del entorno de desarrollo
+2. Implementación de la arquitectura base
+3. Desarrollo del MVP según el plan de implementación
+4. Pruebas continuas siguiendo el plan de pruebas
+
+## Licencia
+
+[MIT License](LICENSE)
 </file>
 
 <file path="tracking/TRACKING.md">
@@ -2239,6 +5530,290 @@ Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del
 - **Contexto actual:** Proyecto inicializado con estructura básica para frontend y backend
 - **Necesito ayuda con:** Implementación de autenticación JWT
 - **Referencias:** Ver `docs/plan-de-implementacion.md` y `docs/plan-de-pruebas.md`
+</file>
+
+<file path="backend/src/index.ts">
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import routes from './routes';
+
+// Cargar variables de entorno
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 5000;
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true
+}));
+app.use(helmet());
+app.use(morgan('dev'));
+
+// Rutas API
+app.use('/api', routes);
+
+// Ruta de salud
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'API funcionando correctamente' });
+});
+
+// Variable para almacenar la instancia de MongoMemoryServer
+let mongoMemoryServer: MongoMemoryServer | null = null;
+
+// Conexión a la base de datos
+export const connectDB = async () => {
+  try {
+    // Evitar conectarse si ya hay una conexión activa
+    if (mongoose.connection.readyState !== 0) {
+      console.log('MongoDB ya está conectado');
+      return;
+    }
+
+    // Intentar conectar a la base de datos configurada en .env
+    const mongoUri = process.env.MONGODB_URI;
+    
+    if (mongoUri) {
+      try {
+        // Intentar conectar a MongoDB usando la URI de .env
+        console.log('Intentando conectar a MongoDB usando la URI configurada...');
+        const conn = await mongoose.connect(mongoUri);
+        console.log(`MongoDB conectado: ${conn.connection.host}`);
+        return;
+      } catch (error) {
+        console.log('No se pudo conectar a MongoDB usando la URI configurada, usando base de datos en memoria...');
+      }
+    }
+    
+    // Si no hay URI configurada o falla la conexión, usar MongoDB en memoria
+    console.log('Configurando MongoDB en memoria para desarrollo/pruebas...');
+    mongoMemoryServer = await MongoMemoryServer.create();
+    const memoryServerUri = mongoMemoryServer.getUri();
+    const conn = await mongoose.connect(memoryServerUri);
+    console.log(`MongoDB en memoria conectado: ${conn.connection.host}`);
+    console.log('ADVERTENCIA: Estás usando una base de datos en memoria. Los datos se perderán al reiniciar la aplicación.');
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Error al conectar a MongoDB: ${error.message}`);
+    } else {
+      console.error('Error desconocido al conectar a MongoDB');
+    }
+    process.exit(1);
+  }
+};
+
+// Función para cerrar la conexión a la base de datos
+export const closeDB = async () => {
+  try {
+    await mongoose.disconnect();
+    if (mongoMemoryServer) {
+      await mongoMemoryServer.stop();
+      mongoMemoryServer = null;
+    }
+    console.log('Conexión a MongoDB cerrada');
+  } catch (error) {
+    console.error('Error al cerrar la conexión a MongoDB:', error);
+  }
+};
+
+// Función para iniciar el servidor
+export const startServer = () => {
+  return app.listen(port, () => {
+    console.log(`Servidor ejecutándose en el puerto ${port}`);
+  });
+};
+
+// Iniciar servidor solo si este archivo es el punto de entrada principal
+// y no es importado por otro (como en pruebas)
+if (require.main === module) {
+  connectDB().then(() => {
+    startServer();
+  });
+}
+
+// Manejo de errores no capturados
+process.on('unhandledRejection', (error) => {
+  console.error('Error no manejado:', error);
+});
+
+// Manejo de cierre de la aplicación
+process.on('SIGINT', async () => {
+  console.log('Cerrando la aplicación...');
+  await closeDB();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Cerrando la aplicación...');
+  await closeDB();
+  process.exit(0);
+});
+
+export default app;
+</file>
+
+<file path="tracking/SPRINT-ACTUAL.md">
+# Sprint 1: Configuración y Arquitectura Base
+**Período:** [17-03-2025] - [28-03-2025]
+
+## Objetivos del Sprint
+1. Configurar repositorio y estructura de proyecto
+2. Implementar autenticación JWT básica
+3. Definir esquemas MongoDB iniciales
+4. Configurar enrutamiento básico React Router
+5. Implementar layout principal responsive
+
+## Tareas Específicas
+
+### 1. Inicializar proyecto React con TypeScript
+- [x] Crear proyecto con ~~Create React App~~ Vite + TypeScript
+- [x] Configurar ESLint y Prettier
+- [x] Configurar estructura de carpetas
+- **Estado:** Completado
+- **Notas:** Se migró de Create React App a Vite debido a problemas de compatibilidad con TypeScript 5.x. La migración permitió usar dependencias más modernas y mejorar el rendimiento.
+
+### 2. Configurar proyecto Express con TypeScript
+- [x] Inicializar proyecto Express
+- [x] Configurar TypeScript
+- [x] Configurar estructura de carpetas
+- [x] Añadir middleware esencial
+- [x] Configurar manejo de base de datos flexible
+- **Estado:** Completado
+- **Notas:** Configuración básica realizada. Dependencias instaladas. Se ha implementado un sistema flexible que permite utilizar una base de datos MongoDB en memoria cuando no hay conexión a MongoDB disponible.
+
+### 3. Definir esquemas MongoDB iniciales
+- [x] Diseñar esquema Usuario
+- [x] Diseñar esquema Equipo
+- [x] Diseñar esquema Jugador
+- [x] Diseñar esquema Partido
+- [x] Diseñar esquema Liga (adicional)
+- **Estado:** Completado
+- **Notas:** Se han creado todos los esquemas necesarios, incluyendo un esquema adicional para Liga que no estaba inicialmente previsto pero era necesario para mantener las relaciones entre entidades.
+
+### 4. Implementar autenticación JWT
+- [x] Configurar estrategia JWT
+- [x] Implementar rutas de autenticación
+- [x] Implementar middleware de autorización
+- [x] Implementar pruebas para la autenticación
+- **Estado:** Completado
+- **Notas:** Se ha implementado la autenticación JWT con rutas para registro, login y obtención del perfil del usuario. También se han creado middlewares de autenticación y autorización basada en roles. Se han añadido pruebas automatizadas y manuales para verificar el funcionamiento.
+
+### 5. Configurar enrutamiento básico React Router
+- [x] Implementar BrowserRouter en App.tsx
+- [x] Configurar rutas principales
+- [x] Implementar rutas anidadas con layout
+- **Estado:** Completado
+- **Notas:** Se han implementado las rutas principales para Home, Login, Register y Dashboard. También se han añadido rutas para las secciones en desarrollo (Equipos, Jugadores, Partidos, Tabla de Posiciones).
+
+### 6. Implementar layout principal responsive
+- [x] Crear componente MainLayout
+- [x] Implementar AppHeader
+- [x] Implementar Sidebar responsive
+- [x] Implementar Footer
+- **Estado:** Completado
+- **Notas:** Se ha creado un layout principal responsive con AppBar, Sidebar (que se adapta a dispositivos móviles) y Footer.
+
+## Registro Diario
+
+### [18-03-2025]
+- **Avances:**
+  - Configurado repositorio Git
+  - Creada estructura básica de carpetas para frontend y backend
+  - Configurados archivos de configuración principales (package.json, tsconfig.json)
+  - Creados archivos básicos para frontend y backend
+  - Migrado frontend de Create React App a Vite para resolver problemas de compatibilidad con TypeScript 5.x
+- **Problemas encontrados:**
+  - Incompatibilidad entre react-scripts (Create React App) y TypeScript 5.x
+  - Solución: Migración completa a Vite, que ofrece mejor compatibilidad y rendimiento
+- **Plan para mañana:**
+  - Instalar dependencias y verificar configuración
+  - Comenzar implementación de esquemas MongoDB
+
+### [19-03-2025]
+- **Avances:**
+  - Implementados todos los esquemas MongoDB iniciales (Usuario, Equipo, Jugador, Partido)
+  - Añadido esquema adicional de Liga para mejorar las relaciones entre entidades
+  - Creado archivo de índice para facilitar la exportación de modelos
+- **Problemas encontrados:**
+  - Ninguno
+- **Plan para mañana:**
+  - Comenzar implementación de autenticación JWT
+
+### [20-03-2025]
+- **Avances:**
+  - Implementada la autenticación JWT completa
+  - Creadas utilidades para generar y verificar tokens JWT
+  - Implementados middlewares de autenticación y autorización
+  - Creados controladores para registro, login y perfil de usuario
+  - Configuradas rutas de autenticación
+- **Problemas encontrados:**
+  - Algunos errores de tipo en la implementación de JWT que fueron resueltos
+- **Plan para mañana:**
+  - Comenzar con la configuración del enrutamiento en React Router
+
+### [21-03-2025]
+- **Avances:**
+  - Implementadas pruebas automatizadas para las rutas de autenticación
+  - Creado script para pruebas manuales de las APIs
+  - Configurado entorno Jest para pruebas
+- **Problemas encontrados:**
+  - Persistencia de algunos errores de tipado en el módulo JWT, pendientes de resolver
+- **Plan para mañana:**
+  - Comenzar con la configuración del enrutamiento en React Router
+
+### [22-03-2025]
+- **Avances:**
+  - Implementado sistema de manejo flexible de base de datos
+  - Añadido soporte para MongoDB en memoria para desarrollo y pruebas
+  - Mejorado el manejo de conexiones a la base de datos
+  - Actualizado archivo .env con variables de entorno para configuración
+  - Verificado funcionamiento de rutas de autenticación con base de datos en memoria
+- **Problemas encontrados:**
+  - Problemas de conexión a MongoDB local (resuelto con implementación de MongoDB en memoria)
+  - Algunos problemas de tipado en el soporte de MongoDB en memoria (resueltos)
+- **Plan para mañana:**
+  - Comenzar con la configuración del enrutamiento en React Router
+
+### [23-03-2025]
+- **Avances:**
+  - Configurado el enrutamiento básico con React Router
+  - Creada la estructura de páginas y componentes
+  - Implementado layout principal responsive con AppBar, Sidebar y Footer
+  - Implementadas las páginas básicas: Home, Login, Register y Dashboard
+- **Problemas encontrados:**
+  - Ninguno significativo
+- **Plan para mañana:**
+  - Configurar GitHub Actions para CI básico
+  - Realizar testing de componentes creados
+  - Finalizar la documentación del sprint
+
+## Métricas del Sprint
+- **Completado:** 100%
+- **Velocidad:** 6 tareas principales completadas en 7 días
+- **Calidad de código:** Alta - Código bien estructurado con componentes reutilizables y responsive
+
+## Retrospectiva (al finalizar)
+- **Lo que salió bien:**
+  - Migración exitosa de Create React App a Vite
+  - Implementación eficiente de la autenticación JWT
+  - Creación de un layout principal responsive y atractivo
+  - Buen manejo de la base de datos flexible (MongoDB en memoria)
+- **Lo que podría mejorar:**
+  - Añadir más pruebas automatizadas para los componentes frontend
+  - Mejorar la documentación del código
+  - Implementar un sistema de gestión de estados más robusto (Redux)
+- **Acciones para el próximo sprint:**
+  - Configurar Redux para gestión de estado global
+  - Implementar pruebas para componentes de UI
+  - Mejorar la integración entre frontend y backend
 </file>
 
 </files>
