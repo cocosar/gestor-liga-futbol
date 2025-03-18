@@ -24,6 +24,12 @@ El Sistema de Gestión de Ligas de Fútbol 8v8 es una plataforma web y móvil qu
 ├── docs/                      # Documentación del proyecto
 │   ├── plan-de-pruebas.md     # Plan detallado de pruebas
 │   └── plan-de-implementacion.md  # Plan de implementación por fases
+├── tracking/                  # Sistema de seguimiento de desarrollo
+│   ├── TRACKING.md            # Estado general del proyecto
+│   ├── SPRINT-ACTUAL.md       # Detalle del sprint en curso
+│   ├── NOTAS-DESARROLLO.md    # Notas técnicas y decisiones
+│   ├── TAREAS-PENDIENTES.md   # Backlog y tareas pendientes
+│   └── sprints/               # Historial de sprints completados
 ├── liga-futbol-prd.md         # Documento de requisitos del producto (PRD)
 └── README.md                  # Este archivo
 ```
@@ -57,11 +63,36 @@ El proyecto incluye los siguientes documentos clave:
    - Gestión de riesgos
    - Métricas de progreso
 
+## Sistema de Seguimiento
+
+El proyecto utiliza un sistema de seguimiento basado en Markdown diseñado para facilitar la colaboración con asistentes de IA:
+
+1. **Estado General**: [tracking/TRACKING.md](tracking/TRACKING.md)
+   - Visión global del progreso del proyecto
+   - Estado actual de fases y sprints
+   - Métricas de avance
+
+2. **Sprint Actual**: [tracking/SPRINT-ACTUAL.md](tracking/SPRINT-ACTUAL.md)
+   - Detalle de tareas del sprint en curso
+   - Registro diario de avances
+   - Problemas encontrados y soluciones
+
+3. **Notas de Desarrollo**: [tracking/NOTAS-DESARROLLO.md](tracking/NOTAS-DESARROLLO.md)
+   - Decisiones técnicas y arquitectónicas
+   - Soluciones a problemas encontrados
+   - Referencias y recursos útiles
+
+4. **Backlog**: [tracking/TAREAS-PENDIENTES.md](tracking/TAREAS-PENDIENTES.md)
+   - Tareas pendientes priorizadas
+   - Mejoras técnicas planeadas
+   - Ideas para futuras fases
+
 ## Cómo Usar Esta Documentación
 
 - **Para entender el producto**: Comienza con el [PRD](liga-futbol-prd.md)
 - **Para planificar el desarrollo**: Consulta el [Plan de Implementación](docs/plan-de-implementacion.md)
 - **Para definir estrategia de pruebas**: Revisa el [Plan de Pruebas](docs/plan-de-pruebas.md)
+- **Para ver el estado actual**: Consulta [TRACKING.md](tracking/TRACKING.md)
 
 ## Stack Tecnológico
 
