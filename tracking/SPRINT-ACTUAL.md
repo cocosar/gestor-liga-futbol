@@ -11,11 +11,11 @@
 ## Tareas Específicas
 
 ### 1. Inicializar proyecto React con TypeScript
-- [x] Crear proyecto con Create React App + TypeScript
+- [x] Crear proyecto con ~~Create React App~~ Vite + TypeScript
 - [x] Configurar ESLint y Prettier
 - [x] Configurar estructura de carpetas
 - **Estado:** Completado
-- **Notas:** Configuración básica realizada. Pendiente instalación de dependencias.
+- **Notas:** Se migró de Create React App a Vite debido a problemas de compatibilidad con TypeScript 5.x. La migración permitió usar dependencias más modernas y mejorar el rendimiento.
 
 ### 2. Configurar proyecto Express con TypeScript
 - [x] Inicializar proyecto Express
@@ -48,8 +48,10 @@
   - Creada estructura básica de carpetas para frontend y backend
   - Configurados archivos de configuración principales (package.json, tsconfig.json)
   - Creados archivos básicos para frontend y backend
+  - Migrado frontend de Create React App a Vite para resolver problemas de compatibilidad con TypeScript 5.x
 - **Problemas encontrados:**
-  - Ninguno relevante
+  - Incompatibilidad entre react-scripts (Create React App) y TypeScript 5.x
+  - Solución: Migración completa a Vite, que ofrece mejor compatibilidad y rendimiento
 - **Plan para mañana:**
   - Instalar dependencias y verificar configuración
   - Comenzar implementación de esquemas MongoDB

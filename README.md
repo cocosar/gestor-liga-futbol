@@ -98,7 +98,7 @@ El proyecto utiliza un sistema de seguimiento basado en Markdown diseñado para 
 
 El proyecto está diseñado para implementarse con las siguientes tecnologías:
 
-- **Frontend**: React con TypeScript, Material UI
+- **Frontend**: React 19 con TypeScript, Vite, Material UI
 - **Backend**: Node.js, Express, TypeScript
 - **Base de Datos**: MongoDB
 - **Almacenamiento**: Cloudinary
@@ -107,7 +107,7 @@ El proyecto está diseñado para implementarse con las siguientes tecnologías:
 
 ## Estado Actual
 
-Este proyecto se encuentra en fase de documentación y planificación, previo al inicio del desarrollo.
+Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la estructura básica del frontend con Vite y React 19, y el backend con Express y TypeScript.
 
 ## Próximos Pasos
 

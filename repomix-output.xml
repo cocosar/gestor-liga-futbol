@@ -1,0 +1,2244 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+.cursor/rules/coding-preferences.mdc
+.gitignore
+backend/package.json
+backend/README.md
+backend/src/index.ts
+backend/tsconfig.json
+docs/plan-de-implementacion.md
+docs/plan-de-pruebas.md
+frontend/package.json
+frontend/public/index.html
+frontend/public/manifest.json
+frontend/README.md
+frontend/src/App.tsx
+frontend/src/index.css
+frontend/src/index.tsx
+frontend/src/reportWebVitals.ts
+frontend/tsconfig.json
+liga-futbol-prd.md
+README.md
+tracking/NOTAS-DESARROLLO.md
+tracking/SPRINT-ACTUAL.md
+tracking/sprints/sprint-template.md
+tracking/TAREAS-PENDIENTES.md
+tracking/TRACKING.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".cursor/rules/coding-preferences.mdc">
+---
+description: Coding pattern preferences
+globs: 
+alwaysApply: false
+---
+
+# Coding pattern preferences
+
+- Always prefer simple solutions
+- Avoid duplication of code whenever possible, which means checking for other areas of the codebase that might already have similar code and functionality
+- Write code that takes into account the different enviroments: dev, test, and prod
+- you are careful to only make changes that are requested or you are confident are well understood and related to the change being requested
+- When fixing an issue or bug, do not introduce a new pattern or technology without first exhausting all options for the existing implementation. And if you finally do this, make sure to remove the old implementation afterwards so we don't have duplicate logic.
+- Keep the codebase very clean and organized
+- Avoid writing scripts in files if possible, especially if the script is likely only to be run once
+- Avoid having files over 200-300 lines of code. Refactor at that point.
+- Mocking data is only needed for tests, never mock data for dev or prod.
+- Never add stubbing or fake data patterns to code that affects the dev or prod environments
+- Never overwrite my .env file without first asking and confirming
+-
+</file>
+
+<file path=".gitignore">
+# Dependencias
+node_modules/
+.pnp/
+.pnp.js
+
+# Producción
+/frontend/build
+/backend/dist
+
+# Archivos de desarrollo
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de cobertura
+/coverage
+
+# Archivos de configuración del IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Misc
+.DS_Store
+*.pem
+
+# Archivos de typescript
+*.tsbuildinfo
+
+# Archivos de dependencias
+package-lock.json
+yarn.lock
+
+# Archivos de debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local history
+.history/
+</file>
+
+<file path="backend/package.json">
+{
+  "name": "liga-futbol-backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "jest"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "morgan": "^1.10.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.10",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.10.4",
+    "@types/supertest": "^2.0.16",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^9.1.1",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.1.0",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.3"
+  }
+}
+</file>
+
+<file path="backend/README.md">
+# Backend - Sistema de Gestión de Ligas de Fútbol 8v8
+
+Este proyecto contiene el backend del Sistema de Gestión de Ligas de Fútbol 8v8, desarrollado con Node.js, Express, TypeScript y MongoDB.
+
+## Requisitos
+
+- Node.js 14.x o superior
+- npm 6.x o superior
+- MongoDB 4.4 o superior
+
+## Instalación
+
+1. Clona el repositorio
+2. Navega a la carpeta del backend:
+   ```bash
+   cd backend
+   ```
+3. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+4. Copia el archivo de variables de entorno:
+   ```bash
+   cp .env.example .env
+   ```
+5. Edita el archivo `.env` con tus variables de entorno
+
+## Desarrollo
+
+Para iniciar el servidor de desarrollo:
+
+```bash
+npm run dev
+```
+
+El servidor estará disponible en [http://localhost:5000](http://localhost:5000).
+
+## Comandos disponibles
+
+- `npm run dev`: Inicia el servidor de desarrollo con hot-reload
+- `npm start`: Inicia el servidor en modo producción
+- `npm run build`: Compila el código TypeScript
+- `npm test`: Ejecuta los tests
+- `npm run lint`: Ejecuta el linter
+- `npm run format`: Formatea el código
+
+## Estructura del proyecto
+
+- `/src/controllers`: Controladores por entidad
+- `/src/models`: Modelos de MongoDB/Mongoose
+- `/src/routes`: Definición de rutas
+- `/src/middleware`: Middleware personalizado
+- `/src/utils`: Funciones utilitarias
+
+## API Endpoints
+
+La documentación detallada de la API estará disponible en `/api/docs` una vez que el servidor esté en funcionamiento.
+</file>
+
+<file path="backend/src/index.ts">
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
+// Cargar variables de entorno
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 5000;
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true
+}));
+app.use(helmet());
+app.use(morgan('dev'));
+
+// Rutas
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'API funcionando correctamente' });
+});
+
+// Conexión a la base de datos
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/liga-futbol');
+    console.log(`MongoDB conectado: ${conn.connection.host}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Error al conectar a MongoDB: ${error.message}`);
+    } else {
+      console.error('Error desconocido al conectar a MongoDB');
+    }
+    process.exit(1);
+  }
+};
+
+// Iniciar servidor
+connectDB().then(() => {
+  app.listen(port, () => {
+    console.log(`Servidor ejecutándose en el puerto ${port}`);
+  });
+});
+
+// Manejo de errores no capturados
+process.on('unhandledRejection', (error) => {
+  console.error('Error no manejado:', error);
+});
+
+export default app;
+</file>
+
+<file path="backend/tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+</file>
+
+<file path="frontend/package.json">
+{
+  "name": "liga-futbol-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.0",
+    "@mui/material": "^5.15.0",
+    "@mui/x-data-grid": "^6.18.5",
+    "@reduxjs/toolkit": "^2.0.1",
+    "axios": "^1.6.2",
+    "formik": "^2.4.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.0.4",
+    "react-router-dom": "^6.20.1",
+    "yup": "^1.3.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^29.5.10",
+    "@types/node": "^20.10.4",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.1.0",
+    "react-scripts": "5.0.1",
+    "typescript": "^5.3.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src --ext ts,tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\""
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
+</file>
+
+<file path="frontend/public/index.html">
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Sistema de Gestión de Ligas de Fútbol 8v8"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <title>Liga Fútbol 8v8</title>
+  </head>
+  <body>
+    <noscript>Necesitas habilitar JavaScript para ejecutar esta aplicación.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+</file>
+
+<file path="frontend/public/manifest.json">
+{
+  "short_name": "Liga Fútbol",
+  "name": "Sistema de Gestión de Ligas de Fútbol 8v8",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
+</file>
+
+<file path="frontend/README.md">
+# Frontend - Sistema de Gestión de Ligas de Fútbol 8v8
+
+Este proyecto contiene el frontend del Sistema de Gestión de Ligas de Fútbol 8v8, desarrollado con React, TypeScript y Material UI.
+
+## Requisitos
+
+- Node.js 14.x o superior
+- npm 6.x o superior
+
+## Instalación
+
+1. Clona el repositorio
+2. Navega a la carpeta del frontend:
+   ```bash
+   cd frontend
+   ```
+3. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+4. Copia el archivo de variables de entorno:
+   ```bash
+   cp .env.example .env.local
+   ```
+5. Edita el archivo `.env.local` con tus variables de entorno
+
+## Desarrollo
+
+Para iniciar el servidor de desarrollo:
+
+```bash
+npm start
+```
+
+El servidor estará disponible en [http://localhost:3000](http://localhost:3000).
+
+## Comandos disponibles
+
+- `npm start`: Inicia el servidor de desarrollo
+- `npm run build`: Compila la aplicación para producción
+- `npm test`: Ejecuta los tests
+- `npm run lint`: Ejecuta el linter
+- `npm run format`: Formatea el código
+
+## Estructura del proyecto
+
+- `/src/components`: Componentes reutilizables
+- `/src/pages`: Páginas principales
+- `/src/features`: Características organizadas por dominio
+- `/src/api`: Llamadas a API
+- `/src/hooks`: Hooks personalizados
+- `/src/utils`: Funciones utilitarias
+</file>
+
+<file path="frontend/src/App.tsx">
+import React from 'react';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Tema personalizado
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
+
+// Componente principal
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<div>Bienvenido al Sistema de Gestión de Ligas de Fútbol 8v8</div>} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+}
+
+export default App;
+</file>
+
+<file path="frontend/src/index.css">
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+</file>
+
+<file path="frontend/src/index.tsx">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+</file>
+
+<file path="frontend/src/reportWebVitals.ts">
+import { ReportHandler } from 'web-vitals';
+
+const reportWebVitals = (onPerfEntry?: ReportHandler) => {
+  if (onPerfEntry && onPerfEntry instanceof Function) {
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(onPerfEntry);
+      getFID(onPerfEntry);
+      getFCP(onPerfEntry);
+      getLCP(onPerfEntry);
+      getTTFB(onPerfEntry);
+    });
+  }
+};
+
+export default reportWebVitals;
+</file>
+
+<file path="frontend/tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": "src"
+  },
+  "include": [
+    "src"
+  ]
+}
+</file>
+
+<file path="liga-futbol-prd.md">
+# PRD: Sistema de Gestión de Ligas de Fútbol 8v8
+
+## 1. Visión General y Objetivos
+
+### Propósito
+Crear una plataforma web y móvil que facilite la administración integral de ligas de fútbol 8v8, con capacidad para gestionar equipos, jugadores, partidos, estadísticas y contenido multimedia. La plataforma está diseñada para ser vendida como servicio a múltiples ligas, ofreciendo una solución completa y personalizable.
+
+### Objetivos Clave
+- Proporcionar herramientas eficientes para la gestión administrativa de ligas de fútbol 8v8
+- Facilitar la comunicación entre administradores, entrenadores y jugadores
+- Centralizar la información de la liga (estadísticas, calendario, sanciones)
+- Aumentar el engagement mediante contenido multimedia y noticias
+- Crear una plataforma escalable y adaptable a diferentes ligas
+- Monetizar el sistema mediante la venta a otras organizaciones
+
+## 2. Público Objetivo
+
+### Usuarios Primarios
+1. **Administradores de Liga**
+   - Control total del sistema
+   - Gestión de equipos, jugadores, calendario y contenido
+   - Acceso a reportes y configuraciones del sistema
+
+2. **Veedores**
+   - Registro de resultados de partidos
+   - Carga de eventos (goles, asistencias, tarjetas)
+   - Generación de informes de partidos
+   - Sin acceso a configuraciones del sistema
+
+3. **Entrenadores/Delegados de Equipo**
+   - Gestión de su propio equipo
+   - Consulta de información de otros equipos
+   - Seguimiento de estadísticas y calendario
+
+4. **Jugadores**
+   - Visualización de información general
+   - Gestión de su perfil personal
+   - Consulta de estadísticas y calendario
+
+### Clientes Potenciales (para venta del sistema)
+- Organizadores de ligas amateur de fútbol 8v8
+- Asociaciones deportivas locales
+- Complejos deportivos con múltiples ligas
+- Torneos corporativos o universitarios
+
+## 3. Características y Funcionalidades
+
+### Gestión de Equipos
+- **Criterios de Aceptación:**
+  - Crear, editar y eliminar equipos
+  - Asignar entrenadores/delegados
+  - Gestionar plantilla de jugadores
+  - Visualizar estadísticas del equipo
+  - Mantener un historial del equipo
+
+### Fichaje y Gestión de Jugadores
+- **Criterios de Aceptación:**
+  - Crear perfiles de jugadores con datos personales
+  - Asignar jugadores a equipos
+  - Registrar estadísticas individuales
+  - Gestionar fichajes y traspasos entre equipos
+  - Mostrar historial de equipos por jugador
+
+### Calendarización de Partidos
+- **Criterios de Aceptación:**
+  - Crear calendarios de temporada automáticos o manuales
+  - Asignar fechas, horarios y campos a los partidos
+  - Modificar calendario según necesidades
+  - Notificar cambios a los equipos afectados
+  - Visualizar calendario por equipo, jornada o fecha
+
+### Estadísticas Básicas
+- **Criterios de Aceptación:**
+  - Permitir a veedores registrar resultados completos de partidos
+  - Cargar información de goles con jugador y asistente
+  - Calcular automáticamente la tabla de posiciones
+  - Mantener estadísticas básicas por equipo (PJ, PG, PE, PP, GF, GC, DG, PTS)
+  - Registrar estadísticas individuales simples (goles, asistencias, tarjetas)
+  - Exportar datos en formatos comunes (CSV, Excel)
+  - Generar informes básicos con filtros por temporada/equipo
+
+### Sistema de Arbitraje
+- **Criterios de Aceptación:**
+  - Gestionar plantel de árbitros
+  - Asignar árbitros a partidos
+  - Registrar informes arbitrales
+  - Seguimiento de pagos a árbitros
+  - Evaluar desempeño de árbitros
+
+### Registro de Sanciones y Tarjetas
+- **Criterios de Aceptación:**
+  - Registrar tarjetas amarillas y rojas por parte de veedores
+  - Calcular automáticamente suspensiones basadas en reglas configurables
+  - Notificar a equipos sobre jugadores sancionados
+  - Gestionar apelaciones
+  - Mantener historial de sanciones
+  - Generar reportes de disciplina por equipo/jugador
+
+### Sistema de Noticias/Anuncios
+- **Criterios de Aceptación:**
+  - Publicar noticias y anuncios
+  - Categorizar contenido
+  - Incluir imágenes y videos
+  - Notificar a usuarios sobre nuevas publicaciones
+  - Permitir comentarios (opcional)
+
+### Galería de Fotos/Videos
+- **Criterios de Aceptación:**
+  - Subir y organizar fotos y videos
+  - Clasificar por equipo, partido o evento
+  - Compartir en redes sociales
+  - Controlar permisos de acceso
+  - Optimizar para distintos dispositivos
+
+### Tabla de Posiciones
+- **Criterios de Aceptación:**
+  - Actualización automática basada en resultados
+  - Visualización clara con criterios de desempate
+  - Histórico de posiciones por jornada
+  - Exportación de datos
+  - Visualización en formato web y móvil
+
+### Gestión de Configuración de Liga
+- **Criterios de Aceptación:**
+  - Personalizar logo y colores de la liga
+  - Configurar reglas específicas
+  - Definir temporadas y fases
+  - Establecer criterios de puntuación y desempate
+  - Gestionar permisos de usuarios
+
+### Integración con Pasarelas de Pago
+- **Criterios de Aceptación:**
+  - Procesar pagos de inscripciones
+  - Gestionar multas y penalizaciones
+  - Generar facturas y recibos
+  - Mantener historial de transacciones
+  - Soportar múltiples métodos de pago
+
+## 4. Recomendaciones de Stack Técnico
+
+### Frontend
+- **Web**: React.js con TypeScript
+  - Material UI o Tailwind CSS para componentes
+  - Redux o Context API para gestión de estado
+  - React Router para navegación
+
+- **Móvil**: React Native
+  - Navegación con React Navigation
+  - Componentes reutilizables con Styled Components
+
+### Backend
+- **API**: Node.js con Express o NestJS (TypeScript)
+  - RESTful API con documentación OpenAPI/Swagger
+  - Autenticación JWT con refresh tokens
+  - Middleware para validación y autorización
+
+### Base de Datos
+- **Primaria**: MongoDB (NoSQL)
+  - Flexible para cambios en esquemas
+  - Buena escalabilidad horizontal
+  - MongoDB Atlas para hosting (tiene plan gratuito)
+
+- **Cache**: Redis (opcional para optimización)
+  - Almacenamiento de sesiones
+  - Caché de datos frecuentes
+
+### Almacenamiento
+- **Imágenes/Videos**: AWS S3 o Cloudinary
+  - Optimización automática de imágenes
+  - CDN para distribución eficiente
+  - Gestión de permisos
+
+### Pasarelas de Pago
+- **Principal**: Stripe
+  - Comisiones competitivas (2.9% + 0.30€ por transacción)
+  - Excelente documentación y soporte
+  - Fácil integración con Node.js
+
+- **Alternativa regional**: Mercado Pago (para Latinoamérica)
+
+### Despliegue y Hosting
+- **Frontend**: Vercel o Netlify
+  - CI/CD integrado
+  - SSL gratuito
+  - Planes gratuitos generosos
+
+- **Backend**: Railway, Render o DigitalOcean App Platform
+  - Escalabilidad según demanda
+  - Monitoreo incluido
+
+## 5. Modelo Conceptual de Datos
+
+### Entidades Principales
+
+#### Usuario
+- id: string (único)
+- nombre: string
+- apellido: string
+- email: string (único)
+- contraseña: string (hash)
+- rol: enum [ADMIN, VEEDOR, ENTRENADOR, JUGADOR]
+- avatar: string (URL)
+- fechaCreacion: date
+- ultimoAcceso: date
+
+#### Equipo
+- id: string (único)
+- nombre: string
+- logo: string (URL)
+- colorPrimario: string
+- colorSecundario: string
+- entrenadorId: reference(Usuario)
+- jugadores: array(reference(Jugador))
+- estadisticas: {
+  partidosJugados: number,
+  partidosGanados: number,
+  partidosEmpatados: number,
+  partidosPerdidos: number,
+  golesAFavor: number,
+  golesEnContra: number,
+  puntos: number
+}
+- fechaCreacion: date
+- activo: boolean
+
+#### Jugador
+- id: string (único)
+- usuarioId: reference(Usuario)
+- equipoId: reference(Equipo)
+- número: number
+- posición: string
+- fechaNacimiento: date
+- estadisticas: {
+  goles: number,
+  asistencias: number,
+  tarjetasAmarillas: number,
+  tarjetasRojas: number,
+  partidosJugados: number
+}
+- historialEquipos: array(object)
+- activo: boolean
+
+#### Partido
+- id: string (único)
+- fechaHora: date
+- equipoLocal: reference(Equipo)
+- equipoVisitante: reference(Equipo)
+- resultadoLocal: number
+- resultadoVisitante: number
+- campo: string
+- jornada: number
+- temporada: string
+- árbitros: array(reference(Árbitro))
+- eventos: array(reference(Evento))
+- estado: enum [PROGRAMADO, JUGANDO, FINALIZADO, SUSPENDIDO]
+
+#### Árbitro
+- id: string (único)
+- usuarioId: reference(Usuario)
+- calificación: number
+- partidos: array(reference(Partido))
+- disponibilidad: array(object)
+
+#### Evento
+- id: string (único)
+- partidoId: reference(Partido)
+- jugadorId: reference(Jugador)
+- asistenciaJugadorId: reference(Jugador) (opcional, para goles)
+- tipo: enum [GOL, TARJETA_AMARILLA, TARJETA_ROJA]
+- minuto: number
+- descripción: string
+
+#### Noticia
+- id: string (único)
+- título: string
+- contenido: string
+- autor: reference(Usuario)
+- imagen: string (URL)
+- fechaPublicación: date
+- categoría: string
+- destacada: boolean
+
+#### Multimedia
+- id: string (único)
+- tipo: enum [IMAGEN, VIDEO]
+- url: string
+- título: string
+- descripción: string
+- fechaSubida: date
+- equipoId: reference(Equipo)
+- partidoId: reference(Partido)
+- autorId: reference(Usuario)
+
+#### Liga
+- id: string (único)
+- nombre: string
+- logo: string (URL)
+- temporadaActual: string
+- configuración: {
+  puntosVictoria: number,
+  puntosEmpate: number,
+  puntosPerdido: number,
+  criteriosDesempate: array(string)
+}
+- administradores: array(reference(Usuario))
+- equipos: array(reference(Equipo))
+
+### Relaciones Principales
+- Usuario (1) --- (1) Jugador/Entrenador/Árbitro
+- Equipo (1) --- (N) Jugador
+- Partido (N) --- (2) Equipo
+- Partido (1) --- (N) Evento
+- Liga (1) --- (N) Equipo
+- Liga (1) --- (N) Temporada
+
+## 6. Principios de Diseño de UI
+
+### Lineamientos Generales
+- Diseño simple y funcional orientado a la usabilidad
+- Interfaces adaptables (responsive) para web y móvil
+- Consistencia visual en todas las secciones
+- Esquema de colores personalizable por liga
+
+### Componentes Clave
+- **Sistema de Navegación**:
+  - Menú principal accesible
+  - Navegación por roles
+  - Breadcrumbs para secciones profundas
+
+- **Dashboards**:
+  - Dashboard administrativo con KPIs
+  - Dashboard de equipo con información relevante
+  - Dashboard de jugador con estadísticas personales
+
+- **Calendario**:
+  - Vista mensual, semanal y diaria
+  - Filtrado por equipo o jornada
+  - Indicadores visuales de estado de partido
+
+- **Tablas de Datos**:
+  - Ordenables y filtrables
+  - Paginación para grandes volúmenes
+  - Exportación a formatos comunes
+
+- **Perfiles**:
+  - Tarjetas de perfil para equipos y jugadores
+  - Estadísticas visuales
+  - Historial accesible
+
+## 7. Consideraciones de Seguridad
+
+### Autenticación y Autorización
+- Implementación de JWT para autenticación
+- Refresh tokens para sesiones persistentes
+- Control granular de permisos por rol
+- Protección contra ataques comunes (CSRF, XSS)
+
+### Protección de Datos
+- Encriptación de contraseñas con bcrypt
+- Validación de datos en frontend y backend
+- Sanitización de inputs para prevenir inyecciones
+- Auditoría de acciones críticas
+
+### Privacidad
+- Conformidad con GDPR/RGPD
+- Políticas claras de privacidad
+- Opciones para el consentimiento de uso de datos
+- Procedimientos para solicitudes de borrado de datos
+
+### API y Servicios
+- Limitación de tasa (rate limiting)
+- Autorización por token para endpoints sensibles
+- Logs de seguridad para detección de anomalías
+- HTTPS obligatorio para todas las comunicaciones
+
+## 8. Fases/Hitos de Desarrollo
+
+### Fase 1: MVP (2-3 meses)
+- Sistema de usuarios y autenticación
+- CRUD básico de equipos y jugadores
+- Calendarización simple de partidos
+- Tabla de posiciones básica
+- Diseño responsive principal
+
+### Fase 2: Funcionalidades Core (2-3 meses)
+- Sistema completo de estadísticas
+- Gestión de árbitros
+- Registro de tarjetas y sanciones
+- Mejoras en calendarización
+- Dashboard administrativo
+
+### Fase 3: Contenido y Engagement (1-2 meses)
+- Sistema de noticias/anuncios
+- Galería de fotos/videos
+- Integraciones con redes sociales
+- Notificaciones y alertas
+- Aplicación móvil básica
+
+### Fase 4: Monetización y Escalabilidad (2-3 meses)
+- Integración de pasarelas de pago
+- Sistema de multi-tenancy para venta a otras ligas
+- Personalización por liga (branding)
+- Optimizaciones de rendimiento
+- Analíticas avanzadas
+
+### Fase 5: Refinamiento y Features Premium (1-2 meses)
+- Características avanzadas solicitadas por usuarios
+- Opciones de monetización adicionales
+- Mejoras de UX basadas en feedback
+- Escalabilidad para mayor volumen de ligas
+
+## 9. Desafíos Potenciales y Soluciones
+
+### Escalabilidad
+- **Desafío**: Manejar múltiples ligas simultáneamente.
+- **Solución**: Arquitectura multi-tenant, sharding de base de datos por liga.
+
+### Almacenamiento de Media
+- **Desafío**: Gestionar gran volumen de imágenes y videos.
+- **Solución**: Implementación de CDN, compresión inteligente, políticas de retención.
+
+### Concurrencia
+- **Desafío**: Múltiples actualizaciones simultáneas a datos compartidos.
+- **Solución**: Bloqueos optimistas, resolución de conflictos, versionado de datos.
+
+### Personalización
+- **Desafío**: Permitir personalización por liga sin duplicar código.
+- **Solución**: Sistema de temas y configuración, inyección de estilos dinámicos.
+
+### Disponibilidad Offline
+- **Desafío**: Acceso a datos críticos sin conexión.
+- **Solución**: Implementación de PWA, sincronización inteligente, almacenamiento local.
+
+## 10. Posibilidades de Expansión Futura
+
+### Funcionalidades Adicionales
+- Sistema de predicciones y apuestas amistosas
+- Transmisiones en vivo de partidos
+- Análisis avanzado con estadísticas ampliadas
+- Marketplace para equipos (compra-venta de jugadores)
+- Aplicación móvil nativa con funcionalidades adicionales
+
+### Integraciones
+- APIs para federaciones deportivas
+- Wearables para seguimiento de rendimiento
+- Sistemas de análisis de video automatizado
+- Plataformas de streaming
+
+### Monetización Adicional
+- Modelo freemium con características premium
+- Publicidad contextual
+- Patrocinios integrados
+- Suscripciones para fans
+
+### Expansión a Otros Deportes
+- Adaptación del sistema para baloncesto, voleibol, etc.
+- Framework unificado para distintos tipos de competiciones
+- Gestión de instalaciones deportivas multidisciplinares
+
+## 11. Indicadores de Éxito
+
+### KPIs Técnicos
+- Tiempo de carga < 1.5 segundos
+- Disponibilidad > 99.9%
+- Tasa de errores < 0.1%
+- Puntuación Google Lighthouse > 85
+
+### KPIs de Negocio
+- Número de ligas activas
+- Retención de clientes > 90% anual
+- Conversión de pruebas gratuitas a planes pagados > 30%
+- Crecimiento mensual de usuarios registrados
+
+### KPIs de Usuario
+- Satisfacción del usuario > 4.5/5
+- Uso diario/semanal por rol de usuario
+- Tiempo promedio en la plataforma
+- Tasa de abandono < 15%
+
+## 12. Conclusiones
+
+Este PRD define una aplicación completa de gestión de ligas de fútbol 8v8 con potencial para convertirse en un producto SaaS vendible a múltiples organizaciones. El enfoque iterativo del desarrollo permitirá lanzar una versión inicial funcional rápidamente mientras se incorporan gradualmente características más avanzadas.
+
+La arquitectura propuesta está diseñada para ser escalable y personalizable, facilitando la adaptación a las necesidades específicas de cada liga cliente. La elección de tecnologías modernas como React, Node.js y MongoDB proporcionará la flexibilidad necesaria para evolucionar el producto según el feedback de los usuarios.
+
+El éxito del producto dependerá en gran medida de su usabilidad, fiabilidad y capacidad para ofrecer valor real a los administradores de ligas, entrenadores y jugadores, simplificando tareas administrativas y mejorando la experiencia general de participación en la liga.
+</file>
+
+<file path="tracking/NOTAS-DESARROLLO.md">
+# Notas de Desarrollo
+
+Este documento contiene notas técnicas, decisiones de diseño, problemas encontrados y sus soluciones. Sirve como un diario técnico del proyecto.
+
+## Decisiones Arquitectónicas
+
+### Frontend
+- **Framework UI:** Material UI, seleccionado por su compatibilidad con React y componentes predefinidos
+- **Gestión de estado:** Redux Toolkit, elegido por su facilidad para manejar estado global
+- **Estructura de carpetas:**
+  - `/src/components/` - Componentes reutilizables
+  - `/src/pages/` - Páginas principales
+  - `/src/features/` - Características organizadas por dominio
+  - `/src/api/` - Llamadas a API
+  - `/src/hooks/` - Hooks personalizados
+  - `/src/utils/` - Funciones utilitarias
+
+### Backend
+- **Estructura API:** REST con Express
+- **Autenticación:** JWT con refresh tokens
+- **Estructura de carpetas:**
+  - `/src/controllers/` - Controladores por entidad
+  - `/src/models/` - Modelos Mongoose
+  - `/src/routes/` - Definición de rutas
+  - `/src/middleware/` - Middleware personalizado
+  - `/src/utils/` - Funciones utilitarias
+
+## Problemas Técnicos y Soluciones
+
+### [Fecha] - [Título del problema]
+**Problema:** Descripción detallada del problema.
+**Análisis:** Análisis de causas.
+**Solución:** Solución implementada.
+**Referencias:** Enlaces o recursos utilizados.
+
+## Ideas y Mejoras Pendientes
+
+- **Rendimiento:** Implementar memoización para componentes pesados
+- **Seguridad:** Considerar implementación de rate limiting
+- **UX:** Mejorar feedback visual en formularios
+
+## Referencias y Recursos Útiles
+
+- [Documentación oficial de React](https://reactjs.org/docs/getting-started.html)
+- [Guía de Material UI](https://mui.com/getting-started/usage/)
+- [Mejores prácticas MongoDB](https://www.mongodb.com/developer/products/mongodb/mongodb-schema-design-best-practices/)
+</file>
+
+<file path="tracking/sprints/sprint-template.md">
+# Sprint [Número]: [Nombre del Sprint]
+**Período:** [Fecha inicio] - [Fecha fin]
+
+## Objetivos del Sprint
+1. [Objetivo 1]
+2. [Objetivo 2]
+3. [Objetivo 3]
+
+## Tareas Específicas
+
+### 1. [Tarea 1]
+- [ ] [Subtarea 1.1]
+- [ ] [Subtarea 1.2]
+- **Estado:** Pendiente
+- **Notas:** [Notas relevantes]
+
+### 2. [Tarea 2]
+- [ ] [Subtarea 2.1]
+- [ ] [Subtarea 2.2]
+- **Estado:** Pendiente
+- **Notas:** [Notas relevantes]
+
+## Registro Diario
+
+### [Fecha]
+- **Avances:**
+  - [Detallar avances del día]
+- **Problemas encontrados:**
+  - [Listar problemas, si hay]
+- **Plan para mañana:**
+  - [Listar tareas para el día siguiente]
+
+## Métricas del Sprint
+- **Completado:** 0%
+- **Velocidad:** [Tareas completadas]
+- **Calidad de código:** [Métricas relevantes]
+
+## Retrospectiva (al finalizar)
+- **Lo que salió bien:**
+  - [Puntos positivos]
+- **Lo que podría mejorar:**
+  - [Áreas de mejora]
+- **Acciones para el próximo sprint:**
+  - [Acciones concretas]
+</file>
+
+<file path="tracking/TAREAS-PENDIENTES.md">
+# Tareas Pendientes y Backlog
+
+Este documento registra todas las tareas pendientes, ideas y mejoras futuras para el proyecto.
+
+## Tareas Prioritarias (Para implementar en próximos sprints)
+
+### Fase 1: MVP
+- [ ] **Alta**: Implementar sistema de autenticación con roles
+- [ ] **Alta**: Crear CRUD de equipos
+- [ ] **Alta**: Desarrollar gestión básica de jugadores
+- [ ] **Media**: Implementar calendario de partidos
+- [ ] **Media**: Desarrollar sistema de tabla de posiciones
+
+### Fase 2: Funcionalidades Core
+- [ ] **Alta**: Sistema de estadísticas por partido
+- [ ] **Media**: Gestión de árbitros
+- [ ] **Media**: Sistema de sanciones automáticas
+- [ ] **Media**: Generador automático de calendario
+- [ ] **Baja**: Dashboard administrativo básico
+
+## Mejoras Técnicas
+
+- [ ] Optimización de consultas MongoDB
+- [ ] Implementar caché en lado cliente
+- [ ] Mejorar sistema de logging
+- [ ] Implementar pruebas automatizadas principales
+- [ ] Configurar CI/CD básico
+
+## Ideas para el Futuro
+
+### Fase 3-5
+- Implementar galería multimedia
+- Sistema de notificaciones
+- Integración de pagos
+- Aplicación móvil básica
+- Funcionalidades premium para ligas
+- Multi-tenancy completo
+
+## Bugs Conocidos
+
+### Frontend
+- Ninguno por el momento
+
+### Backend
+- Ninguno por el momento
+</file>
+
+<file path="docs/plan-de-pruebas.md">
+# Plan de Pruebas: Sistema de Gestión de Ligas de Fútbol 8v8
+
+## 1. Introducción
+
+Este plan de pruebas está diseñado específicamente para un escenario de desarrollo individual con apoyo de IA. El objetivo es garantizar la calidad del Sistema de Gestión de Ligas de Fútbol 8v8 a través de un enfoque sistemático y eficiente de pruebas, adaptado a los recursos disponibles.
+
+## 2. Estrategia General de Pruebas
+
+La estrategia se basa en un enfoque progresivo que prioriza:
+
+1. **Automatización inteligente**: Maximizar el uso de pruebas automatizadas donde aporten mayor valor
+2. **Pruebas incrementales**: Alinear las pruebas con las fases de desarrollo del MVP
+3. **Enfoque en componentes críticos**: Priorizar la robustez de las funcionalidades core
+4. **Retroalimentación continua**: Implementar ciclos cortos de prueba-corrección
+
+## 3. Tipos de Pruebas
+
+### 3.1 Pruebas Unitarias
+
+| Área | Estrategia | Herramientas | Criterio de Éxito |
+|------|------------|--------------|-------------------|
+| Backend | Probar funciones y servicios críticos aisladamente | Jest | Cobertura >80% en módulos críticos |
+| Frontend | Probar componentes React reutilizables | React Testing Library | Funcionalidad verificada de componentes clave |
+
+**Priorización para desarrollador individual:**
+
+- Centrarse en los módulos de alto riesgo (autenticación, cálculos de estadísticas, integración de pagos)
+- Usar generación asistida por IA para crear casos de prueba unitarios
+
+### 3.2 Pruebas de Integración
+
+| Componentes | Estrategia | Herramientas | Criterio de Éxito |
+|-------------|------------|--------------|-------------------|
+| API + DB | Verificar operaciones CRUD completas | Supertest, MongoDB Memory Server | Todos los endpoints críticos funcionan correctamente |
+| Frontend + API | Probar flujos completos de datos | Cypress (pruebas selectivas) | Flujos principales funcionan end-to-end |
+
+**Optimización para desarrollador individual:**
+
+- Automatizar pruebas para rutas API críticas
+- Implementar mocks inteligentes para servicios externos
+- Utilizar IA para generar casos de prueba basados en especificaciones
+
+### 3.3 Pruebas de Usuario (Manual Asistido)
+
+| Escenario | Estrategia | Herramientas | Criterio de Éxito |
+|-----------|------------|--------------|-------------------|
+| Flujos de usuario por rol | Probar manualmente con guiones predefinidos | Listas de verificación, Grabación de sesiones | Completar flujos sin errores bloqueantes |
+| Usabilidad básica | Evaluar experiencia de usuario en puntos clave | Herramientas de feedback, Heurísticas UX | Identificar problemas críticos de usabilidad |
+
+**Enfoque para desarrollador individual:**
+
+- Crear personas ficticias para cada rol (Admin, Veedor, Entrenador, Jugador)
+- Desarrollar scripts de prueba guiados que puedan ejecutarse eficientemente
+- Utilizar herramientas de grabación para analizar posteriormente
+
+### 3.4 Pruebas de Seguridad Básicas
+
+| Aspecto | Estrategia | Herramientas | Criterio de Éxito |
+|---------|------------|--------------|-------------------|
+| Autenticación | Verificar puntos débiles comunes | OWASP ZAP (automatizado) | Sin vulnerabilidades críticas |
+| Autorización | Probar accesos por rol | Scripts manuales + automatizados | Separación correcta de permisos |
+| Protección de datos | Verificar encriptación y sanitización | Revisión de código asistida | Datos sensibles protegidos adecuadamente |
+
+**Enfoque pragmático:**
+
+- Utilizar análisis de código estático y herramientas automatizadas
+- Implementar lista de verificación de seguridad básica
+- Enfocarse en las vulnerabilidades de mayor riesgo según OWASP Top 10
+
+### 3.5 Pruebas de Rendimiento Esenciales
+
+| Aspecto | Estrategia | Herramientas | Criterio de Éxito |
+|---------|------------|--------------|-------------------|
+| Carga básica | Simular uso simultáneo moderado | k6, Artillery (scripts simples) | Respuesta <1s con 50 usuarios concurrentes |
+| Optimización | Identificar cuellos de botella | Chrome DevTools, React Profiler | FCP <1.5s, TTI <3s |
+
+**Simplificación para desarrollador individual:**
+
+- Pruebas de carga selectivas solo para operaciones críticas
+- Enfoque en optimización de consultas de base de datos
+- Mediciones de rendimiento en frontend para páginas clave
+
+## 4. Plan de Pruebas por Fase de Desarrollo
+
+### 4.1 Fase 1 (MVP)
+
+| Módulo | Pruebas Unitarias | Pruebas Integración | Pruebas Manuales | Automatización |
+|--------|-------------------|---------------------|------------------|----------------|
+| Autenticación | Alta | Alta | Media | Alta |
+| Gestión Equipos | Media | Alta | Alta | Media |
+| Gestión Jugadores | Media | Alta | Alta | Media |
+| Calendarización | Baja | Media | Alta | Baja |
+| Tabla Posiciones | Alta | Media | Media | Media |
+
+**Estrategia MVP para desarrollador individual:**
+
+- Crear suite básica de tests unitarios para autenticación y cálculos
+- Implementar pruebas de integración para operaciones CRUD principales
+- Desarrollar lista de verificación de pruebas manuales esenciales
+
+### 4.2 Fase 2 (Funcionalidades Core)
+
+| Módulo | Pruebas Unitarias | Pruebas Integración | Pruebas Manuales | Automatización |
+|--------|-------------------|---------------------|------------------|----------------|
+| Estadísticas | Alta | Alta | Media | Alta |
+| Gestión Árbitros | Media | Media | Alta | Baja |
+| Sanciones | Alta | Alta | Media | Media |
+| Dashboard Admin | Baja | Media | Alta | Baja |
+
+**Estrategia para desarrollador individual:**
+
+- Priorizar pruebas para cálculos de estadísticas y sanciones
+- Automatizar verificación de reglas de negocio complejas
+- Verificar manualmente UX de dashboards
+
+### 4.3 Fase 3-5 (Incrementos posteriores)
+
+Seguir patrón similar, priorizando:
+
+- Integración de pagos (alta prioridad en pruebas)
+- Gestión multimedia (pruebas de carga/almacenamiento)
+- Multi-tenancy (pruebas de aislamiento)
+
+## 5. Automatización de Pruebas
+
+### 5.1 Estrategia de Automatización
+
+| Nivel | Qué Automatizar | Qué No Automatizar | Herramientas |
+|-------|-----------------|---------------------|--------------|
+| Unitarias | Lógica de negocio crítica, validaciones | Componentes UI simples, código trivial | Jest, React Testing Library |
+| API | Endpoints principales, validación de respuestas | Casos extremos raros | Supertest, Postman |
+| E2E | Flujos críticos (2-3 por rol de usuario) | Pruebas de exploración, edge cases | Cypress (selectivamente) |
+| CI/CD | Ejecución de suite de tests, linting, build | Pruebas de rendimiento pesadas | GitHub Actions |
+
+**Plan práctico para desarrollador individual:**
+
+- Configurar GitHub Actions para ejecutar tests en cada commit
+- Utilizar IA para generar tests basados en criterios de aceptación
+- Mantener dashboard simple de cobertura de pruebas
+
+### 5.2 Uso de IA para Pruebas
+
+| Actividad | Enfoque IA | Beneficio |
+|-----------|------------|-----------|
+| Generación de casos de prueba | Generar casos basados en criterios de aceptación | Ahorro de tiempo, mejor cobertura |
+| Mocks y datos de prueba | Crear datos realistas y variados | Pruebas más robustas |
+| Análisis de cobertura | Identificar áreas sin pruebas suficientes | Mejor distribución del esfuerzo |
+| Depuración | Asistencia en análisis de fallos | Resolución más rápida |
+
+## 6. Entornos de Prueba
+
+### 6.1 Configuración de Entornos
+
+| Entorno | Propósito | Configuración | Datos |
+|---------|-----------|---------------|-------|
+| Desarrollo | Pruebas durante implementación | Local + MongoDB local/Atlas | Datos sintéticos básicos |
+| Staging | Verificación pre-producción | Vercel/Netlify Preview + MongoDB Atlas | Datos sintéticos completos |
+| Producción | Verificación final | Vercel/Netlify + MongoDB Atlas | Datos reales (post-lanzamiento) |
+
+**Simplificación para desarrollador individual:**
+
+- Utilizar Docker para simular entornos aislados cuando sea necesario
+- Mantener conjunto de datos de prueba pre-generados por IA
+- Implementar scripts para restablecer entornos de prueba
+
+## 7. Gestión de Defectos
+
+### 7.1 Proceso de Gestión
+
+| Etapa | Herramienta | Proceso |
+|-------|------------|---------|
+| Registro | GitHub Issues | Categorizar por severidad y módulo |
+| Priorización | GitHub Project | Priorizar por impacto y frecuencia |
+| Seguimiento | GitHub Issues | Documentar pasos para reproducir |
+| Verificación | Tests automatizados | Crear test que verifique la corrección |
+
+**Optimización para desarrollador individual:**
+
+- Usar plantillas predefinidas para reporte de bugs
+- Implementar sesiones dedicadas de corrección de bugs
+- Mantener una vista clara de bugs pendientes críticos
+
+### 7.2 Criterios de Severidad
+
+| Nivel | Descripción | Tiempo Objetivo |
+|-------|-------------|-----------------|
+| Crítico | Impide funcionalidad principal, data corruption | Inmediato |
+| Alto | Funcionalidad principal degradada | 1-2 días |
+| Medio | Problema en funcionalidad secundaria | 1 semana |
+| Bajo | Problema cosmético, mejora | Backlog |
+
+## 8. Estrategia para Pruebas Móviles
+
+### 8.1 Enfoque Web Responsive
+
+| Dispositivo | Estrategia | Herramientas |
+|-------------|------------|--------------|
+| Móviles | Pruebas en principales breakpoints | Chrome DevTools, BrowserStack (limitado) |
+| Tablets | Verificar vistas críticas | Chrome DevTools, pruebas manuales |
+
+**Simplificación para desarrollador individual:**
+
+- Probar en dispositivo físico personal + emuladores
+- Verificar puntos de quiebre críticos definidos en CSS
+- Utilizar herramientas de inspección para simular dispositivos
+
+### 8.2 Aplicación Móvil (Fase 3+)
+
+| Aspecto | Estrategia | Herramientas |
+|---------|------------|--------------|
+| Funcionalidad | Probar flujos críticos | Pruebas manuales, Expo |
+| Compatibilidad | Verificar en iOS/Android principales | Dispositivos físicos, Expo |
+
+## 9. Criterios de Aceptación y Salida
+
+### 9.1 Criterios Generales
+
+| Categoría | Criterio de Éxito |
+|-----------|-------------------|
+| Funcional | 100% de pruebas críticas pasan, 0 defectos bloqueantes |
+| Rendimiento | Tiempo de carga <2s en condiciones normales |
+| Usabilidad | Flujos principales completables sin errores de usuario |
+| Seguridad | Sin vulnerabilidades críticas o altas |
+
+### 9.2 Métricas de Calidad
+
+| Métrica | Objetivo | Herramienta |
+|---------|----------|------------|
+| Cobertura de código | >70% en módulos críticos | Jest Coverage |
+| Tasa de defectos | <1 crítico por sprint | GitHub Issues |
+| Deuda técnica | <10% del esfuerzo total | SonarQube (o similar) |
+
+## 10. Planificación de Recursos y Calendario
+
+### 10.1 Distribución de Esfuerzo para Desarrollador Individual
+
+| Actividad | % Tiempo | Enfoque |
+|-----------|----------|---------|
+| Desarrollo | 60-70% | Implementación con TDD cuando sea posible |
+| Pruebas automatizadas | 15-20% | Enfoque en tests de alto valor |
+| Pruebas manuales | 10-15% | Sesiones programadas de prueba |
+| Gestión de defectos | 5-10% | Corrección prioritaria |
+
+### 10.2 Ciclo de Pruebas Recomendado
+
+| Frecuencia | Actividad |
+|------------|-----------|
+| Diaria | Ejecución de tests unitarios y linting automatizado |
+| Fin de feature | Pruebas de integración de la característica |
+| Semanal | Sesión de pruebas exploratorias manuales |
+| Quincenal | Revisión de cobertura y deuda técnica |
+| Por release | Suite completa de pruebas, incluyendo e2e |
+
+## 11. Herramientas Recomendadas
+
+| Categoría | Herramientas | Propósito |
+|-----------|--------------|-----------|
+| Testing unitario | Jest, React Testing Library | Tests de componentes y lógica |
+| Testing API | Supertest, Postman | Verificación de endpoints |
+| Testing E2E | Cypress (uso limitado) | Flujos críticos automatizados |
+| Testing de carga | k6 (scripts básicos) | Verificar rendimiento básico |
+| Testing de seguridad | OWASP ZAP, npm audit | Vulnerabilidades comunes |
+| CI/CD | GitHub Actions | Automatizar pipeline de pruebas |
+| Monitoreo | Sentry | Capturar errores en producción |
+
+## 12. Riesgos y Mitigación
+
+| Riesgo | Probabilidad | Impacto | Estrategia de Mitigación |
+|--------|--------------|---------|--------------------------|
+| Tiempo insuficiente para pruebas | Alta | Alto | Priorizar pruebas por criticidad, automatizar inteligentemente |
+| Complejidad de pruebas multi-tenant | Media | Alto | Comenzar con arquitectura de pruebas que soporte multi-tenancy desde el inicio |
+| Dificultad para simular escenarios reales | Alta | Medio | Crear conjuntos de datos representativos, pruebas de usuario guionizadas |
+| Falsos positivos en automatización | Media | Medio | Diseñar pruebas robustas, evitar selectores frágiles |
+
+## 13. Informes y Comunicación
+
+### 13.1 Dashboards Clave
+
+| Dashboard | Contenido | Propósito |
+|-----------|-----------|-----------|
+| Calidad de código | Cobertura, complejidad, code smells | Visibilidad de salud del código |
+| Estado de pruebas | Tests ejecutados/fallidos, historico | Seguimiento de progreso |
+| Defectos | Bugs abiertos por severidad, tasa de resolución | Gestión de calidad |
+
+### 13.2 Para Desarrollador Individual
+
+- Mantener tablero simple en GitHub Projects
+- Documentar hallazgos importantes para referencia futura
+- Establecer KPIs personales de calidad y seguirlos
+
+## 14. Anexos
+
+### 14.1 Templates de Prueba
+
+#### Template para Pruebas Unitarias
+
+```javascript
+describe('Módulo: [Nombre del Módulo]', () => {
+  describe('Función: [Nombre de la Función]', () => {
+    test('Debería [comportamiento esperado] cuando [condición]', () => {
+      // Arrange
+      // Act
+      // Assert
+    });
+  });
+});
+```
+
+#### Template para Pruebas de API
+
+```javascript
+describe('API: [Nombre del Endpoint]', () => {
+  test('Debería [comportamiento esperado] cuando [condición]', async () => {
+    // Arrange
+    // Act: Llamada al endpoint
+    // Assert: Verificar código de estado y respuesta
+  });
+});
+```
+
+#### Lista de Verificación para Pruebas Manuales
+
+- [ ] Verificar flujo principal
+- [ ] Probar casos de borde (valores límite)
+- [ ] Verificar mensajes de error
+- [ ] Probar en diferentes resoluciones
+- [ ] Verificar permisos por rol
+
+### 14.2 Datos de Prueba Esenciales
+
+| Entidad | Datos Mínimos |
+|---------|---------------|
+| Usuarios | 1 por cada rol (Admin, Veedor, Entrenador, Jugador) |
+| Equipos | 4-8 equipos con datos completos |
+| Jugadores | 10-15 por equipo |
+| Partidos | Calendario completo de una temporada |
+| Eventos | Variedad de goles y tarjetas |
+
+## 15. Conclusión
+
+Este plan de pruebas está diseñado específicamente para un escenario de desarrollo individual con apoyo de IA, equilibrando la necesidad de garantizar calidad con los recursos disponibles. Enfatiza:
+
+1. Automatización estratégica en áreas de alto valor
+2. Uso inteligente de IA para multiplicar capacidades
+3. Ciclos cortos de retroalimentación
+4. Enfoque prioritario en componentes críticos
+
+Al seguir este plan adaptado, se maximizará la eficiencia del proceso de pruebas y se garantizará un producto de calidad a pesar de las limitaciones de recursos.
+</file>
+
+<file path="README.md">
+# Sistema de Gestión de Ligas de Fútbol 8v8
+
+Este repositorio contiene la documentación y el código para un sistema completo de gestión de ligas de fútbol 8v8, diseñado para administrar equipos, jugadores, partidos, estadísticas y contenido multimedia.
+
+## Descripción del Proyecto
+
+El Sistema de Gestión de Ligas de Fútbol 8v8 es una plataforma web y móvil que permite la administración integral de ligas deportivas, con capacidad para gestionar múltiples ligas simultáneamente como servicio SaaS.
+
+### Características Principales
+
+- Gestión completa de equipos y jugadores
+- Calendarización y seguimiento de partidos
+- Registro de estadísticas y tabla de posiciones
+- Sistema de sanciones y arbitraje
+- Galería multimedia y sistema de noticias
+- Dashboard administrativo con analíticas
+- Integración con sistemas de pago
+- Soporte multi-liga (multi-tenancy)
+
+## Estructura del Repositorio
+
+```
+/
+├── docs/                      # Documentación del proyecto
+│   ├── plan-de-pruebas.md     # Plan detallado de pruebas
+│   └── plan-de-implementacion.md  # Plan de implementación por fases
+├── tracking/                  # Sistema de seguimiento de desarrollo
+│   ├── TRACKING.md            # Estado general del proyecto
+│   ├── SPRINT-ACTUAL.md       # Detalle del sprint en curso
+│   ├── NOTAS-DESARROLLO.md    # Notas técnicas y decisiones
+│   ├── TAREAS-PENDIENTES.md   # Backlog y tareas pendientes
+│   └── sprints/               # Historial de sprints completados
+├── liga-futbol-prd.md         # Documento de requisitos del producto (PRD)
+└── README.md                  # Este archivo
+```
+
+## Documentación Principal
+
+El proyecto incluye los siguientes documentos clave:
+
+1. **PRD (Product Requirements Document)**: [liga-futbol-prd.md](liga-futbol-prd.md)
+   - Visión general y objetivos
+   - Público objetivo
+   - Características y funcionalidades detalladas
+   - Recomendaciones técnicas
+   - Modelo conceptual de datos
+   - Consideraciones de diseño y seguridad
+   - Fases de desarrollo propuestas
+
+2. **Plan de Pruebas**: [docs/plan-de-pruebas.md](docs/plan-de-pruebas.md)
+   - Estrategia de pruebas adaptada para un solo desarrollador
+   - Tipos de pruebas y priorización
+   - Plan por fase de desarrollo
+   - Automatización y uso de IA para pruebas
+   - Gestión de defectos
+   - Criterios de aceptación
+
+3. **Plan de Implementación**: [docs/plan-de-implementacion.md](docs/plan-de-implementacion.md)
+   - Enfoque y metodología de desarrollo
+   - Plan detallado por fases con estimaciones
+   - Stack tecnológico y arquitectura
+   - Tareas específicas para el MVP
+   - Gestión de riesgos
+   - Métricas de progreso
+
+## Sistema de Seguimiento
+
+El proyecto utiliza un sistema de seguimiento basado en Markdown diseñado para facilitar la colaboración con asistentes de IA:
+
+1. **Estado General**: [tracking/TRACKING.md](tracking/TRACKING.md)
+   - Visión global del progreso del proyecto
+   - Estado actual de fases y sprints
+   - Métricas de avance
+
+2. **Sprint Actual**: [tracking/SPRINT-ACTUAL.md](tracking/SPRINT-ACTUAL.md)
+   - Detalle de tareas del sprint en curso
+   - Registro diario de avances
+   - Problemas encontrados y soluciones
+
+3. **Notas de Desarrollo**: [tracking/NOTAS-DESARROLLO.md](tracking/NOTAS-DESARROLLO.md)
+   - Decisiones técnicas y arquitectónicas
+   - Soluciones a problemas encontrados
+   - Referencias y recursos útiles
+
+4. **Backlog**: [tracking/TAREAS-PENDIENTES.md](tracking/TAREAS-PENDIENTES.md)
+   - Tareas pendientes priorizadas
+   - Mejoras técnicas planeadas
+   - Ideas para futuras fases
+
+## Cómo Usar Esta Documentación
+
+- **Para entender el producto**: Comienza con el [PRD](liga-futbol-prd.md)
+- **Para planificar el desarrollo**: Consulta el [Plan de Implementación](docs/plan-de-implementacion.md)
+- **Para definir estrategia de pruebas**: Revisa el [Plan de Pruebas](docs/plan-de-pruebas.md)
+- **Para ver el estado actual**: Consulta [TRACKING.md](tracking/TRACKING.md)
+
+## Stack Tecnológico
+
+El proyecto está diseñado para implementarse con las siguientes tecnologías:
+
+- **Frontend**: React con TypeScript, Material UI
+- **Backend**: Node.js, Express, TypeScript
+- **Base de Datos**: MongoDB
+- **Almacenamiento**: Cloudinary
+- **Despliegue**: Vercel (frontend), Railway (backend)
+- **Otros**: Stripe para pagos, GitHub Actions para CI/CD
+
+## Estado Actual
+
+Este proyecto se encuentra en fase de documentación y planificación, previo al inicio del desarrollo.
+
+## Próximos Pasos
+
+1. Configuración del entorno de desarrollo
+2. Implementación de la arquitectura base
+3. Desarrollo del MVP según el plan de implementación
+4. Pruebas continuas siguiendo el plan de pruebas
+
+## Licencia
+
+[MIT License](LICENSE)
+</file>
+
+<file path="docs/plan-de-implementacion.md">
+# Plan de Implementación: Sistema de Gestión de Ligas de Fútbol 8v8
+
+## 1. Introducción
+
+Este documento detalla el plan de implementación para el desarrollo del Sistema de Gestión de Ligas de Fútbol 8v8, estructurado específicamente para un escenario de desarrollo individual con apoyo de IA. El plan adopta un enfoque incremental y pragmático, priorizando la entrega de valor y manteniendo una arquitectura escalable.
+
+## 2. Enfoque de Desarrollo
+
+### 2.1 Metodología
+
+La implementación seguirá un enfoque **ágil adaptado para desarrollador individual**:
+
+- **Ciclos de desarrollo**: Sprints de 2 semanas
+- **Desarrollo iterativo**: Entregas incrementales funcionales
+- **Priorización**: Basada en valor de negocio y dependencias técnicas
+- **Revisión continua**: Validación periódica con feedback simulado de usuarios
+
+### 2.2 Principios Guía
+
+| Principio | Aplicación |
+|-----------|------------|
+| **Simplicidad** | Soluciones directas sobre complejidad prematura |
+| **Automatización** | Procesos repetitivos automatizados desde el inicio |
+| **Calidad incorporada** | Testing integrado en el proceso de desarrollo |
+| **Arquitectura evolutiva** | Diseño que permita cambios sin refactorizaciones masivas |
+| **Deuda técnica controlada** | Registro explícito de compromisos técnicos |
+
+## 3. Preparación del Entorno
+
+### 3.1 Setup Inicial
+
+| Tarea | Herramientas | Tiempo Estimado |
+|-------|--------------|-----------------|
+| Configuración de repositorio | GitHub | 1 día |
+| Estructura de proyecto base | Create React App + TypeScript | 1 día |
+| Setup de backend | Express.js + TypeScript | 1 día |
+| Configuración de base de datos | MongoDB Atlas | 1 día |
+| Integración de CI/CD básica | GitHub Actions | 1 día |
+
+### 3.2 Infraestructura
+
+| Componente | Tecnología | Configuración |
+|------------|------------|---------------|
+| Frontend Hosting | Vercel | Despliegue automático desde main |
+| Backend Hosting | Railway | Despliegue automático desde main |
+| Base de Datos | MongoDB Atlas | Cluster compartido (plan gratuito) |
+| Almacenamiento | Cloudinary | Plan gratuito para desarrollo |
+| Dominio | Personalizado | Configuración en Vercel |
+
+## 4. Plan de Implementación por Fases
+
+### 4.1 Fase 1: MVP (Semanas 1-10)
+
+#### Semanas 1-2: Configuración y Arquitectura Base
+
+- Estructura del proyecto completo
+- Configuración de autenticación JWT
+- Modelo de datos básico
+- Plantillas UI con diseño responsive básico
+
+#### Semanas 3-4: Gestión de Usuarios y Equipos
+
+- CRUD de usuarios con roles
+- CRUD de equipos
+- Asignación de entrenadores a equipos
+- Pantallas y layouts principales
+
+#### Semanas 5-6: Gestión de Jugadores
+
+- CRUD de jugadores
+- Asignación de jugadores a equipos
+- Perfil de jugador básico
+- Lógica de fichajes simple
+
+#### Semanas 7-8: Calendario y Partidos
+
+- Creación manual de calendario
+- Gestión de partidos
+- Asignación de equipos a partidos
+- Visualización de calendario
+
+#### Semanas 9-10: Tabla de Posiciones
+
+- Registro básico de resultados
+- Cálculo automático de posiciones
+- Visualización de tabla
+- Pruebas integradas del MVP
+
+### 4.2 Fase 2: Funcionalidades Core (Semanas 11-20)
+
+#### Semanas 11-12: Sistema de Estadísticas
+
+- Registro detallado de eventos de partido
+- Cálculo de estadísticas por equipo
+- Cálculo de estadísticas individuales
+- Reportes básicos
+
+#### Semanas 13-14: Gestión de Árbitros
+
+- CRUD de árbitros
+- Asignación de árbitros a partidos
+- Registro de informes arbitrales
+- Seguimiento de pagos básico
+
+#### Semanas 15-16: Sistema de Sanciones
+
+- Registro de tarjetas y sanciones
+- Cálculo automático de suspensiones
+- Notificaciones básicas
+- Visualización de sanciones en perfiles
+
+#### Semanas 17-18: Generación Automática de Calendario
+
+- Algoritmo de generación de calendario
+- Configuración de restricciones
+- Edición manual posterior
+- Validación de conflictos
+
+#### Semanas 19-20: Dashboard Administrativo
+
+- KPIs principales
+- Visualización de estado de la liga
+- Funciones de administración centralizadas
+- Revisión y pruebas de Fase 2
+
+### 4.3 Fase 3: Contenido y Engagement (Semanas 21-28)
+
+#### Semanas 21-22: Sistema de Noticias
+
+- CRUD de noticias y anuncios
+- Categorización de contenido
+- Editor WYSIWYG básico
+- Visualización en frontend
+
+#### Semanas 23-24: Galería Multimedia
+
+- Subida y gestión de imágenes
+- Organización por categorías
+- Optimización de imágenes
+- Galería responsive
+
+#### Semanas 25-26: Notificaciones y Alertas
+
+- Sistema de notificaciones in-app
+- Alertas por email (básicas)
+- Preferencias de notificación
+- Centro de notificaciones
+
+#### Semanas 27-28: Optimizaciones y PWA
+
+- Convertir a PWA básica
+- Optimizaciones de rendimiento
+- Mejoras de UX basadas en feedback
+- Revisión completa de Fase 3
+
+### 4.4 Fase 4: Monetización y Escalabilidad (Semanas 29-38)
+
+#### Semanas 29-30: Integración de Pagos
+
+- Integración con Stripe
+- Flujo de pago básico
+- Gestión de transacciones
+- Facturas simples
+
+#### Semanas 31-32: Multi-tenancy Básico
+
+- Separación lógica por liga
+- Gestión de configuración por liga
+- Aislamiento de datos
+- Pruebas de aislamiento
+
+#### Semanas 33-34: Personalización por Liga
+
+- Temas y estilos personalizados
+- Configuración de reglas específicas
+- Branding por liga
+- Configuración visual
+
+#### Semanas 35-36: Optimización de Rendimiento
+
+- Análisis de rendimiento detallado
+- Optimización de consultas
+- Implementación de caché estratégico
+- Lazy loading y code splitting
+
+#### Semanas 37-38: Analíticas Básicas
+
+- Dashboard de análisis de uso
+- Métricas clave por liga
+- Seguimiento de comportamiento
+- Reportes administrativos
+
+### 4.5 Fase 5: Refinamiento (Semanas 39-44)
+
+#### Semanas 39-40: Aplicación Móvil Básica
+
+- Conversión a React Native
+- Funcionalidades principales móviles
+- Adaptación de UI para móvil
+- Pruebas en dispositivos reales
+
+#### Semanas 41-42: Características Premium
+
+- Identificación de features premium
+- Implementación de 2-3 features premium
+- Sistema de control de acceso granular
+- Marketing de características
+
+#### Semanas 43-44: Pulido Final
+
+- Revisión completa de UX
+- Corrección de bugs pendientes
+- Documentación final
+- Preparación para lanzamiento
+
+## 5. Stack Tecnológico Detallado
+
+### 5.1 Frontend
+
+| Componente | Tecnología | Justificación |
+|------------|------------|---------------|
+| Framework | React.js + TypeScript | Tipado estático, ecosistema robusto |
+| UI Framework | Material UI | Componentes pre-estilizados, temas |
+| Estado | Redux Toolkit | Manejo escalable de estado |
+| Routing | React Router | Estándar de la industria |
+| Formularios | Formik + Yup | Validación y manejo eficiente |
+| Gráficos | Recharts | Lightweight, gran personalización |
+| Tablas | Material UI DataGrid | Rendimiento con datasets grandes |
+| Testing | Jest + RTL | Cobertura completa de testing |
+
+### 5.2 Backend
+
+| Componente | Tecnología | Justificación |
+|------------|------------|---------------|
+| Runtime | Node.js | Mismo lenguaje en toda la stack |
+| Framework | Express.js + TypeScript | Ligero, flexible, tipado |
+| Autenticación | JWT + bcrypt | Seguro, stateless |
+| Validación | Joi | Esquemas declarativos |
+| ORM/ODM | Mongoose | Tipado para MongoDB, hooks |
+| API Docs | Swagger/OpenAPI | Documentación interactiva |
+| Testing | Jest + Supertest | Cobertura completa |
+| Logging | Winston | Flexible, múltiples transports |
+
+### 5.3 DevOps Simplificado
+
+| Componente | Tecnología | Justificación |
+|------------|------------|---------------|
+| CI | GitHub Actions | Integrado con repositorio |
+| CD | Vercel/Railway | Despliegue sencillo y automático |
+| Monitoreo | Sentry | Seguimiento de errores |
+| Análisis | Lighthouse CI | Métricas de rendimiento |
+
+## 6. Arquitectura de Alto Nivel
+
+### 6.1 Arquitectura de Aplicación
+
+```ascii
+┌────────────────┐      ┌────────────────┐      ┌────────────────┐
+│   Frontend     │      │    Backend     │      │   Database     │
+│                │      │                │      │                │
+│  React + MUI   │◄────►│  Express API   │◄────►│   MongoDB      │
+│                │      │                │      │                │
+└────────────────┘      └─────┬──────────┘      └────────────────┘
+                              │
+                  ┌───────────┴───────────┐
+                  │   External Services   │
+                  │                       │
+                  │  Cloudinary, Stripe   │
+                  │                       │
+                  └───────────────────────┘
+```
+
+### 6.2 Arquitectura de Datos
+
+```ascii
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Usuario   │─┐   │   Equipo    │─┐   │  Partido    │
+│             │ │   │             │ │   │             │
+└─────────────┘ │   └─────────────┘ │   └─────────────┘
+                │                   │
+                ▼                   ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Jugador   │◄───►│   Evento    │     │  Árbitro    │
+│             │     │             │     │             │
+└─────────────┘     └─────────────┘     └─────────────┘
+                │
+                ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Noticia   │     │ Multimedia  │     │   Liga      │
+│             │     │             │     │             │
+└─────────────┘     └─────────────┘     └─────────────┘
+```
+
+## 7. Tareas de Desarrollo Detalladas (Fase 1 - MVP)
+
+### 7.1 Configuración y Arquitectura Base
+
+| Tarea | Prioridad | Dependencias | Estimación |
+|-------|-----------|--------------|------------|
+| Inicializar proyecto React con TypeScript | Alta | Ninguna | 1 día |
+| Configurar proyecto Express con TypeScript | Alta | Ninguna | 1 día |
+| Definir esquemas MongoDB iniciales | Alta | Ninguna | 2 días |
+| Implementar autenticación JWT | Alta | Backend inicial | 2 días |
+| Configurar enrutamiento básico React Router | Media | Frontend inicial | 1 día |
+| Configurar Material UI y tema base | Media | Frontend inicial | 1 día |
+| Implementar layout principal responsive | Media | Configuración MUI | 2 días |
+
+### 7.2 Gestión de Usuarios y Equipos
+
+| Tarea | Prioridad | Dependencias | Estimación |
+|-------|-----------|--------------|------------|
+| Modelo y API de Usuarios | Alta | DB Schemas | 1 día |
+| Registro e inicio de sesión | Alta | Autenticación JWT | 2 días |
+| Gestión de roles y permisos | Alta | Modelo de Usuarios | 2 días |
+| Modelo y API de Equipos | Alta | DB Schemas | 1 día |
+| CRUD completo de Equipos | Alta | API de Equipos | 2 días |
+| Formularios de gestión de Usuarios | Media | Frontend inicial | 2 días |
+| Formularios de gestión de Equipos | Media | Frontend inicial | 2 días |
+
+## 8. Gestión de Riesgos
+
+| Riesgo | Probabilidad | Impacto | Mitigación |
+|--------|--------------|---------|------------|
+| Scope creep | Alta | Alto | Estricta priorización, scope fijo por sprint |
+| Deuda técnica acumulada | Alta | Medio | Días dedicados a refactorización |
+| Problemas de rendimiento | Media | Alto | Monitorización temprana, optimización progresiva |
+| Curva de aprendizaje | Media | Medio | Reservar tiempo para investigación |
+| Cambios en APIs externas | Baja | Medio | Abstraer integraciones, monitorear cambios |
+
+## 9. Plan de Mitigación de Riesgos
+
+### 9.1 Estrategias Clave
+
+| Estrategia | Aplicación |
+|------------|------------|
+| Desarrollo basado en MVPs | Versiones funcionales tempranas para validar |
+| Prototipos rápidos | Para características complejas antes de implementar |
+| Refactorización planificada | Sessions periódicas dedicadas a mejora de código |
+| Desarrollo guiado por pruebas | Para componentes críticos o complejos |
+| Documentación continua | Documentar decisiones y compromisos técnicos |
+
+### 9.2 Planes de Contingencia
+
+| Escenario | Plan |
+|-----------|------|
+| Retraso significativo | Reducir scope manteniendo MVP viable |
+| Problemas técnicos bloqueantes | Preparar alternativas técnicas para features complejas |
+| Feedback negativo de usuario | Reservar sprints para ajustes basados en feedback |
+| Limitaciones de planes gratuitos | Planificar migración escalonada a planes pagos |
+
+## 10. Métricas de Progreso
+
+| Métrica | Objetivo | Medición |
+|---------|----------|----------|
+| Velocidad | Completar >80% de tareas estimadas por sprint | Tablero de tareas |
+| Calidad de código | <5 bugs críticos por feature | Sistema de issues |
+| Cobertura de pruebas | >70% en módulos críticos | Reportes Jest |
+| Rendimiento | LCP <2.5s, TTI <3.5s | Lighthouse CI |
+| Deuda técnica | <15% del código total | SonarQube o similar |
+
+## 11. Herramientas y Recursos
+
+### 11.1 Desarrollo
+
+| Categoría | Herramientas |
+|-----------|--------------|
+| IDE | VS Code con extensiones recomendadas |
+| Control de versiones | Git + GitHub |
+| Gestión de tareas | GitHub Projects |
+| Diagramas | Draw.io, Figma |
+| Documentación | Markdown, Storybook |
+
+### 11.2 Recursos de IA
+
+| Herramienta | Uso |
+|-------------|-----|
+| GitHub Copilot | Asistencia en codificación |
+| ChatGPT | Generación de datos de prueba, debug |
+| Midjourney | Generación de imágenes para prototipado |
+| Claude | Optimización y revisión de código |
+
+## 12. Conclusión
+
+Este plan de implementación está diseñado específicamente para un desarrollador individual con apoyo de IA, enfocándose en:
+
+1. Entregas incrementales y funcionales
+2. Priorización estricta basada en valor
+3. Uso estratégico de herramientas y automatización
+4. Mejora continua y adaptación
+
+Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del Sistema de Gestión de Ligas de Fútbol 8v8, entregando un producto de calidad a pesar de las limitaciones de recursos.
+</file>
+
+<file path="tracking/SPRINT-ACTUAL.md">
+# Sprint 1: Configuración y Arquitectura Base
+**Período:** [17-03-2025] - [28-03-2025]
+
+## Objetivos del Sprint
+1. Configurar repositorio y estructura de proyecto
+2. Implementar autenticación JWT básica
+3. Definir esquemas MongoDB iniciales
+4. Configurar enrutamiento básico React Router
+5. Implementar layout principal responsive
+
+## Tareas Específicas
+
+### 1. Inicializar proyecto React con TypeScript
+- [x] Crear proyecto con Create React App + TypeScript
+- [x] Configurar ESLint y Prettier
+- [x] Configurar estructura de carpetas
+- **Estado:** Completado
+- **Notas:** Configuración básica realizada. Pendiente instalación de dependencias.
+
+### 2. Configurar proyecto Express con TypeScript
+- [x] Inicializar proyecto Express
+- [x] Configurar TypeScript
+- [x] Configurar estructura de carpetas
+- [x] Añadir middleware esencial
+- **Estado:** Completado
+- **Notas:** Configuración básica realizada. Pendiente instalación de dependencias.
+
+### 3. Definir esquemas MongoDB iniciales
+- [ ] Diseñar esquema Usuario
+- [ ] Diseñar esquema Equipo
+- [ ] Diseñar esquema Jugador
+- [ ] Diseñar esquema Partido
+- **Estado:** Pendiente
+- **Notas:** N/A
+
+### 4. Implementar autenticación JWT
+- [ ] Configurar estrategia JWT
+- [ ] Implementar rutas de autenticación
+- [ ] Implementar middleware de autorización
+- **Estado:** Pendiente
+- **Notas:** N/A
+
+## Registro Diario
+
+### [18-03-2025]
+- **Avances:**
+  - Configurado repositorio Git
+  - Creada estructura básica de carpetas para frontend y backend
+  - Configurados archivos de configuración principales (package.json, tsconfig.json)
+  - Creados archivos básicos para frontend y backend
+- **Problemas encontrados:**
+  - Ninguno relevante
+- **Plan para mañana:**
+  - Instalar dependencias y verificar configuración
+  - Comenzar implementación de esquemas MongoDB
+
+## Métricas del Sprint
+- **Completado:** 15%
+- **Velocidad:** N/A
+- **Calidad de código:** N/A
+
+## Retrospectiva (al finalizar)
+- **Lo que salió bien:**
+- **Lo que podría mejorar:**
+- **Acciones para el próximo sprint:**
+</file>
+
+<file path="tracking/TRACKING.md">
+# Seguimiento del Proyecto: Sistema de Gestión de Ligas de Fútbol 8v8
+
+## Estado Actual
+- **Fase:** 1 - MVP
+- **Sprint:** 1 (Semanas 1-2)
+- **Enfoque actual:** Configuración y Arquitectura Base
+- **Último avance:** [18-03-2025] Configuración inicial del proyecto
+
+## Progreso General
+- 🟡 Fase 1 - Configuración y Arquitectura Base (15%)
+- ⬜ Fase 1 - Gestión de Usuarios y Equipos (0%)
+- ⬜ Fase 1 - Gestión de Jugadores (0%)
+- ⬜ Fase 1 - Calendario y Partidos (0%)
+- ⬜ Fase 1 - Tabla de Posiciones (0%)
+
+## Métricas de Progreso
+- **Tareas completadas:** 3/20
+- **Pruebas implementadas:** 0
+- **Cobertura de código:** 0%
+
+## Bloqueantes/Problemas
+- Ninguno por el momento
+
+## Próximos Pasos
+1. Completar instalación de dependencias
+2. Implementar la autenticación JWT
+3. Definir esquemas MongoDB iniciales
+
+## Notas para IA
+- **Contexto actual:** Proyecto inicializado con estructura básica para frontend y backend
+- **Necesito ayuda con:** Implementación de autenticación JWT
+- **Referencias:** Ver `docs/plan-de-implementacion.md` y `docs/plan-de-pruebas.md`
+</file>
+
+</files>
