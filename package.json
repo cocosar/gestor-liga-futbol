@@ -14,6 +14,7 @@
     "build:backend": "cd backend && npm run build",
     "build": "npm run build:frontend && npm run build:backend",
     "test:frontend": "cd frontend && npm test",
+    "test:frontend:ci": "cd frontend && npm run test:ci",
     "test:backend": "cd backend && npm test",
     "test": "npm run test:frontend && npm run test:backend",
     "lint:frontend": "cd frontend && npm run lint",
@@ -32,7 +33,7 @@
   "lint-staged": {
     "frontend/**/*.{ts,tsx}": [
       "npm run lint:frontend",
-      "npm run test:frontend -- --run --passWithNoTests"
+      "npm run test:frontend:ci"
     ],
     "backend/**/*.ts": [
       "npm run lint:backend",

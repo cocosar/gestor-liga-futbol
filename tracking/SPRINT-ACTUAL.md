@@ -68,6 +68,16 @@
 - **Estado:** Completado
 - **Notas:** Se ha configurado el entorno de pruebas con Vitest para frontend y Jest para backend. Se han implementado pruebas para los componentes principales (MainLayout, AppHeader, Sidebar, Footer) y para el controlador de autenticación. Se ha configurado ESLint para ambos proyectos. Se han implementado hooks de pre-commit con husky y lint-staged para verificar que el código cumple con los estándares de calidad antes de ser comprometido.
 
+### 8. Implementar integración frontend-backend para autenticación
+- [x] Crear estructura de servicios API en frontend
+- [x] Implementar servicio de autenticación (registro, login, perfil)
+- [x] Integrar componentes Register y Login con el backend
+- [x] Armonizar nombres de campos entre frontend y backend
+- [x] Implementar gestión de tokens JWT en frontend
+- [x] Añadir protección de rutas para páginas autenticadas
+- **Estado:** Completado
+- **Notas:** Se ha implementado la integración de autenticación entre frontend y backend. Se ha creado un servicio authService que maneja el registro, login y obtención de perfil de usuario. Se han modificado los componentes Register y Login para usar este servicio en lugar de la lógica simulada. Se han mapeado los nombres de campos y roles entre frontend y backend. Se ha implementado un componente ProtectedRoute para proteger las rutas que requieren autenticación y control de acceso basado en roles.
+
 ## Registro Diario
 
 ### [18-03-2025]
@@ -158,8 +168,9 @@
 - **Lo que podría mejorar:**
   - Añadir más pruebas automatizadas para los componentes frontend
   - Mejorar la documentación del código
-  - Implementar un sistema de gestión de estados más robusto (Redux)
+  - Completar la integración frontend-backend para autenticación
 - **Acciones para el próximo sprint:**
+  - Completar la integración frontend-backend para autenticación si no se finaliza en el Sprint 1
   - Configurar Redux para gestión de estado global
     - Priorizar la implementación completa de Redux Toolkit
     - Crear slices para autenticación, usuarios y equipos
