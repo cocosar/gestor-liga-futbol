@@ -15,12 +15,14 @@ import {
   FormControl,
   InputLabel,
   Select,
-  SelectChangeEvent
+  SelectChangeEvent,
+  CircularProgress
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { authService } from '../api';
 
 // Tipos disponibles de usuario
 const userRoles = [
@@ -30,6 +32,7 @@ const userRoles = [
 ];
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -42,6 +45,7 @@ const Register: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -88,20 +92,32 @@ const Register: React.FC = () => {
     }
 
     try {
-      // Aquí iría la lógica de registro real con la API
-      console.log('Datos de registro:', formData);
+      setLoading(true);
       
-      // Simulamos un registro exitoso
-      // En implementación real, esto se reemplazaría con la integración de la API
-      setSuccess('¡Registro exitoso! Redirigiendo al inicio de sesión...');
+      // Llamada real al API para registro
+      const response = await authService.register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role
+      });
       
-      // Redirección después de registro exitoso (simulado)
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 2000);
+      if (response.success) {
+        setSuccess('¡Registro exitoso! Redirigiendo al inicio de sesión...');
+        
+        // Redirección después de registro exitoso
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        setError(response.message || 'Error al registrarse. Intente nuevamente más tarde.');
+      }
     } catch (error) {
       setError('Error al registrarse. Intente nuevamente más tarde.');
       console.error('Error de registro:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -268,8 +284,9 @@ const Register: React.FC = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
-              Registrarse
+              {loading ? <CircularProgress size={24} /> : 'Registrarse'}
             </Button>
             <Box sx={{ textAlign: 'center' }}>
               <Link component={RouterLink} to="/login" variant="body2">

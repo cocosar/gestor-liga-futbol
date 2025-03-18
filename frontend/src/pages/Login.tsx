@@ -9,20 +9,24 @@ import {
   Alert,
   Link,
   InputAdornment,
-  IconButton
+  IconButton,
+  CircularProgress
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { authService } from '../api';
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,22 +51,25 @@ const Login: React.FC = () => {
     }
 
     try {
-      // Aquí iría la lógica de autenticación real con la API
-      console.log('Datos de inicio de sesión:', formData);
+      setLoading(true);
       
-      // Simulamos un error para mostrar la funcionalidad
-      // En implementación real, esto se reemplazaría con la integración de la API
-      if (formData.email !== 'admin@example.com') {
-        setError('Credenciales inválidas. Intente nuevamente.');
-        return;
+      // Llamada real al API para login
+      const response = await authService.login({
+        email: formData.email,
+        password: formData.password
+      });
+      
+      if (response.success) {
+        // Redirección después de inicio de sesión exitoso
+        navigate('/dashboard');
+      } else {
+        setError(response.message || 'Credenciales inválidas. Intente nuevamente.');
       }
-      
-      // Redirección después de inicio de sesión exitoso
-      // En implementación real, esto se manejaría después de la respuesta de la API
-      window.location.href = '/dashboard';
     } catch (error) {
       setError('Error al iniciar sesión. Intente nuevamente más tarde.');
       console.error('Error de inicio de sesión:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -150,8 +157,9 @@ const Login: React.FC = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
-              Iniciar Sesión
+              {loading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
             </Button>
             <Box sx={{ textAlign: 'center' }}>
               <Link component={RouterLink} to="/register" variant="body2">
