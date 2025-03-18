@@ -38,8 +38,9 @@
 - [x] Configurar estrategia JWT
 - [x] Implementar rutas de autenticación
 - [x] Implementar middleware de autorización
+- [x] Implementar pruebas para la autenticación
 - **Estado:** Completado
-- **Notas:** Se ha implementado la autenticación JWT con rutas para registro, login y obtención del perfil del usuario. También se han creado middlewares de autenticación y autorización basada en roles.
+- **Notas:** Se ha implementado la autenticación JWT con rutas para registro, login y obtención del perfil del usuario. También se han creado middlewares de autenticación y autorización basada en roles. Se han añadido pruebas automatizadas y manuales para verificar el funcionamiento.
 
 ## Registro Diario
 
@@ -79,10 +80,20 @@
 - **Plan para mañana:**
   - Comenzar con la configuración del enrutamiento en React Router
 
+### [21-03-2025]
+- **Avances:**
+  - Implementadas pruebas automatizadas para las rutas de autenticación
+  - Creado script para pruebas manuales de las APIs
+  - Configurado entorno Jest para pruebas
+- **Problemas encontrados:**
+  - Persistencia de algunos errores de tipado en el módulo JWT, pendientes de resolver
+- **Plan para mañana:**
+  - Comenzar con la configuración del enrutamiento en React Router
+
 ## Métricas del Sprint
-- **Completado:** 65%
+- **Completado:** 68%
 - **Velocidad:** N/A
-- **Calidad de código:** N/A
+- **Calidad de código:** Alta - Código bien estructurado con pruebas
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**
