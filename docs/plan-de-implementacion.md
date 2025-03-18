@@ -388,4 +388,4 @@ Este plan de implementación está diseñado específicamente para un desarrolla
 3. Uso estratégico de herramientas y automatización
 4. Mejora continua y adaptación
 
-Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del Sistema de Gestión de Ligas de Fútbol 8v8, entregando un producto de calidad a pesar de las limitaciones de recursos. 
+Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del Sistema de Gestión de Ligas de Fútbol 8v8, entregando un producto de calidad a pesar de las limitaciones de recursos.

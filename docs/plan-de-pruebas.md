@@ -23,6 +23,7 @@ La estrategia se basa en un enfoque progresivo que prioriza:
 | Frontend | Probar componentes React reutilizables | React Testing Library | Funcionalidad verificada de componentes clave |
 
 **Priorización para desarrollador individual:**
+
 - Centrarse en los módulos de alto riesgo (autenticación, cálculos de estadísticas, integración de pagos)
 - Usar generación asistida por IA para crear casos de prueba unitarios
 
@@ -34,6 +35,7 @@ La estrategia se basa en un enfoque progresivo que prioriza:
 | Frontend + API | Probar flujos completos de datos | Cypress (pruebas selectivas) | Flujos principales funcionan end-to-end |
 
 **Optimización para desarrollador individual:**
+
 - Automatizar pruebas para rutas API críticas
 - Implementar mocks inteligentes para servicios externos
 - Utilizar IA para generar casos de prueba basados en especificaciones
@@ -46,6 +48,7 @@ La estrategia se basa en un enfoque progresivo que prioriza:
 | Usabilidad básica | Evaluar experiencia de usuario en puntos clave | Herramientas de feedback, Heurísticas UX | Identificar problemas críticos de usabilidad |
 
 **Enfoque para desarrollador individual:**
+
 - Crear personas ficticias para cada rol (Admin, Veedor, Entrenador, Jugador)
 - Desarrollar scripts de prueba guiados que puedan ejecutarse eficientemente
 - Utilizar herramientas de grabación para analizar posteriormente
@@ -59,6 +62,7 @@ La estrategia se basa en un enfoque progresivo que prioriza:
 | Protección de datos | Verificar encriptación y sanitización | Revisión de código asistida | Datos sensibles protegidos adecuadamente |
 
 **Enfoque pragmático:**
+
 - Utilizar análisis de código estático y herramientas automatizadas
 - Implementar lista de verificación de seguridad básica
 - Enfocarse en las vulnerabilidades de mayor riesgo según OWASP Top 10
@@ -71,6 +75,7 @@ La estrategia se basa en un enfoque progresivo que prioriza:
 | Optimización | Identificar cuellos de botella | Chrome DevTools, React Profiler | FCP <1.5s, TTI <3s |
 
 **Simplificación para desarrollador individual:**
+
 - Pruebas de carga selectivas solo para operaciones críticas
 - Enfoque en optimización de consultas de base de datos
 - Mediciones de rendimiento en frontend para páginas clave
@@ -88,6 +93,7 @@ La estrategia se basa en un enfoque progresivo que prioriza:
 | Tabla Posiciones | Alta | Media | Media | Media |
 
 **Estrategia MVP para desarrollador individual:**
+
 - Crear suite básica de tests unitarios para autenticación y cálculos
 - Implementar pruebas de integración para operaciones CRUD principales
 - Desarrollar lista de verificación de pruebas manuales esenciales
@@ -102,6 +108,7 @@ La estrategia se basa en un enfoque progresivo que prioriza:
 | Dashboard Admin | Baja | Media | Alta | Baja |
 
 **Estrategia para desarrollador individual:**
+
 - Priorizar pruebas para cálculos de estadísticas y sanciones
 - Automatizar verificación de reglas de negocio complejas
 - Verificar manualmente UX de dashboards
@@ -109,6 +116,7 @@ La estrategia se basa en un enfoque progresivo que prioriza:
 ### 4.3 Fase 3-5 (Incrementos posteriores)
 
 Seguir patrón similar, priorizando:
+
 - Integración de pagos (alta prioridad en pruebas)
 - Gestión multimedia (pruebas de carga/almacenamiento)
 - Multi-tenancy (pruebas de aislamiento)
@@ -125,6 +133,7 @@ Seguir patrón similar, priorizando:
 | CI/CD | Ejecución de suite de tests, linting, build | Pruebas de rendimiento pesadas | GitHub Actions |
 
 **Plan práctico para desarrollador individual:**
+
 - Configurar GitHub Actions para ejecutar tests en cada commit
 - Utilizar IA para generar tests basados en criterios de aceptación
 - Mantener dashboard simple de cobertura de pruebas
@@ -149,6 +158,7 @@ Seguir patrón similar, priorizando:
 | Producción | Verificación final | Vercel/Netlify + MongoDB Atlas | Datos reales (post-lanzamiento) |
 
 **Simplificación para desarrollador individual:**
+
 - Utilizar Docker para simular entornos aislados cuando sea necesario
 - Mantener conjunto de datos de prueba pre-generados por IA
 - Implementar scripts para restablecer entornos de prueba
@@ -165,6 +175,7 @@ Seguir patrón similar, priorizando:
 | Verificación | Tests automatizados | Crear test que verifique la corrección |
 
 **Optimización para desarrollador individual:**
+
 - Usar plantillas predefinidas para reporte de bugs
 - Implementar sesiones dedicadas de corrección de bugs
 - Mantener una vista clara de bugs pendientes críticos
@@ -188,6 +199,7 @@ Seguir patrón similar, priorizando:
 | Tablets | Verificar vistas críticas | Chrome DevTools, pruebas manuales |
 
 **Simplificación para desarrollador individual:**
+
 - Probar en dispositivo físico personal + emuladores
 - Verificar puntos de quiebre críticos definidos en CSS
 - Utilizar herramientas de inspección para simular dispositivos
@@ -281,6 +293,7 @@ Seguir patrón similar, priorizando:
 ### 14.1 Templates de Prueba
 
 #### Template para Pruebas Unitarias
+
 ```javascript
 describe('Módulo: [Nombre del Módulo]', () => {
   describe('Función: [Nombre de la Función]', () => {
@@ -294,6 +307,7 @@ describe('Módulo: [Nombre del Módulo]', () => {
 ```
 
 #### Template para Pruebas de API
+
 ```javascript
 describe('API: [Nombre del Endpoint]', () => {
   test('Debería [comportamiento esperado] cuando [condición]', async () => {
@@ -305,6 +319,7 @@ describe('API: [Nombre del Endpoint]', () => {
 ```
 
 #### Lista de Verificación para Pruebas Manuales
+
 - [ ] Verificar flujo principal
 - [ ] Probar casos de borde (valores límite)
 - [ ] Verificar mensajes de error
@@ -330,4 +345,4 @@ Este plan de pruebas está diseñado específicamente para un escenario de desar
 3. Ciclos cortos de retroalimentación
 4. Enfoque prioritario en componentes críticos
 
-Al seguir este plan adaptado, se maximizará la eficiencia del proceso de pruebas y se garantizará un producto de calidad a pesar de las limitaciones de recursos. 
+Al seguir este plan adaptado, se maximizará la eficiencia del proceso de pruebas y se garantizará un producto de calidad a pesar de las limitaciones de recursos.

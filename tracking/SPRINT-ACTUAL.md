@@ -1,5 +1,5 @@
 # Sprint 1: Configuración y Arquitectura Base
-**Período:** [Fecha inicio] - [Fecha fin]
+**Período:** [17-03-2025] - [28-03-2025]
 
 ## Objetivos del Sprint
 1. Configurar repositorio y estructura de proyecto
