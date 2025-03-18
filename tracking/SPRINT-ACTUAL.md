@@ -7,6 +7,7 @@
 3. Definir esquemas MongoDB iniciales
 4. Configurar enrutamiento básico React Router
 5. Implementar layout principal responsive
+6. Establecer base de pruebas y calidad de código
 
 ## Tareas Específicas
 
@@ -57,6 +58,15 @@
 - [x] Implementar Footer
 - **Estado:** Completado
 - **Notas:** Se ha creado un layout principal responsive con AppBar, Sidebar (que se adapta a dispositivos móviles) y Footer.
+
+### 7. Establecer base de pruebas y calidad de código
+- [x] Configurar entorno de pruebas con Vitest para frontend
+- [x] Configurar Jest para pruebas de backend
+- [x] Implementar primeras pruebas unitarias para componentes críticos
+- [x] Configurar análisis estático de código (ESLint)
+- [x] Implementar hooks de pre-commit para verificación de calidad
+- **Estado:** Completado
+- **Notas:** Se ha configurado el entorno de pruebas con Vitest para frontend y Jest para backend. Se han implementado pruebas para los componentes principales (MainLayout, AppHeader, Sidebar, Footer) y para el controlador de autenticación. Se ha configurado ESLint para ambos proyectos. Se han implementado hooks de pre-commit con husky y lint-staged para verificar que el código cumple con los estándares de calidad antes de ser comprometido.
 
 ## Registro Diario
 
@@ -125,6 +135,7 @@
   - Creada la estructura de páginas y componentes
   - Implementado layout principal responsive con AppBar, Sidebar y Footer
   - Implementadas las páginas básicas: Home, Login, Register y Dashboard
+  - Verificado y confirmado el correcto funcionamiento del pipeline CI/CD en GitHub Actions
 - **Problemas encontrados:**
   - Ninguno significativo
 - **Plan para mañana:**
@@ -133,7 +144,7 @@
   - Finalizar la documentación del sprint
 
 ## Métricas del Sprint
-- **Completado:** 100%
+- **Completado:** 85%
 - **Velocidad:** 6 tareas principales completadas en 7 días
 - **Calidad de código:** Alta - Código bien estructurado con componentes reutilizables y responsive
 
@@ -143,11 +154,17 @@
   - Implementación eficiente de la autenticación JWT
   - Creación de un layout principal responsive y atractivo
   - Buen manejo de la base de datos flexible (MongoDB en memoria)
+  - Configuración y verificación exitosa del pipeline CI/CD en GitHub Actions
 - **Lo que podría mejorar:**
   - Añadir más pruebas automatizadas para los componentes frontend
   - Mejorar la documentación del código
   - Implementar un sistema de gestión de estados más robusto (Redux)
 - **Acciones para el próximo sprint:**
   - Configurar Redux para gestión de estado global
+    - Priorizar la implementación completa de Redux Toolkit
+    - Crear slices para autenticación, usuarios y equipos
+    - Implementar persistencia del token JWT
+    - Desarrollar middlewares personalizados para manejo de errores y logging
+    - Crear hooks tipados para facilitar el uso de Redux en componentes
   - Implementar pruebas para componentes de UI
   - Mejorar la integración entre frontend y backend 
