@@ -52,30 +52,35 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 ### 4.1 Fase 1: MVP (Semanas 1-10)
 
 #### Semanas 1-2: Configuración y Arquitectura Base
+
 - Estructura del proyecto completo
 - Configuración de autenticación JWT
 - Modelo de datos básico
 - Plantillas UI con diseño responsive básico
 
 #### Semanas 3-4: Gestión de Usuarios y Equipos
+
 - CRUD de usuarios con roles
 - CRUD de equipos
 - Asignación de entrenadores a equipos
 - Pantallas y layouts principales
 
 #### Semanas 5-6: Gestión de Jugadores
+
 - CRUD de jugadores
 - Asignación de jugadores a equipos
 - Perfil de jugador básico
 - Lógica de fichajes simple
 
 #### Semanas 7-8: Calendario y Partidos
+
 - Creación manual de calendario
 - Gestión de partidos
 - Asignación de equipos a partidos
 - Visualización de calendario
 
 #### Semanas 9-10: Tabla de Posiciones
+
 - Registro básico de resultados
 - Cálculo automático de posiciones
 - Visualización de tabla
@@ -84,30 +89,35 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 ### 4.2 Fase 2: Funcionalidades Core (Semanas 11-20)
 
 #### Semanas 11-12: Sistema de Estadísticas
+
 - Registro detallado de eventos de partido
 - Cálculo de estadísticas por equipo
 - Cálculo de estadísticas individuales
 - Reportes básicos
 
 #### Semanas 13-14: Gestión de Árbitros
+
 - CRUD de árbitros
 - Asignación de árbitros a partidos
 - Registro de informes arbitrales
 - Seguimiento de pagos básico
 
 #### Semanas 15-16: Sistema de Sanciones
+
 - Registro de tarjetas y sanciones
 - Cálculo automático de suspensiones
 - Notificaciones básicas
 - Visualización de sanciones en perfiles
 
 #### Semanas 17-18: Generación Automática de Calendario
+
 - Algoritmo de generación de calendario
 - Configuración de restricciones
 - Edición manual posterior
 - Validación de conflictos
 
 #### Semanas 19-20: Dashboard Administrativo
+
 - KPIs principales
 - Visualización de estado de la liga
 - Funciones de administración centralizadas
@@ -116,24 +126,28 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 ### 4.3 Fase 3: Contenido y Engagement (Semanas 21-28)
 
 #### Semanas 21-22: Sistema de Noticias
+
 - CRUD de noticias y anuncios
 - Categorización de contenido
 - Editor WYSIWYG básico
 - Visualización en frontend
 
 #### Semanas 23-24: Galería Multimedia
+
 - Subida y gestión de imágenes
 - Organización por categorías
 - Optimización de imágenes
 - Galería responsive
 
 #### Semanas 25-26: Notificaciones y Alertas
+
 - Sistema de notificaciones in-app
 - Alertas por email (básicas)
 - Preferencias de notificación
 - Centro de notificaciones
 
 #### Semanas 27-28: Optimizaciones y PWA
+
 - Convertir a PWA básica
 - Optimizaciones de rendimiento
 - Mejoras de UX basadas en feedback
@@ -142,30 +156,35 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 ### 4.4 Fase 4: Monetización y Escalabilidad (Semanas 29-38)
 
 #### Semanas 29-30: Integración de Pagos
+
 - Integración con Stripe
 - Flujo de pago básico
 - Gestión de transacciones
 - Facturas simples
 
 #### Semanas 31-32: Multi-tenancy Básico
+
 - Separación lógica por liga
 - Gestión de configuración por liga
 - Aislamiento de datos
 - Pruebas de aislamiento
 
 #### Semanas 33-34: Personalización por Liga
+
 - Temas y estilos personalizados
 - Configuración de reglas específicas
 - Branding por liga
 - Configuración visual
 
 #### Semanas 35-36: Optimización de Rendimiento
+
 - Análisis de rendimiento detallado
 - Optimización de consultas
 - Implementación de caché estratégico
 - Lazy loading y code splitting
 
 #### Semanas 37-38: Analíticas Básicas
+
 - Dashboard de análisis de uso
 - Métricas clave por liga
 - Seguimiento de comportamiento
@@ -174,18 +193,21 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 ### 4.5 Fase 5: Refinamiento (Semanas 39-44)
 
 #### Semanas 39-40: Aplicación Móvil Básica
+
 - Conversión a React Native
 - Funcionalidades principales móviles
 - Adaptación de UI para móvil
 - Pruebas en dispositivos reales
 
 #### Semanas 41-42: Características Premium
+
 - Identificación de features premium
 - Implementación de 2-3 features premium
 - Sistema de control de acceso granular
 - Marketing de características
 
 #### Semanas 43-44: Pulido Final
+
 - Revisión completa de UX
 - Corrección de bugs pendientes
 - Documentación final
@@ -232,7 +254,7 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 
 ### 6.1 Arquitectura de Aplicación
 
-```
+```ascii
 ┌────────────────┐      ┌────────────────┐      ┌────────────────┐
 │   Frontend     │      │    Backend     │      │   Database     │
 │                │      │                │      │                │
@@ -250,7 +272,7 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 
 ### 6.2 Arquitectura de Datos
 
-```
+```ascii
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │   Usuario   │─┐   │   Equipo    │─┐   │  Partido    │
 │             │ │   │             │ │   │             │
