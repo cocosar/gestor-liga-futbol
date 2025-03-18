@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import routes from './routes';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -21,7 +22,10 @@ app.use(cors({
 app.use(helmet());
 app.use(morgan('dev'));
 
-// Rutas
+// Rutas API
+app.use('/api', routes);
+
+// Ruta de salud
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'API funcionando correctamente' });
 });

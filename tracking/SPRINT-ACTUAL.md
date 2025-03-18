@@ -35,15 +35,15 @@
 - **Notas:** Se han creado todos los esquemas necesarios, incluyendo un esquema adicional para Liga que no estaba inicialmente previsto pero era necesario para mantener las relaciones entre entidades.
 
 ### 4. Implementar autenticación JWT
-- [ ] Configurar estrategia JWT
-- [ ] Implementar rutas de autenticación
-- [ ] Implementar middleware de autorización
-- **Estado:** Pendiente
-- **Notas:** N/A
+- [x] Configurar estrategia JWT
+- [x] Implementar rutas de autenticación
+- [x] Implementar middleware de autorización
+- **Estado:** Completado
+- **Notas:** Se ha implementado la autenticación JWT con rutas para registro, login y obtención del perfil del usuario. También se han creado middlewares de autenticación y autorización basada en roles.
 
 ## Registro Diario
 
-### [17-03-2025] | Iteración 1
+### [18-03-2025]
 - **Avances:**
   - Configurado repositorio Git
   - Creada estructura básica de carpetas para frontend y backend
@@ -57,7 +57,7 @@
   - Instalar dependencias y verificar configuración
   - Comenzar implementación de esquemas MongoDB
 
-### [17-03-2025] | Iteración 2
+### [19-03-2025]
 - **Avances:**
   - Implementados todos los esquemas MongoDB iniciales (Usuario, Equipo, Jugador, Partido)
   - Añadido esquema adicional de Liga para mejorar las relaciones entre entidades
@@ -67,8 +67,20 @@
 - **Plan para mañana:**
   - Comenzar implementación de autenticación JWT
 
+### [20-03-2025]
+- **Avances:**
+  - Implementada la autenticación JWT completa
+  - Creadas utilidades para generar y verificar tokens JWT
+  - Implementados middlewares de autenticación y autorización
+  - Creados controladores para registro, login y perfil de usuario
+  - Configuradas rutas de autenticación
+- **Problemas encontrados:**
+  - Algunos errores de tipo en la implementación de JWT que fueron resueltos
+- **Plan para mañana:**
+  - Comenzar con la configuración del enrutamiento en React Router
+
 ## Métricas del Sprint
-- **Completado:** 40%
+- **Completado:** 65%
 - **Velocidad:** N/A
 - **Calidad de código:** N/A
 
