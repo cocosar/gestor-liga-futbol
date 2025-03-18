@@ -22,8 +22,9 @@
 - [x] Configurar TypeScript
 - [x] Configurar estructura de carpetas
 - [x] Añadir middleware esencial
+- [x] Configurar manejo de base de datos flexible
 - **Estado:** Completado
-- **Notas:** Configuración básica realizada. Dependencias instaladas
+- **Notas:** Configuración básica realizada. Dependencias instaladas. Se ha implementado un sistema flexible que permite utilizar una base de datos MongoDB en memoria cuando no hay conexión a MongoDB disponible.
 
 ### 3. Definir esquemas MongoDB iniciales
 - [x] Diseñar esquema Usuario
@@ -90,10 +91,23 @@
 - **Plan para mañana:**
   - Comenzar con la configuración del enrutamiento en React Router
 
+### [22-03-2025]
+- **Avances:**
+  - Implementado sistema de manejo flexible de base de datos
+  - Añadido soporte para MongoDB en memoria para desarrollo y pruebas
+  - Mejorado el manejo de conexiones a la base de datos
+  - Actualizado archivo .env con variables de entorno para configuración
+  - Verificado funcionamiento de rutas de autenticación con base de datos en memoria
+- **Problemas encontrados:**
+  - Problemas de conexión a MongoDB local (resuelto con implementación de MongoDB en memoria)
+  - Algunos problemas de tipado en el soporte de MongoDB en memoria (resueltos)
+- **Plan para mañana:**
+  - Comenzar con la configuración del enrutamiento en React Router
+
 ## Métricas del Sprint
-- **Completado:** 68%
+- **Completado:** 70%
 - **Velocidad:** N/A
-- **Calidad de código:** Alta - Código bien estructurado con pruebas
+- **Calidad de código:** Alta - Código bien estructurado con pruebas y manejo flexible de la base de datos
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**
