@@ -61,12 +61,10 @@ backend/src/models/User.ts
 backend/src/routes/authRoutes.ts
 backend/src/routes/index.ts
 backend/src/tests/auth.test.ts
-backend/src/tests/test-auth-manual.sh
 backend/src/utils/jwt.ts
 backend/tsconfig.json
 docs/plan-de-implementacion.md
 docs/plan-de-pruebas.md
-docs/plan-implementacion-integrado.md
 frontend/eslint.config.js
 frontend/index.html
 frontend/package.json
@@ -88,15 +86,18 @@ frontend/src/pages/Login.tsx
 frontend/src/pages/Register.tsx
 frontend/src/reportWebVitals.ts
 frontend/src/test/setup.ts
+frontend/src/types/css.d.ts
 frontend/tsconfig.app.json
 frontend/tsconfig.json
 frontend/tsconfig.node.json
 frontend/vite.config.ts
 frontend/vitest.config.ts
 liga-futbol-prd.md
+package.json
 README.md
 tracking/NOTAS-DESARROLLO.md
 tracking/SPRINT-ACTUAL.md
+tracking/sprints/sprint-2.md
 tracking/sprints/sprint-template.md
 tracking/TAREAS-PENDIENTES.md
 tracking/TRACKING.md
@@ -105,149 +106,103 @@ tracking/TRACKING.md
 <files>
 This section contains the contents of the repository's files.
 
-<file path="frontend/src/components/layout/__tests__/MainLayout.test.tsx">
-import { render, screen } from '@testing-library/react';
-import MainLayout from '../MainLayout';
-import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material';
-import { vi, describe, it, expect } from 'vitest';
+<file path="tracking/sprints/sprint-2.md">
+# Sprint 2: Gestión de Usuarios y Equipos
+**Período:** [31-03-2025] - [11-04-2025]
 
-// Mock de los componentes internos para simplificar las pruebas
-vi.mock('../AppHeader', () => ({
-  default: () => <div data-testid="app-header">AppHeader</div>
-}));
+## Objetivos del Sprint
+1. Implementar Redux para gestión de estado global
+2. Desarrollar CRUD completo de usuarios
+3. Implementar gestión de equipos
+4. Añadir página de perfil de usuario
+5. Mejorar cobertura de pruebas
 
-vi.mock('../Sidebar', () => ({
-  default: () => <div data-testid="sidebar">Sidebar</div>
-}));
+## Tareas Específicas
 
-vi.mock('../Footer', () => ({
-  default: () => <div data-testid="footer">Footer</div>
-}));
+### 1. Implementar Redux para gestión de estado global
+- [ ] Configurar Redux Toolkit
+  - [ ] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
+  - [ ] Crear archivo de configuración de store
+  - [ ] Implementar provider en componente raíz
+- [ ] Implementar slices para autenticación
+  - [ ] Crear acciones para login, logout y registro
+  - [ ] Implementar reducers para manejo de estado de autenticación
+  - [ ] Configurar persistencia del token JWT en localStorage
+- [ ] Implementar slices para usuarios
+  - [ ] Crear acciones para gestión de usuarios (CRUD)
+  - [ ] Implementar reducers para manejo del estado de usuarios
+  - [ ] Crear selectores para acceso eficiente a datos de usuarios
+- [ ] Implementar slices para equipos
+  - [ ] Crear acciones para gestión de equipos (CRUD)
+  - [ ] Implementar reducers para manejo del estado de equipos
+  - [ ] Crear selectores para acceso eficiente a datos de equipos
+- [ ] Crear middlewares personalizados
+  - [ ] Middleware para manejo de errores de API
+  - [ ] Middleware para logging de acciones (desarrollo)
+- [ ] Implementar hooks personalizados para Redux
+  - [ ] Crear useAppSelector y useAppDispatch tipados
+  - [ ] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
+- **Estado:** Pendiente
+- **Notas:** Prioridad alta. Esta tarea es fundamental para las demás funcionalidades del sprint.
 
-// Mock para react-router-dom Outlet
-vi.mock('react-router-dom', () => ({
-  ...vi.importActual('react-router-dom'),
-  Outlet: () => <div data-testid="outlet">Outlet content</div>,
-  MemoryRouter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
+### 2. Desarrollar CRUD completo de usuarios
+- [ ] Implementar endpoints en backend para gestión de usuarios
+- [ ] Crear página de administración de usuarios
+- [ ] Implementar formularios para creación/edición de usuarios
+- [ ] Añadir funcionalidad para cambio de contraseña
+- [ ] Implementar gestión de roles de usuario
+- **Estado:** Pendiente
+- **Notas:** Depende de la implementación de Redux para la gestión de estado.
 
-describe('MainLayout', () => {
-  const theme = createTheme();
-  
-  it('renders all main components', () => {
-    render(
-      <ThemeProvider theme={theme}>
-        <MemoryRouter>
-          <MainLayout />
-        </MemoryRouter>
-      </ThemeProvider>
-    );
-    
-    // Verificar que los componentes principales están presentes
-    expect(screen.getByTestId('app-header')).toBeInTheDocument();
-    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
-    expect(screen.getByTestId('outlet')).toBeInTheDocument();
-    expect(screen.getByTestId('footer')).toBeInTheDocument();
-  });
-});
-</file>
+### 3. Implementar gestión de equipos
+- [ ] Desarrollar endpoints en backend para equipos
+- [ ] Crear página de listado de equipos
+- [ ] Implementar formulario para creación/edición de equipos
+- [ ] Crear página de detalle de equipo
+- [ ] Implementar asignación de entrenadores a equipos
+- **Estado:** Pendiente
+- **Notas:** Utilizar los slices de Redux implementados para la gestión del estado.
 
-<file path="frontend/src/main.tsx">
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+### 4. Añadir página de perfil de usuario
+- [ ] Diseñar e implementar página de perfil
+- [ ] Crear formulario para edición de datos de perfil
+- [ ] Implementar funcionalidad de cambio de contraseña
+- [ ] Añadir historial de actividad del usuario
+- **Estado:** Pendiente
+- **Notas:** Esta página debe ser accesible para todos los usuarios autenticados.
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+### 5. Mejorar cobertura de pruebas
+- [ ] Añadir pruebas para componentes de UI principales
+- [ ] Implementar pruebas para slices de Redux
+- [ ] Crear pruebas para hooks personalizados
+- [ ] Mejorar cobertura de pruebas en backend
+- **Estado:** Pendiente
+- **Notas:** Objetivo: alcanzar al menos 70% de cobertura en el código frontend y backend.
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
-</file>
+## Registro Diario
 
-<file path="frontend/src/pages/__tests__/Home.test.tsx">
-import { render, screen } from '@testing-library/react';
-import Home from '../Home';
-import { vi } from 'vitest';
-import { ThemeProvider, createTheme } from '@mui/material';
+### [31-03-2025]
+- **Avances:**
+  - Planificación detallada del sprint
+  - Configuración inicial del entorno para Redux
+- **Problemas encontrados:**
+  - Ninguno por el momento
+- **Plan para mañana:**
+  - Comenzar implementación de Redux Toolkit
+  - Configurar store inicial
 
-// Mock para react-router-dom
-vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn(),
-  useLocation: vi.fn(),
-  Link: ({ to, children, ...rest }: { to: string; children: React.ReactNode; [key: string]: unknown }) => (
-    <a href={to} {...rest}>{children}</a>
-  ),
-}));
+## Métricas del Sprint
+- **Completado:** 0%
+- **Velocidad:** Por determinar
+- **Calidad de código:** Por evaluar
 
-describe('Home', () => {
-  const theme = createTheme();
-  
-  it('renders home page components', () => {
-    render(
-      <ThemeProvider theme={theme}>
-        <Home />
-      </ThemeProvider>
-    );
-    
-    // Verificar título principal
-    expect(screen.getByText('Sistema de Gestión de Ligas de Fútbol 8v8')).toBeInTheDocument();
-    
-    // Verificar sección de características
-    expect(screen.getByText('Características Principales')).toBeInTheDocument();
-    
-    // Verificar botones principales
-    expect(screen.getByText('Comenzar Ahora')).toBeInTheDocument();
-    expect(screen.getByText('Iniciar Sesión')).toBeInTheDocument();
-    
-    // Verificar elementos de características
-    expect(screen.getByText('Gestión de Equipos')).toBeInTheDocument();
-    expect(screen.getByText('Calendario de Partidos')).toBeInTheDocument();
-    expect(screen.getByText('Gestión de Jugadores')).toBeInTheDocument();
-  });
-});
-</file>
-
-<file path="frontend/src/test/setup.ts">
-import '@testing-library/jest-dom'
-import { vi } from 'vitest'
-
-// Mock para elementos que no existen en JSDOM
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
-</file>
-
-<file path="frontend/vitest.config.ts">
-import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
-  }
-})
+## Retrospectiva (al finalizar)
+- **Lo que salió bien:**
+  - Por determinar
+- **Lo que podría mejorar:**
+  - Por determinar
+- **Acciones para el próximo sprint:**
+  - Por determinar
 </file>
 
 <file path=".cursor/rules/coding-preferences.mdc">
@@ -271,55 +226,6 @@ alwaysApply: false
 - Never add stubbing or fake data patterns to code that affects the dev or prod environments
 - Never overwrite my .env file without first asking and confirming
 -
-</file>
-
-<file path=".github/workflows/ci.yml">
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    
-    # Frontend
-    - name: Install frontend dependencies
-      working-directory: ./frontend
-      run: npm ci
-      
-    - name: Build frontend
-      working-directory: ./frontend
-      run: npm run build
-      
-    - name: Check frontend linting
-      working-directory: ./frontend
-      run: npm run lint
-      
-    # Backend
-    - name: Install backend dependencies
-      working-directory: ./backend
-      run: npm ci
-      
-    - name: Run backend tests
-      working-directory: ./backend
-      run: npm test
 </file>
 
 <file path=".gitignore">
@@ -388,55 +294,6 @@ module.exports = {
   resetMocks: true,
   restoreMocks: true,
 };
-</file>
-
-<file path="backend/package.json">
-{
-  "name": "liga-futbol-backend",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "lint": "eslint src --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "test": "jest"
-  },
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "express-validator": "^7.0.1",
-    "helmet": "^7.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.3",
-    "morgan": "^1.10.0",
-    "winston": "^3.11.0"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/jest": "^29.5.10",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/morgan": "^1.9.9",
-    "@types/node": "^20.10.4",
-    "@types/supertest": "^2.0.16",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@typescript-eslint/parser": "^6.13.2",
-    "eslint": "^8.55.0",
-    "jest": "^29.7.0",
-    "mongodb-memory-server": "^9.5.0",
-    "nodemon": "^3.0.2",
-    "prettier": "^3.1.0",
-    "supertest": "^6.3.3",
-    "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.3.3"
-  }
-}
 </file>
 
 <file path="backend/README.md">
@@ -1458,83 +1315,6 @@ router.use('/auth', authRoutes);
 export default router;
 </file>
 
-<file path="backend/src/tests/test-auth-manual.sh">
-#!/bin/bash
-
-# Definir la URL base
-BASE_URL="http://localhost:5000/api/auth"
-
-# Colores para salida
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
-
-echo -e "${YELLOW}=== Test Manual de APIs de Autenticación ===${NC}"
-echo 
-
-# 1. Registrar un nuevo usuario
-echo -e "${YELLOW}1. Registrando un nuevo usuario...${NC}"
-REGISTER_RESPONSE=$(curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"nombre":"Test","apellido":"User","email":"test@example.com","password":"password123"}' \
-  $BASE_URL/register)
-
-echo "$REGISTER_RESPONSE" | jq .
-
-# Extraer token
-TOKEN=$(echo "$REGISTER_RESPONSE" | jq -r '.token')
-
-if [ "$TOKEN" != "null" ]; then
-  echo -e "${GREEN}✓ Registro exitoso, token obtenido${NC}"
-else
-  echo -e "${RED}✗ Error en registro${NC}"
-  exit 1
-fi
-
-echo 
-
-# 2. Iniciar sesión
-echo -e "${YELLOW}2. Iniciando sesión...${NC}"
-LOGIN_RESPONSE=$(curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password123"}' \
-  $BASE_URL/login)
-
-echo "$LOGIN_RESPONSE" | jq .
-
-# Actualizar token
-TOKEN=$(echo "$LOGIN_RESPONSE" | jq -r '.token')
-
-if [ "$TOKEN" != "null" ]; then
-  echo -e "${GREEN}✓ Login exitoso, token obtenido${NC}"
-else
-  echo -e "${RED}✗ Error en login${NC}"
-  exit 1
-fi
-
-echo 
-
-# 3. Obtener perfil del usuario
-echo -e "${YELLOW}3. Obteniendo perfil del usuario...${NC}"
-ME_RESPONSE=$(curl -s -X GET \
-  -H "Authorization: Bearer $TOKEN" \
-  $BASE_URL/me)
-
-echo "$ME_RESPONSE" | jq .
-
-if [ "$(echo "$ME_RESPONSE" | jq -r '.success')" == "true" ]; then
-  echo -e "${GREEN}✓ Perfil obtenido correctamente${NC}"
-else
-  echo -e "${RED}✗ Error al obtener perfil${NC}"
-  exit 1
-fi
-
-echo 
-
-echo -e "${GREEN}=== Todos los tests manuales pasaron exitosamente ===${NC}"
-</file>
-
 <file path="backend/tsconfig.json">
 {
   "compilerOptions": {
@@ -1554,615 +1334,6 @@ echo -e "${GREEN}=== Todos los tests manuales pasaron exitosamente ===${NC}"
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
-</file>
-
-<file path="docs/plan-implementacion-integrado.md">
-# Plan de Implementación Integrado: Sistema de Gestión de Ligas de Fútbol 8v8
-
-## 1. Introducción
-
-Este documento detalla el plan de implementación integral para el desarrollo del Sistema de Gestión de Ligas de Fútbol 8v8, estructurado específicamente para un escenario de desarrollo individual con apoyo de IA. El plan adopta un enfoque incremental y pragmático, priorizando la entrega de valor, la calidad del producto y manteniendo una arquitectura escalable.
-
-## 2. Enfoque de Desarrollo
-
-### 2.1 Metodología
-
-La implementación seguirá un enfoque **ágil adaptado para desarrollador individual**:
-
-- **Ciclos de desarrollo**: Sprints de 2 semanas
-- **Desarrollo iterativo**: Entregas incrementales funcionales
-- **Priorización**: Basada en valor de negocio y dependencias técnicas
-- **Revisión continua**: Validación periódica con feedback simulado de usuarios
-- **Calidad incorporada**: Pruebas integradas desde el inicio del desarrollo
-
-### 2.2 Principios Guía
-
-| Principio | Aplicación |
-|-----------|------------|
-| **Simplicidad** | Soluciones directas sobre complejidad prematura |
-| **Automatización** | Procesos repetitivos automatizados desde el inicio |
-| **Calidad incorporada** | Testing integrado en el proceso de desarrollo |
-| **Arquitectura evolutiva** | Diseño que permita cambios sin refactorizaciones masivas |
-| **Deuda técnica controlada** | Registro explícito de compromisos técnicos |
-| **Priorización inteligente** | Enfoque en componentes críticos para testing exhaustivo |
-
-## 3. Estrategia de Pruebas
-
-La estrategia de pruebas integrada se basa en un enfoque progresivo que prioriza:
-
-1. **Automatización inteligente**: Maximizar el uso de pruebas automatizadas donde aporten mayor valor
-2. **Pruebas incrementales**: Alinear las pruebas con las fases de desarrollo del MVP
-3. **Enfoque en componentes críticos**: Priorizar la robustez de las funcionalidades core
-4. **Retroalimentación continua**: Implementar ciclos cortos de prueba-corrección
-
-### 3.1 Tipos de Pruebas y Enfoque
-
-#### Pruebas Unitarias
-
-| Área | Estrategia | Herramientas | Criterio de Éxito |
-|------|------------|--------------|-------------------|
-| Backend | Probar funciones y servicios críticos aisladamente | Jest | Cobertura >80% en módulos críticos |
-| Frontend | Probar componentes React reutilizables | React Testing Library | Funcionalidad verificada de componentes clave |
-
-**Priorización para desarrollador individual:**
-- Centrarse en los módulos de alto riesgo (autenticación, cálculos de estadísticas, integración de pagos)
-- Usar generación asistida por IA para crear casos de prueba unitarios
-
-#### Pruebas de Integración
-
-| Componentes | Estrategia | Herramientas | Criterio de Éxito |
-|-------------|------------|--------------|-------------------|
-| API + DB | Verificar operaciones CRUD completas | Supertest, MongoDB Memory Server | Todos los endpoints críticos funcionan correctamente |
-| Frontend + API | Probar flujos completos de datos | Cypress (pruebas selectivas) | Flujos principales funcionan end-to-end |
-
-**Optimización para desarrollador individual:**
-- Automatizar pruebas para rutas API críticas
-- Implementar mocks inteligentes para servicios externos
-- Utilizar IA para generar casos de prueba basados en especificaciones
-
-#### Pruebas de Usuario (Manual Asistido)
-
-| Escenario | Estrategia | Herramientas | Criterio de Éxito |
-|-----------|------------|--------------|-------------------|
-| Flujos de usuario por rol | Probar manualmente con guiones predefinidos | Listas de verificación, Grabación de sesiones | Completar flujos sin errores bloqueantes |
-| Usabilidad básica | Evaluar experiencia de usuario en puntos clave | Herramientas de feedback, Heurísticas UX | Identificar problemas críticos de usabilidad |
-
-#### Pruebas de Seguridad Básicas
-
-| Aspecto | Estrategia | Herramientas | Criterio de Éxito |
-|---------|------------|--------------|-------------------|
-| Autenticación | Verificar puntos débiles comunes | OWASP ZAP (automatizado) | Sin vulnerabilidades críticas |
-| Autorización | Probar accesos por rol | Scripts manuales + automatizados | Separación correcta de permisos |
-| Protección de datos | Verificar encriptación y sanitización | Revisión de código asistida | Datos sensibles protegidos adecuadamente |
-
-#### Pruebas de Rendimiento Esenciales
-
-| Aspecto | Estrategia | Herramientas | Criterio de Éxito |
-|---------|------------|--------------|-------------------|
-| Carga básica | Simular uso simultáneo moderado | k6, Artillery (scripts simples) | Respuesta <1s con 50 usuarios concurrentes |
-| Optimización | Identificar cuellos de botella | Chrome DevTools, React Profiler | FCP <1.5s, TTI <3s |
-
-## 4. Preparación del Entorno
-
-### 4.1 Setup Inicial
-
-| Tarea | Herramientas | Tiempo Estimado |
-|-------|--------------|-----------------|
-| Configuración de repositorio | GitHub | 1 día |
-| Estructura de proyecto base | Create React App + TypeScript | 1 día |
-| Setup de backend | Express.js + TypeScript | 1 día |
-| Configuración de base de datos | MongoDB Atlas | 1 día |
-| Integración de CI/CD básica | GitHub Actions | 1 día |
-| Configuración de entorno de pruebas | Jest, Supertest, RTL | 1 día |
-
-### 4.2 Infraestructura
-
-| Componente | Tecnología | Configuración |
-|------------|------------|---------------|
-| Frontend Hosting | Vercel | Despliegue automático desde main |
-| Backend Hosting | Railway | Despliegue automático desde main |
-| Base de Datos | MongoDB Atlas | Cluster compartido (plan gratuito) |
-| Almacenamiento | Cloudinary | Plan gratuito para desarrollo |
-| Dominio | Personalizado | Configuración en Vercel |
-| Entornos de Prueba | Local, Staging, Producción | Configuración específica por entorno |
-
-### 4.3 Configuración de Entornos de Prueba
-
-| Entorno | Propósito | Configuración | Datos |
-|---------|-----------|---------------|-------|
-| Desarrollo | Pruebas durante implementación | Local + MongoDB local/Atlas | Datos sintéticos básicos |
-| Staging | Verificación pre-producción | Vercel/Netlify Preview + MongoDB Atlas | Datos sintéticos completos |
-| Producción | Verificación final | Vercel/Netlify + MongoDB Atlas | Datos reales (post-lanzamiento) |
-
-**Simplificación para desarrollador individual:**
-- Utilizar Docker para simular entornos aislados cuando sea necesario
-- Mantener conjunto de datos de prueba pre-generados por IA
-- Implementar scripts para restablecer entornos de prueba
-
-## 5. Plan de Implementación por Fases con Pruebas Integradas
-
-### 5.1 Fase 1: MVP (Semanas 1-10)
-
-#### Semanas 1-2: Configuración y Arquitectura Base
-
-**Desarrollo:**
-- Estructura del proyecto completo
-- Configuración de autenticación JWT
-- Modelo de datos básico
-- Plantillas UI con diseño responsive básico
-
-**Pruebas:**
-- Configuración inicial de Jest y React Testing Library
-- Creación de suite básica de pruebas para autenticación
-- Configuración de GitHub Actions para CI
-
-#### Semanas 3-4: Gestión de Usuarios y Equipos
-
-**Desarrollo:**
-- CRUD de usuarios con roles
-- CRUD de equipos
-- Asignación de entrenadores a equipos
-- Pantallas y layouts principales
-
-**Pruebas:**
-- Tests unitarios para validación de usuarios y roles
-- Tests de integración para operaciones CRUD de usuarios y equipos
-- Pruebas manuales de flujos de autenticación
-
-#### Semanas 5-6: Gestión de Jugadores
-
-**Desarrollo:**
-- CRUD de jugadores
-- Asignación de jugadores a equipos
-- Perfil de jugador básico
-- Lógica de fichajes simple
-
-**Pruebas:**
-- Tests unitarios para validación de jugadores
-- Tests de integración para asignación de jugadores a equipos
-- Pruebas manuales de flujos de gestión de jugadores
-
-#### Semanas 7-8: Calendario y Partidos
-
-**Desarrollo:**
-- Creación manual de calendario
-- Gestión de partidos
-- Asignación de equipos a partidos
-- Visualización de calendario
-
-**Pruebas:**
-- Tests de integración para gestión de calendario
-- Verificación manual de visualización de calendario
-- Pruebas de casos borde en asignaciones de partidos
-
-#### Semanas 9-10: Tabla de Posiciones
-
-**Desarrollo:**
-- Registro básico de resultados
-- Cálculo automático de posiciones
-- Visualización de tabla
-- Revisión general del MVP
-
-**Pruebas:**
-- Tests unitarios exhaustivos para cálculos de posiciones
-- Tests de integración para actualización de tabla
-- Pruebas end-to-end de flujo completo del MVP
-- Revisión de seguridad básica del MVP
-
-**Tabla de Priorización de Pruebas MVP:**
-
-| Módulo | Pruebas Unitarias | Pruebas Integración | Pruebas Manuales | Automatización |
-|--------|-------------------|---------------------|------------------|----------------|
-| Autenticación | Alta | Alta | Media | Alta |
-| Gestión Equipos | Media | Alta | Alta | Media |
-| Gestión Jugadores | Media | Alta | Alta | Media |
-| Calendarización | Baja | Media | Alta | Baja |
-| Tabla Posiciones | Alta | Media | Media | Media |
-
-### 5.2 Fase 2: Funcionalidades Core (Semanas 11-20)
-
-#### Semanas 11-12: Sistema de Estadísticas
-
-**Desarrollo:**
-- Registro detallado de eventos de partido
-- Cálculo de estadísticas por equipo
-- Cálculo de estadísticas individuales
-- Reportes básicos
-
-**Pruebas:**
-- Tests unitarios exhaustivos para cálculos estadísticos
-- Pruebas de integración para registro de eventos
-- Validación de reportes generados
-
-#### Semanas 13-14: Gestión de Árbitros
-
-**Desarrollo:**
-- CRUD de árbitros
-- Asignación de árbitros a partidos
-- Registro de informes arbitrales
-- Seguimiento de pagos básico
-
-**Pruebas:**
-- Tests de integración para asignación de árbitros
-- Pruebas manuales de flujos de informes
-- Verificación de permisos por rol
-
-#### Semanas 15-16: Sistema de Sanciones
-
-**Desarrollo:**
-- Registro de tarjetas y sanciones
-- Cálculo automático de suspensiones
-- Notificaciones básicas
-- Visualización de sanciones en perfiles
-
-**Pruebas:**
-- Tests unitarios para cálculos de suspensiones
-- Tests de integración para aplicación de sanciones
-- Pruebas de casos límite en acumulación de tarjetas
-
-#### Semanas 17-18: Generación Automática de Calendario
-
-**Desarrollo:**
-- Algoritmo de generación de calendario
-- Configuración de restricciones
-- Edición manual posterior
-- Validación de conflictos
-
-**Pruebas:**
-- Tests unitarios exhaustivos del algoritmo de generación
-- Pruebas de casos específicos con restricciones
-- Verificación manual de calendarios generados
-
-#### Semanas 19-20: Dashboard Administrativo
-
-**Desarrollo:**
-- KPIs principales
-- Visualización de estado de la liga
-- Funciones de administración centralizadas
-- Revisión y pruebas de Fase 2
-
-**Pruebas:**
-- Pruebas manuales de experiencia de usuario en dashboard
-- Verificación de cálculos de KPIs
-- Pruebas de rendimiento básicas
-- Revisión de seguridad de la Fase 2
-
-**Tabla de Priorización de Pruebas Fase 2:**
-
-| Módulo | Pruebas Unitarias | Pruebas Integración | Pruebas Manuales | Automatización |
-|--------|-------------------|---------------------|------------------|----------------|
-| Estadísticas | Alta | Alta | Media | Alta |
-| Gestión Árbitros | Media | Media | Alta | Baja |
-| Sanciones | Alta | Alta | Media | Media |
-| Dashboard Admin | Baja | Media | Alta | Baja |
-
-### 5.3 Fase 3: Contenido y Engagement (Semanas 21-28)
-
-#### Semanas 21-22: Sistema de Noticias
-
-**Desarrollo:**
-- CRUD de noticias y anuncios
-- Categorización de contenido
-- Editor WYSIWYG básico
-- Visualización en frontend
-
-**Pruebas:**
-- Tests de integración para publicación de noticias
-- Pruebas de sanitización de contenido
-- Verificación de permisos por rol
-
-#### Semanas 23-24: Galería Multimedia
-
-**Desarrollo:**
-- Subida y gestión de imágenes
-- Organización por categorías
-- Optimización de imágenes
-- Galería responsive
-
-**Pruebas:**
-- Pruebas de carga y rendimiento con imágenes
-- Verificación de optimización de imágenes
-- Tests de seguridad para subida de archivos
-
-#### Semanas 25-26: Notificaciones y Alertas
-
-**Desarrollo:**
-- Sistema de notificaciones in-app
-- Alertas por email (básicas)
-- Preferencias de notificación
-- Centro de notificaciones
-
-**Pruebas:**
-- Tests de integración para generación de notificaciones
-- Pruebas de entrega de emails
-- Verificación de configuración de preferencias
-
-#### Semanas 27-28: Optimizaciones y PWA
-
-**Desarrollo:**
-- Convertir a PWA básica
-- Optimizaciones de rendimiento
-- Mejoras de UX basadas en feedback
-- Revisión completa de Fase 3
-
-**Pruebas:**
-- Pruebas de funcionalidad PWA (offline, instalación)
-- Tests de rendimiento y optimización
-- Pruebas en múltiples dispositivos
-- Revisión de seguridad de la Fase 3
-
-### 5.4 Fase 4: Monetización y Escalabilidad (Semanas 29-38)
-
-#### Semanas 29-30: Integración de Pagos
-
-**Desarrollo:**
-- Integración con Stripe
-- Flujo de pago básico
-- Gestión de transacciones
-- Facturas simples
-
-**Pruebas:**
-- Tests exhaustivos de flujos de pago (sandbox)
-- Pruebas de seguridad específicas para pagos
-- Verificación de manejo de errores en transacciones
-
-#### Semanas 31-32: Multi-tenancy Básico
-
-**Desarrollo:**
-- Separación lógica por liga
-- Gestión de configuración por liga
-- Aislamiento de datos
-- Pruebas de aislamiento
-
-**Pruebas:**
-- Tests de aislamiento de datos entre ligas
-- Pruebas de seguridad de acceso entre tenants
-- Verificación de configuraciones específicas por liga
-
-#### Semanas 33-38: Personalización, Rendimiento y Analíticas
-
-**Desarrollo y Pruebas:** Desarrollo incremental con pruebas integradas siguiendo el mismo patrón.
-
-### 5.5 Fase 5: Refinamiento (Semanas 39-44)
-
-**Desarrollo y Pruebas:** Desarrollo incremental con pruebas integradas siguiendo el mismo patrón, con énfasis en:
-- Pruebas de compatibilidad móvil
-- Verificación exhaustiva de funcionalidades premium
-- Revisión final de seguridad
-- Tests de rendimiento finales
-
-## 6. Estrategia de Automatización de Pruebas
-
-### 6.1 Qué Automatizar vs. Qué No Automatizar
-
-| Nivel | Qué Automatizar | Qué No Automatizar | Herramientas |
-|-------|-----------------|---------------------|--------------|
-| Unitarias | Lógica de negocio crítica, validaciones | Componentes UI simples, código trivial | Jest, React Testing Library |
-| API | Endpoints principales, validación de respuestas | Casos extremos raros | Supertest, Postman |
-| E2E | Flujos críticos (2-3 por rol de usuario) | Pruebas de exploración, edge cases | Cypress (selectivamente) |
-| CI/CD | Ejecución de suite de tests, linting, build | Pruebas de rendimiento pesadas | GitHub Actions |
-
-### 6.2 Uso de IA para Pruebas
-
-| Actividad | Enfoque IA | Beneficio |
-|-----------|------------|-----------|
-| Generación de casos de prueba | Generar casos basados en criterios de aceptación | Ahorro de tiempo, mejor cobertura |
-| Mocks y datos de prueba | Crear datos realistas y variados | Pruebas más robustas |
-| Análisis de cobertura | Identificar áreas sin pruebas suficientes | Mejor distribución del esfuerzo |
-| Depuración | Asistencia en análisis de fallos | Resolución más rápida |
-
-## 7. Gestión de Defectos Integrada
-
-### 7.1 Proceso de Gestión
-
-| Etapa | Herramienta | Proceso |
-|-------|------------|---------|
-| Registro | GitHub Issues | Categorizar por severidad y módulo |
-| Priorización | GitHub Project | Priorizar por impacto y frecuencia |
-| Seguimiento | GitHub Issues | Documentar pasos para reproducir |
-| Verificación | Tests automatizados | Crear test que verifique la corrección |
-
-### 7.2 Criterios de Severidad y Tiempos de Respuesta
-
-| Nivel | Descripción | Tiempo Objetivo |
-|-------|-------------|-----------------|
-| Crítico | Impide funcionalidad principal, data corruption | Inmediato |
-| Alto | Funcionalidad principal degradada | 1-2 días |
-| Medio | Problema en funcionalidad secundaria | 1 semana |
-| Bajo | Problema cosmético, mejora | Backlog |
-
-## 8. Stack Tecnológico Detallado
-
-### 8.1 Frontend
-
-| Componente | Tecnología | Justificación |
-|------------|------------|---------------|
-| Framework | React.js + TypeScript | Tipado estático, ecosistema robusto |
-| UI Framework | Material UI | Componentes pre-estilizados, temas |
-| Estado | Redux Toolkit | Manejo escalable de estado |
-| Routing | React Router | Estándar de la industria |
-| Formularios | Formik + Yup | Validación y manejo eficiente |
-| Gráficos | Recharts | Lightweight, gran personalización |
-| Tablas | Material UI DataGrid | Rendimiento con datasets grandes |
-| Testing | Jest + RTL | Cobertura completa de testing |
-
-### 8.2 Backend
-
-| Componente | Tecnología | Justificación |
-|------------|------------|---------------|
-| Runtime | Node.js | Mismo lenguaje en toda la stack |
-| Framework | Express.js + TypeScript | Ligero, flexible, tipado |
-| Autenticación | JWT + bcrypt | Seguro, stateless |
-| Validación | Joi | Esquemas declarativos |
-| ORM/ODM | Mongoose | Tipado para MongoDB, hooks |
-| API Docs | Swagger/OpenAPI | Documentación interactiva |
-| Testing | Jest + Supertest | Cobertura completa |
-| Logging | Winston | Flexible, múltiples transports |
-
-### 8.3 DevOps y Pruebas
-
-| Componente | Tecnología | Justificación |
-|------------|------------|---------------|
-| CI | GitHub Actions | Integrado con repositorio |
-| CD | Vercel/Railway | Despliegue sencillo y automático |
-| Monitoreo | Sentry | Seguimiento de errores |
-| Análisis | Lighthouse CI | Métricas de rendimiento |
-| Testing API | Supertest, Postman | Verificación de endpoints |
-| Testing E2E | Cypress (uso limitado) | Flujos críticos automatizados |
-| Testing de carga | k6 (scripts básicos) | Verificar rendimiento básico |
-| Testing de seguridad | OWASP ZAP, npm audit | Vulnerabilidades comunes |
-
-## 9. Ciclo de Trabajo Integrado de Desarrollo y Pruebas
-
-### 9.1 Distribución de Esfuerzo para Desarrollador Individual
-
-| Actividad | % Tiempo | Enfoque |
-|-----------|----------|---------|
-| Desarrollo | 60-70% | Implementación con TDD cuando sea posible |
-| Pruebas automatizadas | 15-20% | Enfoque en tests de alto valor |
-| Pruebas manuales | 10-15% | Sesiones programadas de prueba |
-| Gestión de defectos | 5-10% | Corrección prioritaria |
-
-### 9.2 Ciclo de Trabajo Recomendado
-
-| Frecuencia | Actividad |
-|------------|-----------|
-| Diaria | Ejecución de tests unitarios y linting automatizado |
-| Fin de feature | Pruebas de integración de la característica |
-| Semanal | Sesión de pruebas exploratorias manuales |
-| Quincenal | Revisión de cobertura y deuda técnica |
-| Por release | Suite completa de pruebas, incluyendo e2e |
-
-## 10. Criterios de Aceptación y Métricas
-
-### 10.1 Criterios de Aceptación Generales
-
-| Categoría | Criterio de Éxito |
-|-----------|-------------------|
-| Funcional | 100% de pruebas críticas pasan, 0 defectos bloqueantes |
-| Rendimiento | Tiempo de carga <2s en condiciones normales |
-| Usabilidad | Flujos principales completables sin errores de usuario |
-| Seguridad | Sin vulnerabilidades críticas o altas |
-
-### 10.2 Métricas de Calidad y Progreso
-
-| Métrica | Objetivo | Herramienta |
-|---------|----------|------------|
-| Cobertura de código | >70% en módulos críticos | Jest Coverage |
-| Tasa de defectos | <1 crítico por sprint | GitHub Issues |
-| Deuda técnica | <10% del esfuerzo total | SonarQube (o similar) |
-| Velocidad | Completar >80% de tareas estimadas por sprint | Tablero de tareas |
-| Rendimiento | LCP <2.5s, TTI <3.5s | Lighthouse CI |
-
-## 11. Arquitectura de Alto Nivel
-
-### 11.1 Arquitectura de Aplicación
-
-```ascii
-┌────────────────┐      ┌────────────────┐      ┌────────────────┐
-│   Frontend     │      │    Backend     │      │   Database     │
-│                │      │                │      │                │
-│  React + MUI   │◄────►│  Express API   │◄────►│   MongoDB      │
-│                │      │                │      │                │
-└────────────────┘      └─────┬──────────┘      └────────────────┘
-                              │
-                  ┌───────────┴───────────┐
-                  │   External Services   │
-                  │                       │
-                  │  Cloudinary, Stripe   │
-                  │                       │
-                  └───────────────────────┘
-```
-
-### 11.2 Arquitectura de Datos
-
-```ascii
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Usuario   │─┐   │   Equipo    │─┐   │  Partido    │
-│             │ │   │             │ │   │             │
-└─────────────┘ │   └─────────────┘ │   └─────────────┘
-                │                   │
-                ▼                   ▼
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Jugador   │◄───►│   Evento    │     │  Árbitro    │
-│             │     │             │     │             │
-└─────────────┘     └─────────────┘     └─────────────┘
-                │
-                ▼
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Noticia   │     │ Multimedia  │     │   Liga      │
-│             │     │             │     │             │
-└─────────────┘     └─────────────┘     └─────────────┘
-```
-
-## 12. Gestión de Riesgos
-
-| Riesgo | Probabilidad | Impacto | Mitigación |
-|--------|--------------|---------|------------|
-| Scope creep | Alta | Alto | Estricta priorización, scope fijo por sprint |
-| Deuda técnica acumulada | Alta | Medio | Días dedicados a refactorización |
-| Problemas de rendimiento | Media | Alto | Monitorización temprana, optimización progresiva |
-| Tiempo insuficiente para pruebas | Alta | Alto | Priorizar pruebas por criticidad, automatizar inteligentemente |
-| Complejidad de pruebas multi-tenant | Media | Alto | Comenzar con arquitectura de pruebas que soporte multi-tenancy desde el inicio |
-
-## 13. Anexos
-
-### 13.1 Templates de Prueba
-
-#### Template para Pruebas Unitarias
-
-```javascript
-describe('Módulo: [Nombre del Módulo]', () => {
-  describe('Función: [Nombre de la Función]', () => {
-    test('Debería [comportamiento esperado] cuando [condición]', () => {
-      // Arrange
-      // Act
-      // Assert
-    });
-  });
-});
-```
-
-#### Template para Pruebas de API
-
-```javascript
-describe('API: [Nombre del Endpoint]', () => {
-  test('Debería [comportamiento esperado] cuando [condición]', async () => {
-    // Arrange
-    // Act: Llamada al endpoint
-    // Assert: Verificar código de estado y respuesta
-  });
-});
-```
-
-#### Lista de Verificación para Pruebas Manuales
-
-- [ ] Verificar flujo principal
-- [ ] Probar casos de borde (valores límite)
-- [ ] Verificar mensajes de error
-- [ ] Probar en diferentes resoluciones
-- [ ] Verificar permisos por rol
-
-### 13.2 Datos de Prueba Esenciales
-
-| Entidad | Datos Mínimos |
-|---------|---------------|
-| Usuarios | 1 por cada rol (Admin, Veedor, Entrenador, Jugador) |
-| Equipos | 4-8 equipos con datos completos |
-| Jugadores | 10-15 por equipo |
-| Partidos | Calendario completo de una temporada |
-| Eventos | Variedad de goles y tarjetas |
-
-## 14. Conclusión
-
-Este plan de implementación integrado está diseñado específicamente para un escenario de desarrollo individual con apoyo de IA, equilibrando la necesidad de garantizar calidad con los recursos disponibles. Al integrar las pruebas directamente en el proceso de desarrollo, se busca:
-
-1. Maximizar la eficiencia en el desarrollo y las pruebas
-2. Asegurar la calidad del producto desde las primeras etapas
-3. Utilizar estratégicamente la automatización y los recursos disponibles
-4. Mantener un balance pragmático entre desarrollo y verificación
-
-Siguiendo este plan adaptado, se facilitará el seguimiento de actividades en la carpeta de tracking y se garantizará un producto de calidad a pesar de las limitaciones de recursos.
 </file>
 
 <file path="frontend/eslint.config.js">
@@ -2267,66 +1438,52 @@ export default tseslint.config(
 }
 </file>
 
-<file path="frontend/src/App.tsx">
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+<file path="frontend/src/components/layout/__tests__/MainLayout.test.tsx">
+import { render, screen } from '@testing-library/react';
+import MainLayout from '../MainLayout';
+import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material';
+import { vi, describe, it, expect } from 'vitest';
 
-// Importar layout principal
-import MainLayout from './components/layout/MainLayout';
+// Mock de los componentes internos para simplificar las pruebas
+vi.mock('../AppHeader', () => ({
+  default: () => <div data-testid="app-header">AppHeader</div>
+}));
 
-// Importar páginas
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
+vi.mock('../Sidebar', () => ({
+  default: () => <div data-testid="sidebar">Sidebar</div>
+}));
 
-// Tema personalizado
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-  typography: {
-    fontFamily: [
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif'
-    ].join(','),
-  },
+vi.mock('../Footer', () => ({
+  default: () => <div data-testid="footer">Footer</div>
+}));
+
+// Mock para react-router-dom Outlet
+vi.mock('react-router-dom', () => ({
+  ...vi.importActual('react-router-dom'),
+  Outlet: () => <div data-testid="outlet">Outlet content</div>,
+  MemoryRouter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+describe('MainLayout', () => {
+  const theme = createTheme();
+  
+  it('renders all main components', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <MemoryRouter>
+          <MainLayout />
+        </MemoryRouter>
+      </ThemeProvider>
+    );
+    
+    // Verificar que los componentes principales están presentes
+    expect(screen.getByTestId('app-header')).toBeInTheDocument();
+    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+    expect(screen.getByTestId('outlet')).toBeInTheDocument();
+    expect(screen.getByTestId('footer')).toBeInTheDocument();
+  });
 });
-
-// Componente principal
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <Routes>
-          {/* Rutas públicas */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          
-          {/* Rutas con layout principal */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/teams" element={<div>Gestión de Equipos (En desarrollo)</div>} />
-            <Route path="/players" element={<div>Gestión de Jugadores (En desarrollo)</div>} />
-            <Route path="/matches" element={<div>Gestión de Partidos (En desarrollo)</div>} />
-            <Route path="/standings" element={<div>Tabla de Posiciones (En desarrollo)</div>} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
-  );
-}
-
-export default App;
 </file>
 
 <file path="frontend/src/components/layout/AppHeader.tsx">
@@ -2625,23 +1782,66 @@ const Sidebar: React.FC<SidebarProps> = ({
 export default Sidebar;
 </file>
 
-<file path="frontend/src/index.css">
-/* Estilos globales */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+<file path="frontend/src/main.tsx">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
-/* Agregar más estilos globales según sea necesario */
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+</file>
+
+<file path="frontend/src/pages/__tests__/Home.test.tsx">
+import { render, screen } from '@testing-library/react';
+import Home from '../Home';
+import { vi } from 'vitest';
+import { ThemeProvider, createTheme } from '@mui/material';
+
+// Mock para react-router-dom
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+  useLocation: vi.fn(),
+  Link: ({ to, children, ...rest }: { to: string; children: React.ReactNode; [key: string]: unknown }) => (
+    <a href={to} {...rest}>{children}</a>
+  ),
+}));
+
+describe('Home', () => {
+  const theme = createTheme();
+  
+  it('renders home page components', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <Home />
+      </ThemeProvider>
+    );
+    
+    // Verificar título principal
+    expect(screen.getByText('Sistema de Gestión de Ligas de Fútbol 8v8')).toBeInTheDocument();
+    
+    // Verificar sección de características
+    expect(screen.getByText('Características Principales')).toBeInTheDocument();
+    
+    // Verificar botones principales
+    expect(screen.getByText('Comenzar Ahora')).toBeInTheDocument();
+    expect(screen.getByText('Iniciar Sesión')).toBeInTheDocument();
+    
+    // Verificar elementos de características
+    expect(screen.getByText('Gestión de Equipos')).toBeInTheDocument();
+    expect(screen.getByText('Calendario de Partidos')).toBeInTheDocument();
+    expect(screen.getByText('Gestión de Jugadores')).toBeInTheDocument();
+  });
+});
 </file>
 
 <file path="frontend/src/pages/Dashboard.tsx">
@@ -3438,24 +2638,28 @@ const Register: React.FC = () => {
 export default Register;
 </file>
 
-<file path="frontend/src/reportWebVitals.ts">
-import * as webVitals from 'web-vitals';
+<file path="frontend/src/test/setup.ts">
+import '@testing-library/jest-dom'
+import { vi } from 'vitest'
 
-type ReportHandler = (metric: webVitals.Metric) => void;
+// Mock para elementos que no existen en JSDOM
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
+</file>
 
-const reportWebVitals = (onPerfEntry?: ReportHandler) => {
-  if (onPerfEntry && onPerfEntry instanceof Function) {
-    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
-      onCLS(onPerfEntry);
-      onFID(onPerfEntry);
-      onFCP(onPerfEntry);
-      onLCP(onPerfEntry);
-      onTTFB(onPerfEntry);
-    });
-  }
-};
-
-export default reportWebVitals;
+<file path="frontend/src/types/css.d.ts">
+declare module '*.css';
 </file>
 
 <file path="frontend/tsconfig.app.json">
@@ -3514,16 +2718,17 @@ export default reportWebVitals;
 }
 </file>
 
-<file path="frontend/vite.config.ts">
-import { defineConfig } from 'vite'
+<file path="frontend/vitest.config.ts">
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    port: 3000,
-    open: true
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
   }
 })
 </file>
@@ -4015,6 +3220,38 @@ Este PRD define una aplicación completa de gestión de ligas de fútbol 8v8 con
 La arquitectura propuesta está diseñada para ser escalable y personalizable, facilitando la adaptación a las necesidades específicas de cada liga cliente. La elección de tecnologías modernas como React, Node.js y MongoDB proporcionará la flexibilidad necesaria para evolucionar el producto según el feedback de los usuarios.
 
 El éxito del producto dependerá en gran medida de su usabilidad, fiabilidad y capacidad para ofrecer valor real a los administradores de ligas, entrenadores y jugadores, simplificando tareas administrativas y mejorando la experiencia general de participación en la liga.
+</file>
+
+<file path="package.json">
+{
+  "name": "gestor-liga-futbol",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build": "npm run build:frontend && npm run build:backend",
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd backend && npm test",
+    "test": "npm run test:frontend && npm run test:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "lint": "npm run lint:frontend && npm run lint:backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
 </file>
 
 <file path="tracking/sprints/sprint-template.md">
@@ -4667,61 +3904,6 @@ Este plan de pruebas está diseñado específicamente para un escenario de desar
 Al seguir este plan adaptado, se maximizará la eficiencia del proceso de pruebas y se garantizará un producto de calidad a pesar de las limitaciones de recursos.
 </file>
 
-<file path="frontend/package.json">
-{
-  "name": "liga-futbol-frontend",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint src --ext ts,tsx",
-    "preview": "vite preview",
-    "test": "vitest",
-    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\""
-  },
-  "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.8",
-    "@mui/material": "^6.4.8",
-    "@mui/x-data-grid": "^7.28.0",
-    "@reduxjs/toolkit": "^2.6.1",
-    "axios": "^1.8.3",
-    "formik": "^2.4.6",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-redux": "^9.2.0",
-    "react-router-dom": "^7.3.0",
-    "yup": "^1.6.1"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/jest": "^29.5.14",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "^9.21.0",
-    "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
-    "globals": "^15.15.0",
-    "jsdom": "^26.0.0",
-    "prettier": "^3.5.3",
-    "typescript": "~5.7.2",
-    "typescript-eslint": "^8.24.1",
-    "vite": "^6.2.0",
-    "vitest": "^3.0.9",
-    "web-vitals": "^4.2.4"
-  }
-}
-</file>
-
 <file path="frontend/README.md">
 # Frontend - Sistema de Gestión de Ligas de Fútbol 8v8
 
@@ -4798,6 +3980,107 @@ src/
 - Formik & Yup
 </file>
 
+<file path="frontend/src/App.tsx">
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Importar layout principal
+import MainLayout from './components/layout/MainLayout';
+
+// Importar páginas
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+
+// Tema personalizado
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+  typography: {
+    fontFamily: [
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif'
+    ].join(','),
+  },
+});
+
+// Componente principal
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Routes>
+          {/* Rutas públicas */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Rutas con layout principal */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/teams" element={<div>Gestión de Equipos (En desarrollo)</div>} />
+            <Route path="/players" element={<div>Gestión de Jugadores (En desarrollo)</div>} />
+            <Route path="/matches" element={<div>Gestión de Partidos (En desarrollo)</div>} />
+            <Route path="/standings" element={<div>Tabla de Posiciones (En desarrollo)</div>} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+}
+
+export default App;
+</file>
+
+<file path="frontend/src/index.css">
+/* Estilos globales */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Agregar más estilos globales según sea necesario */
+</file>
+
+<file path="frontend/src/reportWebVitals.ts">
+import * as webVitals from 'web-vitals';
+
+type ReportHandler = (metric: webVitals.Metric) => void;
+
+const reportWebVitals = (onPerfEntry?: ReportHandler) => {
+  if (onPerfEntry && onPerfEntry instanceof Function) {
+    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+      onCLS(onPerfEntry);
+      onFID(onPerfEntry);
+      onFCP(onPerfEntry);
+      onLCP(onPerfEntry);
+      onTTFB(onPerfEntry);
+    });
+  }
+};
+
+export default reportWebVitals;
+</file>
+
 <file path="frontend/tsconfig.json">
 {
   "files": [],
@@ -4806,6 +4089,20 @@ src/
     { "path": "./tsconfig.node.json" }
   ]
 }
+</file>
+
+<file path="frontend/vite.config.ts">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    open: true
+  }
+})
 </file>
 
 <file path="tracking/NOTAS-DESARROLLO.md">
@@ -4862,6 +4159,18 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - **Rendimiento:** Implementar memoización para componentes pesados
 - **Seguridad:** Considerar implementación de rate limiting
 - **UX:** Mejorar feedback visual en formularios
+- **Estado Global:** Implementar Redux en Sprint 2
+  - Prioridad: Alta
+  - Beneficios esperados:
+    - Mejor gestión del estado global de la aplicación
+    - Facilitar el manejo de datos entre componentes no relacionados
+    - Mejorar la trazabilidad de cambios en la aplicación
+    - Facilitar la implementación de persistencia de datos
+  - Consideraciones técnicas:
+    - Usar Redux Toolkit para reducir el boilerplate
+    - Organizar slices por dominio (auth, users, teams, etc.)
+    - Implementar middleware personalizado para manejo de errores
+    - Crear hooks tipados para mejorar la experiencia de desarrollo
 
 ## Referencias y Recursos Útiles
 
@@ -4895,9 +4204,27 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 
 #### Redux
 - [ ] Configurar Redux Toolkit
+  - [ ] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
+  - [ ] Crear archivo de configuración de store
+  - [ ] Implementar provider en componente raíz
 - [ ] Implementar slices para autenticación
+  - [ ] Crear acciones para login, logout y registro
+  - [ ] Implementar reducers para manejo de estado de autenticación
+  - [ ] Configurar persistencia del token JWT en localStorage
 - [ ] Implementar slices para usuarios
+  - [ ] Crear acciones para gestión de usuarios (CRUD)
+  - [ ] Implementar reducers para manejo del estado de usuarios
+  - [ ] Crear selectores para acceso eficiente a datos de usuarios
 - [ ] Implementar slices para equipos
+  - [ ] Crear acciones para gestión de equipos (CRUD)
+  - [ ] Implementar reducers para manejo del estado de equipos
+  - [ ] Crear selectores para acceso eficiente a datos de equipos
+- [ ] Crear middlewares personalizados
+  - [ ] Middleware para manejo de errores de API
+  - [ ] Middleware para logging de acciones (desarrollo)
+- [ ] Implementar hooks personalizados para Redux
+  - [ ] Crear useAppSelector y useAppDispatch tipados
+  - [ ] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
 
 #### Funcionalidades de usuario
 - [ ] Crear página de perfil de usuario
@@ -4916,6 +4243,13 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - [ ] Mejorar pipeline CI/CD
 - [ ] Añadir análisis de cobertura de código
 - [ ] Configurar despliegue automático a entorno de desarrollo
+
+### Pruebas y Refactorización (Sprint Actual)
+- [ ] Implementar pruebas unitarias para servicios de autenticación
+- [ ] Implementar pruebas de componentes para formularios de login/registro
+- [ ] Refactorizar código de autenticación para mejorar mantenibilidad
+- [ ] Configurar análisis estático de código en GitHub Actions
+- [ ] Documentar decisiones técnicas tomadas durante el sprint
 
 ## Backlog para Sprints Futuros
 
@@ -4979,6 +4313,108 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - Ninguno por el momento
 </file>
 
+<file path=".github/workflows/ci.yml">
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    # Instalar dependencias del proyecto raíz
+    - name: Install root dependencies
+      run: npm install
+    
+    # Frontend
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm install
+      
+    - name: Build frontend
+      run: npm run build:frontend
+      
+    - name: Run frontend tests
+      run: npm run test:frontend -- --run
+      
+    - name: Check frontend linting
+      run: npm run lint:frontend
+      
+    # Backend
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: npm install
+      
+    - name: Run backend tests
+      run: npm run test:backend
+</file>
+
+<file path="backend/package.json">
+{
+  "name": "liga-futbol-backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "jest"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.14.2",
+    "mongoose": "^8.0.3",
+    "morgan": "^1.10.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.10",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.10.4",
+    "@types/supertest": "^2.0.16",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^9.5.0",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.1.0",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.3"
+  }
+}
+</file>
+
 <file path="docs/plan-de-implementacion.md">
 # Plan de Implementación: Sistema de Gestión de Ligas de Fútbol 8v8
 
@@ -5014,7 +4450,7 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 | Tarea | Herramientas | Tiempo Estimado |
 |-------|--------------|-----------------|
 | Configuración de repositorio | GitHub | 1 día |
-| Estructura de proyecto base | Create React App + TypeScript | 1 día |
+| Estructura de proyecto base | Vite + React + TypeScript | 1 día |
 | Setup de backend | Express.js + TypeScript | 1 día |
 | Configuración de base de datos | MongoDB Atlas | 1 día |
 | Integración de CI/CD básica | GitHub Actions | 1 día |
@@ -5195,6 +4631,25 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 - Documentación final
 - Preparación para lanzamiento
 
+### 4.6 Tiempo de Calidad y Refactorización
+
+Para asegurar la calidad del código y evitar la acumulación de deuda técnica, se asignará explícitamente tiempo para pruebas y refactorización dentro de cada fase:
+
+| Fase | Tiempo Asignado | Enfoque |
+|------|-----------------|---------|
+| Fase 1: MVP | 1 día cada 2 semanas | Pruebas unitarias básicas, refactorización de componentes clave |
+| Fase 2: Core | 1.5 días cada 2 semanas | Ampliación de cobertura de pruebas, mejora de rendimiento |
+| Fase 3: Engagement | 2 días cada 2 semanas | Pruebas de integración, optimización de UX |
+| Fase 4: Monetización | 2 días cada 2 semanas | Pruebas de seguridad, optimización de rendimiento |
+| Fase 5: Refinamiento | 3 días cada 2 semanas | Pruebas de carga, optimización final |
+
+Adicionalmente, se implementará:
+
+- Sistema de revisión de código periódica (auto-revisión con ayuda de IA)
+- Análisis estático de código como parte del pipeline CI/CD
+- Documentación continua de decisiones técnicas y compromisos
+- Medición periódica de métricas de calidad (cobertura, complejidad, etc.)
+
 ## 5. Stack Tecnológico Detallado
 
 ### 5.1 Frontend
@@ -5373,6 +4828,61 @@ Este plan de implementación está diseñado específicamente para un desarrolla
 Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del Sistema de Gestión de Ligas de Fútbol 8v8, entregando un producto de calidad a pesar de las limitaciones de recursos.
 </file>
 
+<file path="frontend/package.json">
+{
+  "name": "liga-futbol-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint src --ext ts,tsx",
+    "preview": "vite preview",
+    "test": "vitest",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\""
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.8",
+    "@mui/material": "^6.4.8",
+    "@mui/x-data-grid": "^7.28.0",
+    "@reduxjs/toolkit": "^2.6.1",
+    "axios": "^1.8.3",
+    "formik": "^2.4.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.3.0",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.14",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "jsdom": "^26.0.0",
+    "prettier": "^3.5.3",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.9",
+    "web-vitals": "^4.2.4"
+  }
+}
+</file>
+
 <file path="README.md">
 # Sistema de Gestión de Ligas de Fútbol 8v8
 
@@ -5514,7 +5024,7 @@ Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la e
 - ⬜ Fase 1 - Tabla de Posiciones (0%)
 
 ## Métricas de Progreso
-- **Tareas completadas:** 3/20
+- **Tareas completadas:** 3/25
 - **Pruebas implementadas:** 0
 - **Cobertura de código:** 0%
 
@@ -5670,6 +5180,7 @@ export default app;
 3. Definir esquemas MongoDB iniciales
 4. Configurar enrutamiento básico React Router
 5. Implementar layout principal responsive
+6. Establecer base de pruebas y calidad de código
 
 ## Tareas Específicas
 
@@ -5720,6 +5231,15 @@ export default app;
 - [x] Implementar Footer
 - **Estado:** Completado
 - **Notas:** Se ha creado un layout principal responsive con AppBar, Sidebar (que se adapta a dispositivos móviles) y Footer.
+
+### 7. Establecer base de pruebas y calidad de código
+- [ ] Configurar entorno de pruebas con Vitest para frontend
+- [ ] Configurar Jest para pruebas de backend
+- [ ] Implementar primeras pruebas unitarias para componentes críticos
+- [ ] Configurar análisis estático de código (ESLint)
+- [ ] Implementar hooks de pre-commit para verificación de calidad
+- **Estado:** En progreso
+- **Notas:** Siguiendo el plan actualizado, se dedicará 1 día cada 2 semanas específicamente a pruebas y refactorización.
 
 ## Registro Diario
 
@@ -5788,6 +5308,7 @@ export default app;
   - Creada la estructura de páginas y componentes
   - Implementado layout principal responsive con AppBar, Sidebar y Footer
   - Implementadas las páginas básicas: Home, Login, Register y Dashboard
+  - Verificado y confirmado el correcto funcionamiento del pipeline CI/CD en GitHub Actions
 - **Problemas encontrados:**
   - Ninguno significativo
 - **Plan para mañana:**
@@ -5796,7 +5317,7 @@ export default app;
   - Finalizar la documentación del sprint
 
 ## Métricas del Sprint
-- **Completado:** 100%
+- **Completado:** 85%
 - **Velocidad:** 6 tareas principales completadas en 7 días
 - **Calidad de código:** Alta - Código bien estructurado con componentes reutilizables y responsive
 
@@ -5806,12 +5327,18 @@ export default app;
   - Implementación eficiente de la autenticación JWT
   - Creación de un layout principal responsive y atractivo
   - Buen manejo de la base de datos flexible (MongoDB en memoria)
+  - Configuración y verificación exitosa del pipeline CI/CD en GitHub Actions
 - **Lo que podría mejorar:**
   - Añadir más pruebas automatizadas para los componentes frontend
   - Mejorar la documentación del código
   - Implementar un sistema de gestión de estados más robusto (Redux)
 - **Acciones para el próximo sprint:**
   - Configurar Redux para gestión de estado global
+    - Priorizar la implementación completa de Redux Toolkit
+    - Crear slices para autenticación, usuarios y equipos
+    - Implementar persistencia del token JWT
+    - Desarrollar middlewares personalizados para manejo de errores y logging
+    - Crear hooks tipados para facilitar el uso de Redux en componentes
   - Implementar pruebas para componentes de UI
   - Mejorar la integración entre frontend y backend
 </file>

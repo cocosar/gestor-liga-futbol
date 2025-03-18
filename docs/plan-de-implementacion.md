@@ -32,7 +32,7 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 | Tarea | Herramientas | Tiempo Estimado |
 |-------|--------------|-----------------|
 | Configuración de repositorio | GitHub | 1 día |
-| Estructura de proyecto base | Create React App + TypeScript | 1 día |
+| Estructura de proyecto base | Vite + React + TypeScript | 1 día |
 | Setup de backend | Express.js + TypeScript | 1 día |
 | Configuración de base de datos | MongoDB Atlas | 1 día |
 | Integración de CI/CD básica | GitHub Actions | 1 día |
@@ -212,6 +212,25 @@ La implementación seguirá un enfoque **ágil adaptado para desarrollador indiv
 - Corrección de bugs pendientes
 - Documentación final
 - Preparación para lanzamiento
+
+### 4.6 Tiempo de Calidad y Refactorización
+
+Para asegurar la calidad del código y evitar la acumulación de deuda técnica, se asignará explícitamente tiempo para pruebas y refactorización dentro de cada fase:
+
+| Fase | Tiempo Asignado | Enfoque |
+|------|-----------------|---------|
+| Fase 1: MVP | 1 día cada 2 semanas | Pruebas unitarias básicas, refactorización de componentes clave |
+| Fase 2: Core | 1.5 días cada 2 semanas | Ampliación de cobertura de pruebas, mejora de rendimiento |
+| Fase 3: Engagement | 2 días cada 2 semanas | Pruebas de integración, optimización de UX |
+| Fase 4: Monetización | 2 días cada 2 semanas | Pruebas de seguridad, optimización de rendimiento |
+| Fase 5: Refinamiento | 3 días cada 2 semanas | Pruebas de carga, optimización final |
+
+Adicionalmente, se implementará:
+
+- Sistema de revisión de código periódica (auto-revisión con ayuda de IA)
+- Análisis estático de código como parte del pipeline CI/CD
+- Documentación continua de decisiones técnicas y compromisos
+- Medición periódica de métricas de calidad (cobertura, complejidad, etc.)
 
 ## 5. Stack Tecnológico Detallado
 

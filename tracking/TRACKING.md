@@ -14,7 +14,7 @@
 - ⬜ Fase 1 - Tabla de Posiciones (0%)
 
 ## Métricas de Progreso
-- **Tareas completadas:** 3/20
+- **Tareas completadas:** 3/25
 - **Pruebas implementadas:** 0
 - **Cobertura de código:** 0%
 

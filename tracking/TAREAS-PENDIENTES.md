@@ -22,9 +22,27 @@
 
 #### Redux
 - [ ] Configurar Redux Toolkit
+  - [ ] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
+  - [ ] Crear archivo de configuración de store
+  - [ ] Implementar provider en componente raíz
 - [ ] Implementar slices para autenticación
+  - [ ] Crear acciones para login, logout y registro
+  - [ ] Implementar reducers para manejo de estado de autenticación
+  - [ ] Configurar persistencia del token JWT en localStorage
 - [ ] Implementar slices para usuarios
+  - [ ] Crear acciones para gestión de usuarios (CRUD)
+  - [ ] Implementar reducers para manejo del estado de usuarios
+  - [ ] Crear selectores para acceso eficiente a datos de usuarios
 - [ ] Implementar slices para equipos
+  - [ ] Crear acciones para gestión de equipos (CRUD)
+  - [ ] Implementar reducers para manejo del estado de equipos
+  - [ ] Crear selectores para acceso eficiente a datos de equipos
+- [ ] Crear middlewares personalizados
+  - [ ] Middleware para manejo de errores de API
+  - [ ] Middleware para logging de acciones (desarrollo)
+- [ ] Implementar hooks personalizados para Redux
+  - [ ] Crear useAppSelector y useAppDispatch tipados
+  - [ ] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
 
 #### Funcionalidades de usuario
 - [ ] Crear página de perfil de usuario
@@ -43,6 +61,13 @@
 - [ ] Mejorar pipeline CI/CD
 - [ ] Añadir análisis de cobertura de código
 - [ ] Configurar despliegue automático a entorno de desarrollo
+
+### Pruebas y Refactorización (Sprint Actual)
+- [ ] Implementar pruebas unitarias para servicios de autenticación
+- [ ] Implementar pruebas de componentes para formularios de login/registro
+- [ ] Refactorizar código de autenticación para mejorar mantenibilidad
+- [ ] Configurar análisis estático de código en GitHub Actions
+- [ ] Documentar decisiones técnicas tomadas durante el sprint
 
 ## Backlog para Sprints Futuros
 

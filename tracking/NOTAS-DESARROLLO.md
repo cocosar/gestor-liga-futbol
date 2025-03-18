@@ -51,6 +51,18 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - **Rendimiento:** Implementar memoización para componentes pesados
 - **Seguridad:** Considerar implementación de rate limiting
 - **UX:** Mejorar feedback visual en formularios
+- **Estado Global:** Implementar Redux en Sprint 2
+  - Prioridad: Alta
+  - Beneficios esperados:
+    - Mejor gestión del estado global de la aplicación
+    - Facilitar el manejo de datos entre componentes no relacionados
+    - Mejorar la trazabilidad de cambios en la aplicación
+    - Facilitar la implementación de persistencia de datos
+  - Consideraciones técnicas:
+    - Usar Redux Toolkit para reducir el boilerplate
+    - Organizar slices por dominio (auth, users, teams, etc.)
+    - Implementar middleware personalizado para manejo de errores
+    - Crear hooks tipados para mejorar la experiencia de desarrollo
 
 ## Referencias y Recursos Útiles
 

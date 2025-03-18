@@ -18,12 +18,25 @@
     "test": "npm run test:frontend && npm run test:backend",
     "lint:frontend": "cd frontend && npm run lint",
     "lint:backend": "cd backend && npm run lint",
-    "lint": "npm run lint:frontend && npm run lint:backend"
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx}": [
+      "npm run lint:frontend",
+      "npm run test:frontend -- --run --passWithNoTests"
+    ],
+    "backend/**/*.ts": [
+      "npm run lint:backend",
+      "npm run test:backend -- --passWithNoTests"
+    ]
   }
-} 
+}

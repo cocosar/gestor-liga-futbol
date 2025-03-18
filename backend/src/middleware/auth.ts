@@ -3,19 +3,19 @@ import { verifyToken } from '../utils/jwt';
 import User from '../models/User';
 
 // Extender el tipo Request para incluir el usuario autenticado
-declare global {
-  namespace Express {
-    interface Request {
-      user?: any;
-    }
-  }
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    rol: string;
+  };
 }
 
 /**
  * Middleware para proteger rutas que requieren autenticación
  */
 export const authenticate = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -80,7 +80,7 @@ export const authenticate = async (
  * @param roles Array de roles permitidos
  */
 export const authorize = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,

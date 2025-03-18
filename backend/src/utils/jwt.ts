@@ -17,8 +17,8 @@ export const generateToken = (user: IUser): string => {
     rol: user.rol,
   };
 
-  // Usar @ts-ignore para evitar el error de tipo
-  // @ts-ignore
+  // Desactivar la regla de eslint para esta línea específica
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return jwt.sign(payload, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
   });
@@ -31,8 +31,8 @@ export const generateToken = (user: IUser): string => {
  */
 export const verifyToken = (token: string): jwt.JwtPayload | null => {
   try {
-    // Usar @ts-ignore para evitar el error de tipo
-    // @ts-ignore
+    // Desactivar la regla de eslint para esta línea específica
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
   } catch (error) {
     return null;
