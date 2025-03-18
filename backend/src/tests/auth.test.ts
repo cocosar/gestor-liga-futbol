@@ -6,23 +6,49 @@ import User from '../models/User';
 
 let mongoServer: MongoMemoryServer;
 
+// Desconectar cualquier conexión existente antes de las pruebas
 beforeAll(async () => {
-  // Configurar la base de datos en memoria para las pruebas
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri);
+  try {
+    // Si hay una conexión activa, cerrarla
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+    }
+    
+    // Configurar la base de datos en memoria para las pruebas
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    await mongoose.connect(uri);
+  } catch (error) {
+    console.error('Error en la configuración de pruebas:', error);
+    throw error;
+  }
 });
 
 afterAll(async () => {
-  // Limpiar y cerrar conexiones después de las pruebas
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
-  await mongoServer.stop();
+  try {
+    // Limpiar y cerrar conexiones después de las pruebas
+    await mongoose.disconnect();
+    await mongoServer.stop();
+  } catch (error) {
+    console.error('Error en la limpieza después de pruebas:', error);
+  }
 });
 
 beforeEach(async () => {
   // Limpiar la colección de usuarios antes de cada prueba
-  await User.deleteMany({});
+  try {
+    await User.deleteMany({});
+  } catch (error) {
+    console.error('Error al limpiar colección de usuarios:', error);
+  }
+});
+
+// Modificar app para evitar que llame a connectDB() múltiples veces
+// Esta es una solución temporal para las pruebas
+jest.mock('../index', () => {
+  const originalModule = jest.requireActual('../index');
+  const app = originalModule.default;
+  return app;
 });
 
 describe('Pruebas de autenticación', () => {

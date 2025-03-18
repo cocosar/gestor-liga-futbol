@@ -31,8 +31,14 @@ app.get('/api/health', (req, res) => {
 });
 
 // Conexión a la base de datos
-const connectDB = async () => {
+export const connectDB = async () => {
   try {
+    // Evitar conectarse si ya hay una conexión activa
+    if (mongoose.connection.readyState !== 0) {
+      console.log('MongoDB ya está conectado');
+      return;
+    }
+    
     const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/liga-futbol');
     console.log(`MongoDB conectado: ${conn.connection.host}`);
   } catch (error) {
@@ -45,12 +51,20 @@ const connectDB = async () => {
   }
 };
 
-// Iniciar servidor
-connectDB().then(() => {
+// Función para iniciar el servidor
+export const startServer = () => {
   app.listen(port, () => {
     console.log(`Servidor ejecutándose en el puerto ${port}`);
   });
-});
+};
+
+// Iniciar servidor solo si este archivo es el punto de entrada principal
+// y no es importado por otro (como en pruebas)
+if (require.main === module) {
+  connectDB().then(() => {
+    startServer();
+  });
+}
 
 // Manejo de errores no capturados
 process.on('unhandledRejection', (error) => {
