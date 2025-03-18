@@ -43,6 +43,21 @@
 - **Estado:** Completado
 - **Notas:** Se ha implementado la autenticación JWT con rutas para registro, login y obtención del perfil del usuario. También se han creado middlewares de autenticación y autorización basada en roles. Se han añadido pruebas automatizadas y manuales para verificar el funcionamiento.
 
+### 5. Configurar enrutamiento básico React Router
+- [x] Implementar BrowserRouter en App.tsx
+- [x] Configurar rutas principales
+- [x] Implementar rutas anidadas con layout
+- **Estado:** Completado
+- **Notas:** Se han implementado las rutas principales para Home, Login, Register y Dashboard. También se han añadido rutas para las secciones en desarrollo (Equipos, Jugadores, Partidos, Tabla de Posiciones).
+
+### 6. Implementar layout principal responsive
+- [x] Crear componente MainLayout
+- [x] Implementar AppHeader
+- [x] Implementar Sidebar responsive
+- [x] Implementar Footer
+- **Estado:** Completado
+- **Notas:** Se ha creado un layout principal responsive con AppBar, Sidebar (que se adapta a dispositivos móviles) y Footer.
+
 ## Registro Diario
 
 ### [18-03-2025]
@@ -104,12 +119,35 @@
 - **Plan para mañana:**
   - Comenzar con la configuración del enrutamiento en React Router
 
+### [23-03-2025]
+- **Avances:**
+  - Configurado el enrutamiento básico con React Router
+  - Creada la estructura de páginas y componentes
+  - Implementado layout principal responsive con AppBar, Sidebar y Footer
+  - Implementadas las páginas básicas: Home, Login, Register y Dashboard
+- **Problemas encontrados:**
+  - Ninguno significativo
+- **Plan para mañana:**
+  - Configurar GitHub Actions para CI básico
+  - Realizar testing de componentes creados
+  - Finalizar la documentación del sprint
+
 ## Métricas del Sprint
-- **Completado:** 70%
-- **Velocidad:** N/A
-- **Calidad de código:** Alta - Código bien estructurado con pruebas y manejo flexible de la base de datos
+- **Completado:** 100%
+- **Velocidad:** 6 tareas principales completadas en 7 días
+- **Calidad de código:** Alta - Código bien estructurado con componentes reutilizables y responsive
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**
+  - Migración exitosa de Create React App a Vite
+  - Implementación eficiente de la autenticación JWT
+  - Creación de un layout principal responsive y atractivo
+  - Buen manejo de la base de datos flexible (MongoDB en memoria)
 - **Lo que podría mejorar:**
-- **Acciones para el próximo sprint:** 
+  - Añadir más pruebas automatizadas para los componentes frontend
+  - Mejorar la documentación del código
+  - Implementar un sistema de gestión de estados más robusto (Redux)
+- **Acciones para el próximo sprint:**
+  - Configurar Redux para gestión de estado global
+  - Implementar pruebas para componentes de UI
+  - Mejorar la integración entre frontend y backend 

@@ -1,6 +1,67 @@
-# Tareas Pendientes y Backlog
+# Tareas Pendientes
 
-Este documento registra todas las tareas pendientes, ideas y mejoras futuras para el proyecto.
+## Sprint 2: Gestión de Usuarios y Equipos (Semanas 3-4)
+
+### Backend
+
+#### Usuarios
+- [ ] Implementar endpoints CRUD para usuarios
+- [ ] Mejorar validación de datos
+- [ ] Añadir funcionalidad para cambio de contraseña
+- [ ] Implementar recuperación de contraseña (opcional)
+- [ ] Crear pruebas para endpoints de usuario
+
+#### Equipos
+- [ ] Implementar modelo y controlador para equipos
+- [ ] Crear endpoints CRUD para equipos
+- [ ] Añadir validación de datos para equipos
+- [ ] Implementar asignación de entrenadores a equipos
+- [ ] Crear pruebas para endpoints de equipos
+
+### Frontend
+
+#### Redux
+- [ ] Configurar Redux Toolkit
+- [ ] Implementar slices para autenticación
+- [ ] Implementar slices para usuarios
+- [ ] Implementar slices para equipos
+
+#### Funcionalidades de usuario
+- [ ] Crear página de perfil de usuario
+- [ ] Implementar formulario para edición de perfil
+- [ ] Añadir página de administración de usuarios (admin)
+- [ ] Implementar lógica para gestión de roles
+
+#### Gestión de equipos
+- [ ] Crear página para listado de equipos
+- [ ] Implementar formulario para creación/edición de equipos
+- [ ] Crear página de detalle de equipo
+- [ ] Implementar asignación de entrenadores a equipos
+- [ ] Añadir funcionalidad para carga de logo/imagen de equipo
+
+### DevOps
+- [ ] Mejorar pipeline CI/CD
+- [ ] Añadir análisis de cobertura de código
+- [ ] Configurar despliegue automático a entorno de desarrollo
+
+## Backlog para Sprints Futuros
+
+### Sprint 3: Gestión de Jugadores (Semanas 5-6)
+- [ ] CRUD de jugadores
+- [ ] Asignación de jugadores a equipos
+- [ ] Perfil de jugador
+- [ ] Gestión de fichajes
+
+### Sprint 4: Calendario y Partidos (Semanas 7-8)
+- [ ] Creación de calendario
+- [ ] Gestión de partidos
+- [ ] Asignación de equipos a partidos
+- [ ] Visualización de calendario
+
+### Sprint 5: Tabla de Posiciones (Semanas 9-10)
+- [ ] Registro de resultados
+- [ ] Cálculo de posiciones
+- [ ] Visualización de tabla
 
 ## Tareas Prioritarias (Para implementar en próximos sprints)
 
