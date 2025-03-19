@@ -10,7 +10,9 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
-import { Link } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 interface AppHeaderProps {
   drawerWidth: number;
@@ -19,6 +21,13 @@ interface AppHeaderProps {
 
 const AppHeader: React.FC<AppHeaderProps> = ({ drawerWidth, onDrawerToggle }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <AppBar
@@ -51,22 +60,42 @@ const AppHeader: React.FC<AppHeaderProps> = ({ drawerWidth, onDrawerToggle }) =>
         </Typography>
         
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button 
-            color="inherit" 
-            component={Link} 
-            to="/login"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            Iniciar Sesión
-          </Button>
-          <Button 
-            color="inherit" 
-            component={Link} 
-            to="/register"
-            sx={{ display: { xs: 'none', sm: 'block' }, ml: 1 }}
-          >
-            Registrarse
-          </Button>
+          {isAuthenticated ? (
+            <>
+              <Typography variant="body2" sx={{ mr: 1, display: { xs: 'none', sm: 'block' } }}>
+                {user?.nombre} {user?.apellido}
+              </Typography>
+              <Button 
+                color="inherit" 
+                onClick={handleLogout}
+                startIcon={<LogoutIcon />}
+                sx={{ display: { xs: 'flex', sm: 'flex' } }}
+              >
+                <Typography sx={{ display: { xs: 'none', sm: 'block' } }}>
+                  Cerrar Sesión
+                </Typography>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/login"
+                sx={{ display: { xs: 'none', sm: 'block' } }}
+              >
+                Iniciar Sesión
+              </Button>
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/register"
+                sx={{ display: { xs: 'none', sm: 'block' }, ml: 1 }}
+              >
+                Registrarse
+              </Button>
+            </>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
