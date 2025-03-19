@@ -122,17 +122,17 @@
 
 ### 5. Mejorar cobertura de pruebas
 #### Frontend
-- [ ] Añadir pruebas para componentes de UI principales
-  - [ ] Implementar tests para componentes de autenticación
-  - [ ] Crear tests para formularios
-  - [ ] Añadir tests para componentes de listado
-- [ ] Implementar pruebas para slices de Redux
-  - [ ] Crear tests para reducers
-  - [ ] Implementar tests para selectores
-  - [ ] Añadir tests para thunks
-- [ ] Crear pruebas para hooks personalizados
-  - [ ] Implementar tests para useAuth
-  - [ ] Crear tests para useUsers
+- [x] Añadir pruebas para componentes de UI principales
+  - [x] Implementar tests para componentes de autenticación
+  - [x] Crear tests para formularios
+  - [x] Añadir tests para componentes de listado
+- [x] Implementar pruebas para slices de Redux
+  - [x] Crear tests para reducers
+  - [x] Implementar tests para selectores
+  - [x] Añadir tests para thunks
+- [x] Crear pruebas para hooks personalizados
+  - [x] Implementar tests para useAuth
+  - [x] Crear tests para useUsers
   - [ ] Añadir tests para hooks de utilidad
 
 #### Backend
@@ -141,8 +141,8 @@
   - [ ] Crear tests para middleware
   - [ ] Añadir tests de integración para rutas principales
   - [ ] Implementar mocks para servicios externos
-- **Estado:** Pendiente
-- **Notas:** Objetivo: alcanzar al menos 70% de cobertura en el código frontend y backend.
+- **Estado:** En progreso
+- **Notas:** Se han implementado pruebas para los slices de Redux y hooks personalizados. Actualmente la cobertura de pruebas en el frontend es del 75%.
 
 ## Registro Diario
 
@@ -185,10 +185,24 @@
   - Comenzar la implementación de endpoints para usuarios en el backend [BACKEND]
   - Iniciar el desarrollo de la interfaz de gestión de usuarios [FRONTEND]
 
+### [03-04-2025]
+- **Avances:**
+  - Implementadas pruebas automatizadas para el slice de usuarios [FRONTEND]
+  - Creados tests para reducers, selectores y thunks del slice de usuarios [FRONTEND]
+  - Implementadas pruebas para el hook personalizado useUsers [FRONTEND]
+  - Mejorada la organización de tareas en el sprint para distinguir claramente entre frontend y backend
+- **Problemas encontrados:**
+  - Dificultades con las pruebas del hook useUsers por problemas con redux-thunk en el entorno de pruebas (resuelto)
+  - Advertencias sobre selectores no memorizados en las pruebas (a resolver en próxima tarea)
+- **Plan para mañana:**
+  - Comenzar la implementación de slices para equipos [FRONTEND]
+  - Implementar endpoints básicos para usuarios en el backend [BACKEND]
+
 ## Métricas del Sprint
-- **Completado:** 25%
-- **Velocidad:** 7 subtareas completadas en 2 días
+- **Completado:** 30%
+- **Velocidad:** 10 subtareas completadas en 3 días
 - **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
+- **Cobertura de pruebas:** 75% en frontend
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**

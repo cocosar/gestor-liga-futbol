@@ -1,10 +1,10 @@
 import authReducer from './auth/authSlice';
+import usersReducer from './users';
 // Importar futuros reducers
-// import usersReducer from './users/usersSlice';
 // import teamsReducer from './teams/teamsSlice';
 
 export {
   authReducer,
-  // usersReducer,
+  usersReducer,
   // teamsReducer
 }; 
