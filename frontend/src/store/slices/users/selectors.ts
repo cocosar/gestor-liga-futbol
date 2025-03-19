@@ -1,4 +1,5 @@
 import { RootState } from '../../index';
+import { createSelector } from '@reduxjs/toolkit';
 
 // Selector para obtener la lista de usuarios
 export const selectUsers = (state: RootState) => state.users.users;
@@ -21,13 +22,16 @@ export const selectPage = (state: RootState) => state.users.page;
 // Selector para obtener el límite de usuarios por página
 export const selectLimit = (state: RootState) => state.users.limit;
 
-// Selector para obtener información de paginación
-export const selectPagination = (state: RootState) => ({
-  total: state.users.total,
-  page: state.users.page,
-  limit: state.users.limit,
-  totalPages: Math.ceil(state.users.total / state.users.limit)
-});
+// Selector para obtener información de paginación (usando memoización)
+export const selectPagination = createSelector(
+  [selectTotal, selectPage, selectLimit],
+  (total, page, limit) => ({
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit)
+  })
+);
 
 // Selector para verificar si existen usuarios
 export const selectHasUsers = (state: RootState) => state.users.users.length > 0;
