@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import {
   fetchUsers,
   fetchUserById,
@@ -17,6 +17,7 @@ import {
 } from '../../../slices/users/usersSlice';
 import { userService } from '../../../../api';
 import { UserListItem, UserFormData, PaginationParams } from '../../../../types';
+import { vi } from 'vitest';
 
 // Mock del servicio de usuarios
 vi.mock('../../../../api', () => ({
@@ -65,14 +66,15 @@ describe('Users Thunks', () => {
 
     test('debería dispatchar usersLoadSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (userService.getUsers as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.getUsers).mockResolvedValue({
         success: true,
         usuarios: [mockUser],
         totalUsuarios: 1
       });
 
       // Ejecutar el thunk
-      await fetchUsers(mockParams)(mockDispatch);
+      const thunk = fetchUsers(mockParams);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
@@ -91,25 +93,27 @@ describe('Users Thunks', () => {
 
     test('debería dispatchar usersFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (userService.getUsers as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.getUsers).mockResolvedValue({
         success: false,
         message: 'Error al obtener usuarios'
       });
 
       // Ejecutar el thunk
-      await fetchUsers(mockParams)(mockDispatch);
+      const thunk = fetchUsers(mockParams);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
       expect(mockDispatch).toHaveBeenCalledWith(usersFail('Error al obtener usuarios'));
     });
 
-    test('debería dispatchar usersFail cuando ocurre una excepción', async () => {
-      // Configurar mock para lanzar error
-      (userService.getUsers as vi.Mock).mockRejectedValue(new Error('Error de red'));
+    test('debería dispatchar usersFail cuando la petición lanza una excepción', async () => {
+      // Configurar mock para lanzar excepción
+      vi.mocked(userService.getUsers).mockRejectedValue(new Error('Error en la petición'));
 
       // Ejecutar el thunk
-      await fetchUsers(mockParams)(mockDispatch);
+      const thunk = fetchUsers(mockParams);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
@@ -122,13 +126,14 @@ describe('Users Thunks', () => {
 
     test('debería dispatchar userLoadSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (userService.getUserById as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.getUserById).mockResolvedValue({
         success: true,
         usuario: mockUser
       });
 
       // Ejecutar el thunk
-      await fetchUserById(userId)(mockDispatch);
+      const thunk = fetchUserById(userId);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
@@ -140,30 +145,32 @@ describe('Users Thunks', () => {
 
     test('debería dispatchar usersFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (userService.getUserById as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.getUserById).mockResolvedValue({
         success: false,
-        message: 'Usuario no encontrado'
+        message: 'Error al obtener usuario'
       });
 
       // Ejecutar el thunk
-      await fetchUserById(userId)(mockDispatch);
+      const thunk = fetchUserById(userId);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
-      expect(mockDispatch).toHaveBeenCalledWith(usersFail('Usuario no encontrado'));
+      expect(mockDispatch).toHaveBeenCalledWith(usersFail('Error al obtener usuario'));
     });
   });
 
   describe('createUser', () => {
     test('debería dispatchar userCreateSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (userService.createUser as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.createUser).mockResolvedValue({
         success: true,
         usuario: mockUser
       });
 
       // Ejecutar el thunk
-      await createUser(mockUserFormData)(mockDispatch);
+      const thunk = createUser(mockUserFormData);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
@@ -175,13 +182,14 @@ describe('Users Thunks', () => {
 
     test('debería dispatchar usersFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (userService.createUser as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.createUser).mockResolvedValue({
         success: false,
         message: 'Error al crear usuario'
       });
 
       // Ejecutar el thunk
-      await createUser(mockUserFormData)(mockDispatch);
+      const thunk = createUser(mockUserFormData);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
@@ -190,38 +198,37 @@ describe('Users Thunks', () => {
   });
 
   describe('updateUser', () => {
-    const updatePayload = {
-      id: '1',
-      userData: mockUserFormData
-    };
+    const userId = '1';
 
     test('debería dispatchar userUpdateSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (userService.updateUser as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.updateUser).mockResolvedValue({
         success: true,
         usuario: mockUser
       });
 
       // Ejecutar el thunk
-      await updateUser(updatePayload)(mockDispatch);
+      const thunk = updateUser({ id: userId, userData: mockUserFormData });
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
       expect(mockDispatch).toHaveBeenCalledWith(userUpdateSuccess(mockUser));
 
       // Verificar llamada al servicio
-      expect(userService.updateUser).toHaveBeenCalledWith('1', mockUserFormData);
+      expect(userService.updateUser).toHaveBeenCalledWith(userId, mockUserFormData);
     });
 
     test('debería dispatchar usersFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (userService.updateUser as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.updateUser).mockResolvedValue({
         success: false,
         message: 'Error al actualizar usuario'
       });
 
       // Ejecutar el thunk
-      await updateUser(updatePayload)(mockDispatch);
+      const thunk = updateUser({ id: userId, userData: mockUserFormData });
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
@@ -234,12 +241,13 @@ describe('Users Thunks', () => {
 
     test('debería dispatchar userDeleteSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (userService.deleteUser as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.deleteUser).mockResolvedValue({
         success: true
       });
 
       // Ejecutar el thunk
-      await deleteUser(userId)(mockDispatch);
+      const thunk = deleteUser(userId);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());
@@ -251,13 +259,14 @@ describe('Users Thunks', () => {
 
     test('debería dispatchar usersFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (userService.deleteUser as vi.Mock).mockResolvedValue({
+      vi.mocked(userService.deleteUser).mockResolvedValue({
         success: false,
         message: 'Error al eliminar usuario'
       });
 
       // Ejecutar el thunk
-      await deleteUser(userId)(mockDispatch);
+      const thunk = deleteUser(userId);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(usersLoading());

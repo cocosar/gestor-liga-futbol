@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import {
   fetchTeams,
   fetchTeamById,
@@ -17,6 +17,7 @@ import {
 } from '../../../slices/teams/teamsSlice';
 import { teamService } from '../../../../api';
 import { TeamListItem, TeamFormData, PaginationParams } from '../../../../types';
+import { vi } from 'vitest';
 
 // Mock del servicio de equipos
 vi.mock('../../../../api', () => ({
@@ -67,14 +68,15 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamsLoadSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (teamService.getTeams as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.getTeams).mockResolvedValue({
         success: true,
         equipos: [mockTeam],
         totalEquipos: 1
       });
 
       // Ejecutar el thunk
-      await fetchTeams(mockParams)(mockDispatch);
+      const thunk = fetchTeams(mockParams);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -93,13 +95,14 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamsFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (teamService.getTeams as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.getTeams).mockResolvedValue({
         success: false,
         message: 'Error al obtener equipos'
       });
 
       // Ejecutar el thunk
-      await fetchTeams(mockParams)(mockDispatch);
+      const thunk = fetchTeams(mockParams);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -108,10 +111,11 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamsFail cuando la petición lanza una excepción', async () => {
       // Configurar mock para lanzar excepción
-      (teamService.getTeams as vi.Mock).mockRejectedValue(new Error('Error en la petición'));
+      vi.mocked(teamService.getTeams).mockRejectedValue(new Error('Error en la petición'));
 
       // Ejecutar el thunk
-      await fetchTeams(mockParams)(mockDispatch);
+      const thunk = fetchTeams(mockParams);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -124,13 +128,14 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamLoadSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (teamService.getTeamById as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.getTeamById).mockResolvedValue({
         success: true,
         equipo: mockTeam
       });
 
       // Ejecutar el thunk
-      await fetchTeamById(teamId)(mockDispatch);
+      const thunk = fetchTeamById(teamId);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -142,13 +147,14 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamsFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (teamService.getTeamById as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.getTeamById).mockResolvedValue({
         success: false,
         message: 'Error al obtener equipo'
       });
 
       // Ejecutar el thunk
-      await fetchTeamById(teamId)(mockDispatch);
+      const thunk = fetchTeamById(teamId);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -159,13 +165,14 @@ describe('Teams Thunks', () => {
   describe('createTeam', () => {
     test('debería dispatchar teamCreateSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (teamService.createTeam as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.createTeam).mockResolvedValue({
         success: true,
         equipo: mockTeam
       });
 
       // Ejecutar el thunk
-      await createTeam(mockTeamFormData)(mockDispatch);
+      const thunk = createTeam(mockTeamFormData);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -177,13 +184,14 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamsFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (teamService.createTeam as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.createTeam).mockResolvedValue({
         success: false,
         message: 'Error al crear equipo'
       });
 
       // Ejecutar el thunk
-      await createTeam(mockTeamFormData)(mockDispatch);
+      const thunk = createTeam(mockTeamFormData);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -196,13 +204,14 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamUpdateSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (teamService.updateTeam as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.updateTeam).mockResolvedValue({
         success: true,
         equipo: mockTeam
       });
 
       // Ejecutar el thunk
-      await updateTeam({ id: teamId, teamData: mockTeamFormData })(mockDispatch);
+      const thunk = updateTeam({ id: teamId, teamData: mockTeamFormData });
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -214,13 +223,14 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamsFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (teamService.updateTeam as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.updateTeam).mockResolvedValue({
         success: false,
         message: 'Error al actualizar equipo'
       });
 
       // Ejecutar el thunk
-      await updateTeam({ id: teamId, teamData: mockTeamFormData })(mockDispatch);
+      const thunk = updateTeam({ id: teamId, teamData: mockTeamFormData });
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -233,12 +243,13 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamDeleteSuccess cuando la petición es exitosa', async () => {
       // Configurar mock para retornar datos de éxito
-      (teamService.deleteTeam as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.deleteTeam).mockResolvedValue({
         success: true
       });
 
       // Ejecutar el thunk
-      await deleteTeam(teamId)(mockDispatch);
+      const thunk = deleteTeam(teamId);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
@@ -250,13 +261,14 @@ describe('Teams Thunks', () => {
 
     test('debería dispatchar teamsFail cuando la petición falla', async () => {
       // Configurar mock para retornar datos de error
-      (teamService.deleteTeam as vi.Mock).mockResolvedValue({
+      vi.mocked(teamService.deleteTeam).mockResolvedValue({
         success: false,
         message: 'Error al eliminar equipo'
       });
 
       // Ejecutar el thunk
-      await deleteTeam(teamId)(mockDispatch);
+      const thunk = deleteTeam(teamId);
+      await thunk(mockDispatch, () => ({}), undefined);
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());

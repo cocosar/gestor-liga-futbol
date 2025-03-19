@@ -7,7 +7,7 @@ import usersReducer from '../../store/slices/users/usersSlice';
 import authReducer from '../../store/slices/auth/authSlice';
 import * as usersThunks from '../../store/slices/users/thunks';
 import { UserListItem, PaginationParams, UserFormData } from '../../types';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 // Mock para los thunks
 vi.mock('../../store/slices/users/thunks', () => ({

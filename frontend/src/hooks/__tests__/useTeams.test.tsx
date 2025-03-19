@@ -8,7 +8,7 @@ import authReducer from '../../store/slices/auth/authSlice';
 import usersReducer from '../../store/slices/users';
 import * as teamsThunks from '../../store/slices/teams/thunks';
 import { TeamListItem, PaginationParams, TeamFormData } from '../../types';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 // Mock para los thunks
 vi.mock('../../store/slices/teams/thunks', () => ({
