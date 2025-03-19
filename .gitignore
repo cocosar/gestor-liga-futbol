@@ -54,3 +54,4 @@ yarn-error.log*
 
 # Repomix
 repomix.config.json
+.repomixignore
