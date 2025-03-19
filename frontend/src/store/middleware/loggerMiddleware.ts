@@ -3,7 +3,7 @@ import { Middleware, AnyAction } from '@reduxjs/toolkit';
 // Middleware para logging de acciones (solo en desarrollo)
 const loggerMiddleware: Middleware = store => next => action => {
   // Solo realizar el logging en entorno de desarrollo
-  if (process.env.NODE_ENV !== 'production') {
+  if (import.meta.env.MODE !== 'production') {
     // Asegurar que action tiene un type
     const { type } = action as AnyAction;
     
