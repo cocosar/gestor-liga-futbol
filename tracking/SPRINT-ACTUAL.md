@@ -22,10 +22,10 @@
 - [x] Implementar funcionalidad UI de autenticación
   - [x] Actualizar AppHeader para mostrar botones de autenticación dinámicamente (login/register o logout)
   - [x] Implementar funcionalidad de cierre de sesión en la interfaz de usuario
-- [ ] Implementar slices para usuarios
-  - [ ] Crear acciones para gestión de usuarios (CRUD)
-  - [ ] Implementar reducers para manejo del estado de usuarios
-  - [ ] Crear selectores para acceso eficiente a datos de usuarios
+- [x] Implementar slices para usuarios
+  - [x] Crear acciones para gestión de usuarios (CRUD)
+  - [x] Implementar reducers para manejo del estado de usuarios
+  - [x] Crear selectores para acceso eficiente a datos de usuarios
 - [ ] Implementar slices para equipos
   - [ ] Crear acciones para gestión de equipos (CRUD)
   - [ ] Implementar reducers para manejo del estado de equipos
@@ -37,7 +37,7 @@
   - [x] Crear useAppSelector y useAppDispatch tipados
   - [x] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
 - **Estado:** En progreso
-- **Notas:** Se ha implementado la configuración base de Redux Toolkit y el slice de autenticación con acciones, thunks y selectores. Se ha creado un hook personalizado para la autenticación.
+- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios.
 
 ### 2. Desarrollar CRUD completo de usuarios
 - [ ] Implementar endpoints en backend para gestión de usuarios
@@ -46,7 +46,7 @@
 - [ ] Añadir funcionalidad para cambio de contraseña
 - [ ] Implementar gestión de roles de usuario
 - **Estado:** Pendiente
-- **Notas:** Depende de la implementación de Redux para la gestión de estado.
+- **Notas:** Ya está implementado el slice de Redux para la gestión de estado de usuarios. El siguiente paso es desarrollar la interfaz de usuario.
 
 ### 3. Implementar gestión de equipos
 - [ ] Desarrollar endpoints en backend para equipos
@@ -101,9 +101,21 @@
   - Implementar slices para usuarios
   - Comenzar la implementación del CRUD de usuarios en el backend
 
+### [02-04-2025]
+- **Avances:**
+  - Implementado el slice completo de usuarios con Redux Toolkit
+  - Creadas las acciones, reducers, thunks y selectores para el CRUD de usuarios
+  - Desarrollado el servicio de API para usuarios con axios
+  - Implementado hook personalizado useUsers para facilitar el uso del slice
+- **Problemas encontrados:**
+  - Algunos errores de linting en los thunks que se han corregido
+- **Plan para mañana:**
+  - Implementar slices para equipos
+  - Comenzar la implementación de la interfaz de usuario para la gestión de usuarios
+
 ## Métricas del Sprint
-- **Completado:** 15%
-- **Velocidad:** 3 subtareas completadas en 1 día
+- **Completado:** 25%
+- **Velocidad:** 7 subtareas completadas en 2 días
 - **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
 
 ## Retrospectiva (al finalizar)
