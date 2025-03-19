@@ -10,7 +10,7 @@ interface MockUser {
   nombre?: string;
   apellido?: string;
   rol?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Mock para useAuth
