@@ -29,7 +29,7 @@ export const store = configureStore({
     })
     .concat(middlewares.errorMiddleware)
     .concat(middlewares.loggerMiddleware),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: import.meta.env.MODE !== 'production',
 });
 
 // Tipos para dispatch y state

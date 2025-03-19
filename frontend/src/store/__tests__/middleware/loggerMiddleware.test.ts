@@ -12,11 +12,11 @@ type MockedFunction<T extends (...args: any[]) => any> = {
 } & T;
 
 describe('Logger Middleware', () => {
-  // Original NODE_ENV
-  const originalEnv = process.env.NODE_ENV;
-  
-  // Mocks para console
+  // Configurar MODE para los tests
   beforeEach(() => {
+    vi.stubEnv('MODE', 'development');
+    
+    // Mocks para console
     vi.spyOn(console, 'group').mockImplementation(() => {});
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'groupEnd').mockImplementation(() => {});
@@ -24,7 +24,7 @@ describe('Logger Middleware', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    process.env.NODE_ENV = originalEnv; // Restaurar el valor original
+    vi.unstubAllEnvs(); // Restaurar variables de entorno
   });
 
   // Mock de la API de middleware
@@ -36,7 +36,7 @@ describe('Logger Middleware', () => {
 
   test('debería registrar acciones en entorno de desarrollo', () => {
     // Arrange
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('MODE', 'development');
     const next = vi.fn(() => 'RESULTADO');
     const action = { type: 'TEST_ACTION' };
     
@@ -54,7 +54,7 @@ describe('Logger Middleware', () => {
 
   test('debería colorizar acciones pending correctamente', () => {
     // Arrange
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('MODE', 'development');
     const next = vi.fn();
     const action = { type: 'TEST_ACTION/pending' };
     
@@ -75,7 +75,7 @@ describe('Logger Middleware', () => {
 
   test('debería colorizar acciones fulfilled correctamente', () => {
     // Arrange
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('MODE', 'development');
     const next = vi.fn();
     const action = { type: 'TEST_ACTION/fulfilled' };
     
@@ -96,7 +96,7 @@ describe('Logger Middleware', () => {
 
   test('debería colorizar acciones rejected correctamente', () => {
     // Arrange
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('MODE', 'development');
     const next = vi.fn();
     const action = { type: 'TEST_ACTION/rejected' };
     
@@ -117,7 +117,7 @@ describe('Logger Middleware', () => {
 
   test('no debería registrar en producción', () => {
     // Arrange
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('MODE', 'production');
     const next = vi.fn(() => 'RESULTADO');
     const action = { type: 'TEST_ACTION' };
     

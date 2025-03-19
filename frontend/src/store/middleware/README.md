@@ -30,7 +30,7 @@ El middleware de errores intercepta todas las acciones rechazadas (rejected) de 
 El middleware de logging registra todas las acciones de Redux y los cambios de estado, facilitando la depuración durante el desarrollo.
 
 **Funcionalidades:**
-- Solo funciona en entorno de desarrollo (`process.env.NODE_ENV !== 'production'`)
+- Solo funciona en entorno de desarrollo (`import.meta.env.MODE !== 'production'`)
 - Muestra en consola:
   - La acción despachada
   - El estado anterior
@@ -46,7 +46,7 @@ El middleware de logging registra todas las acciones de Redux y los cambios de e
 
 El middleware de logging está diseñado para ser utilizado durante el desarrollo. Para probarlo:
 
-1. Asegúrate de estar en entorno de desarrollo (`process.env.NODE_ENV !== 'production'`)
+1. Asegúrate de estar en entorno de desarrollo (`import.meta.env.MODE !== 'production'`)
 2. Abre la consola del navegador (F12 > pestaña Console)
 3. Realiza alguna acción en la aplicación que despache una acción de Redux:
    - Iniciar sesión/cerrar sesión
