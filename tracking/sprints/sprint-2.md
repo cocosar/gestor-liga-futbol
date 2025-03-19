@@ -11,14 +11,14 @@
 ## Tareas Específicas
 
 ### 1. Implementar Redux para gestión de estado global
-- [ ] Configurar Redux Toolkit
-  - [ ] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
-  - [ ] Crear archivo de configuración de store
-  - [ ] Implementar provider en componente raíz
-- [ ] Implementar slices para autenticación
-  - [ ] Crear acciones para login, logout y registro
-  - [ ] Implementar reducers para manejo de estado de autenticación
-  - [ ] Configurar persistencia del token JWT en localStorage
+- [x] Configurar Redux Toolkit
+  - [x] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
+  - [x] Crear archivo de configuración de store
+  - [x] Implementar provider en componente raíz
+- [x] Implementar slices para autenticación
+  - [x] Crear acciones para login, logout y registro
+  - [x] Implementar reducers para manejo de estado de autenticación
+  - [x] Configurar persistencia del token JWT en localStorage
 - [ ] Implementar slices para usuarios
   - [ ] Crear acciones para gestión de usuarios (CRUD)
   - [ ] Implementar reducers para manejo del estado de usuarios
@@ -30,11 +30,11 @@
 - [ ] Crear middlewares personalizados
   - [ ] Middleware para manejo de errores de API
   - [ ] Middleware para logging de acciones (desarrollo)
-- [ ] Implementar hooks personalizados para Redux
-  - [ ] Crear useAppSelector y useAppDispatch tipados
-  - [ ] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
-- **Estado:** Pendiente
-- **Notas:** Prioridad alta. Esta tarea es fundamental para las demás funcionalidades del sprint.
+- [x] Implementar hooks personalizados para Redux
+  - [x] Crear useAppSelector y useAppDispatch tipados
+  - [x] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
+- **Estado:** En progreso
+- **Notas:** Se ha implementado la configuración base de Redux Toolkit y el slice de autenticación con acciones, thunks y selectores. Se ha creado un hook personalizado para la autenticación.
 
 ### 2. Desarrollar CRUD completo de usuarios
 - [ ] Implementar endpoints en backend para gestión de usuarios
@@ -74,18 +74,34 @@
 
 ### [31-03-2025]
 - **Avances:**
-  - Planificación detallada del sprint
-  - Configuración inicial del entorno para Redux
+  - Inicio oficial del Sprint 2
+  - Análisis detallado de requisitos para implementación de Redux
+  - Revisión del código existente para planificar la integración
 - **Problemas encontrados:**
   - Ninguno por el momento
 - **Plan para mañana:**
-  - Comenzar implementación de Redux Toolkit
-  - Configurar store inicial
+  - Instalar dependencias de Redux Toolkit
+  - Crear estructura inicial del store
+  - Implementar configuración base de Redux
+
+### [01-04-2025]
+- **Avances:**
+  - Implementada la configuración base de Redux Toolkit
+  - Creados los tipos compartidos para la autenticación
+  - Implementado el slice de autenticación con acciones, reducers, thunks y selectores
+  - Creado hook personalizado useAuth para facilitar el uso de Redux en componentes
+  - Actualizado el componente raíz para incluir el Provider de Redux
+- **Problemas encontrados:**
+  - Algunos errores de linting que se han corregido
+  - Problema al usar useAppSelector dentro de un callback en el hook personalizado (resuelto con un enfoque diferente)
+- **Plan para mañana:**
+  - Implementar slices para usuarios
+  - Comenzar la implementación del CRUD de usuarios en el backend
 
 ## Métricas del Sprint
-- **Completado:** 0%
-- **Velocidad:** Por determinar
-- **Calidad de código:** Por evaluar
+- **Completado:** 15%
+- **Velocidad:** 3 subtareas completadas en 1 día
+- **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**

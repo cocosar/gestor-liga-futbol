@@ -40,6 +40,67 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - [Documentación oficial de Vite](https://vitejs.dev/guide/)
 - [Guía de migración de CRA a Vite](https://vitejs.dev/guide/migration-from-cra.html)
 
+### [31-03-2025] - Plan de Implementación de Redux Toolkit
+**Análisis:** Después de completar el Sprint 1 con éxito, es necesario implementar una solución robusta para la gestión del estado global. La aplicación necesitará manejar datos de autenticación, usuarios, equipos y más adelante jugadores y partidos. Redux Toolkit ofrece una solución moderna con menos código boilerplate que Redux tradicional.
+**Enfoque:** Se ha decidido seguir un enfoque por dominios (feature-based) para organizar el código de Redux, con los siguientes componentes:
+1. **Store central** configurado con Redux Toolkit
+2. **Slices por dominio:** 
+   - `auth`: Para gestión de autenticación (login, registro, logout)
+   - `users`: Para gestión de usuarios y perfiles
+   - `teams`: Para gestión de equipos
+3. **Middleware personalizado** para:
+   - Manejo de errores de API
+   - Logging (solo en desarrollo)
+   - Persistencia del token JWT
+4. **Hooks tipados** para facilitar el uso de Redux en componentes:
+   - `useAppDispatch` y `useAppSelector`
+   - Hooks específicos por dominio (por ejemplo, `useAuth`, `useTeam`)
+**Estructura de archivos prevista:**
+```
+/src/store/
+  ├── index.ts              # Configuración principal del store
+  ├── middleware/           # Middlewares personalizados
+  │   ├── api.ts            # Middleware para manejo de API
+  │   ├── logger.ts         # Middleware para logging
+  │   └── index.ts          # Exportación de middlewares
+  └── slices/               # Slices por dominio
+      ├── auth/             # Slice de autenticación
+      │   ├── authSlice.ts  # Definición del slice
+      │   ├── selectors.ts  # Selectores
+      │   └── thunks.ts     # Thunks para acciones asíncronas
+      ├── users/            # Slice de usuarios
+      ├── teams/            # Slice de equipos
+      └── index.ts          # Exportación de reducers
+```
+**Referencias:**
+- [Documentación oficial de Redux Toolkit](https://redux-toolkit.js.org/)
+- [Redux Style Guide](https://redux.js.org/style-guide/style-guide)
+- [RTK Query para llamadas a API](https://redux-toolkit.js.org/rtk-query/overview)
+
+### [01-04-2025] - Implementación de Redux Toolkit - Slice de Autenticación
+**Implementación:** Se ha creado la estructura base para Redux Toolkit según el plan definido e implementado el slice de autenticación, que incluye:
+1. **Configuración del store** con Redux Toolkit
+2. **Definición de tipos** compartidos para autenticación (`Usuario`, `LoginData`, `RegisterData`, etc.) 
+3. **Slice de autenticación** con:
+   - Reducers para login, registro, logout y actualización de perfil 
+   - Thunks para operaciones asíncronas (login, registro, obtención de perfil)
+   - Selectores para acceder eficientemente a los datos de autenticación
+4. **Hook personalizado** `useAuth` para facilitar el uso del slice de autenticación en componentes
+5. **Provider de Redux** en el componente raíz
+
+**Problemas encontrados:**
+1. **Error al usar useAppSelector dentro de callbacks**: Al implementar el hook personalizado `useAuth`, se intentó usar `useAppSelector` dentro de un callback, lo que React no permite. Solución: Se cambió el enfoque para almacenar el estado necesario en variables y utilizarlas dentro del callback.
+2. **Errores de linting**: Variables no utilizadas en bloques catch. Solución: Se utilizó la sintaxis de catch sin parámetro.
+
+**Siguientes pasos:**
+1. Implementar slices para usuarios y equipos
+2. Crear middlewares personalizados para manejo de errores y logging
+3. Integrar los servicios API con los slices de Redux
+
+**Referencias:**
+- [Redux Toolkit: Async Logic and Data Fetching](https://redux-toolkit.js.org/tutorials/rtk-query)
+- [React-Redux Hooks API](https://react-redux.js.org/api/hooks)
+
 ### [Fecha] - [Título del problema]
 **Problema:** Descripción detallada del problema.
 **Análisis:** Análisis de causas.

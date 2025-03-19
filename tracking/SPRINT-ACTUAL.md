@@ -1,181 +1,112 @@
-# Sprint 1: Configuración y Arquitectura Base
-**Período:** [17-03-2025] - [28-03-2025]
+# Sprint 2: Gestión de Usuarios y Equipos
+**Período:** [31-03-2025] - [11-04-2025]
 
 ## Objetivos del Sprint
-1. Configurar repositorio y estructura de proyecto
-2. Implementar autenticación JWT básica
-3. Definir esquemas MongoDB iniciales
-4. Configurar enrutamiento básico React Router
-5. Implementar layout principal responsive
-6. Establecer base de pruebas y calidad de código
+1. Implementar Redux para gestión de estado global
+2. Desarrollar CRUD completo de usuarios
+3. Implementar gestión de equipos
+4. Añadir página de perfil de usuario
+5. Mejorar cobertura de pruebas
 
 ## Tareas Específicas
 
-### 1. Inicializar proyecto React con TypeScript
-- [x] Crear proyecto con ~~Create React App~~ Vite + TypeScript
-- [x] Configurar ESLint y Prettier
-- [x] Configurar estructura de carpetas
-- **Estado:** Completado
-- **Notas:** Se migró de Create React App a Vite debido a problemas de compatibilidad con TypeScript 5.x. La migración permitió usar dependencias más modernas y mejorar el rendimiento.
+### 1. Implementar Redux para gestión de estado global
+- [x] Configurar Redux Toolkit
+  - [x] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
+  - [x] Crear archivo de configuración de store
+  - [x] Implementar provider en componente raíz
+- [x] Implementar slices para autenticación
+  - [x] Crear acciones para login, logout y registro
+  - [x] Implementar reducers para manejo de estado de autenticación
+  - [x] Configurar persistencia del token JWT en localStorage
+- [ ] Implementar slices para usuarios
+  - [ ] Crear acciones para gestión de usuarios (CRUD)
+  - [ ] Implementar reducers para manejo del estado de usuarios
+  - [ ] Crear selectores para acceso eficiente a datos de usuarios
+- [ ] Implementar slices para equipos
+  - [ ] Crear acciones para gestión de equipos (CRUD)
+  - [ ] Implementar reducers para manejo del estado de equipos
+  - [ ] Crear selectores para acceso eficiente a datos de equipos
+- [ ] Crear middlewares personalizados
+  - [ ] Middleware para manejo de errores de API
+  - [ ] Middleware para logging de acciones (desarrollo)
+- [x] Implementar hooks personalizados para Redux
+  - [x] Crear useAppSelector y useAppDispatch tipados
+  - [x] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
+- **Estado:** En progreso
+- **Notas:** Se ha implementado la configuración base de Redux Toolkit y el slice de autenticación con acciones, thunks y selectores. Se ha creado un hook personalizado para la autenticación.
 
-### 2. Configurar proyecto Express con TypeScript
-- [x] Inicializar proyecto Express
-- [x] Configurar TypeScript
-- [x] Configurar estructura de carpetas
-- [x] Añadir middleware esencial
-- [x] Configurar manejo de base de datos flexible
-- **Estado:** Completado
-- **Notas:** Configuración básica realizada. Dependencias instaladas. Se ha implementado un sistema flexible que permite utilizar una base de datos MongoDB en memoria cuando no hay conexión a MongoDB disponible.
+### 2. Desarrollar CRUD completo de usuarios
+- [ ] Implementar endpoints en backend para gestión de usuarios
+- [ ] Crear página de administración de usuarios
+- [ ] Implementar formularios para creación/edición de usuarios
+- [ ] Añadir funcionalidad para cambio de contraseña
+- [ ] Implementar gestión de roles de usuario
+- **Estado:** Pendiente
+- **Notas:** Depende de la implementación de Redux para la gestión de estado.
 
-### 3. Definir esquemas MongoDB iniciales
-- [x] Diseñar esquema Usuario
-- [x] Diseñar esquema Equipo
-- [x] Diseñar esquema Jugador
-- [x] Diseñar esquema Partido
-- [x] Diseñar esquema Liga (adicional)
-- **Estado:** Completado
-- **Notas:** Se han creado todos los esquemas necesarios, incluyendo un esquema adicional para Liga que no estaba inicialmente previsto pero era necesario para mantener las relaciones entre entidades.
+### 3. Implementar gestión de equipos
+- [ ] Desarrollar endpoints en backend para equipos
+- [ ] Crear página de listado de equipos
+- [ ] Implementar formulario para creación/edición de equipos
+- [ ] Crear página de detalle de equipo
+- [ ] Implementar asignación de entrenadores a equipos
+- **Estado:** Pendiente
+- **Notas:** Utilizar los slices de Redux implementados para la gestión del estado.
 
-### 4. Implementar autenticación JWT
-- [x] Configurar estrategia JWT
-- [x] Implementar rutas de autenticación
-- [x] Implementar middleware de autorización
-- [x] Implementar pruebas para la autenticación
-- **Estado:** Completado
-- **Notas:** Se ha implementado la autenticación JWT con rutas para registro, login y obtención del perfil del usuario. También se han creado middlewares de autenticación y autorización basada en roles. Se han añadido pruebas automatizadas y manuales para verificar el funcionamiento.
+### 4. Añadir página de perfil de usuario
+- [ ] Diseñar e implementar página de perfil
+- [ ] Crear formulario para edición de datos de perfil
+- [ ] Implementar funcionalidad de cambio de contraseña
+- [ ] Añadir historial de actividad del usuario
+- **Estado:** Pendiente
+- **Notas:** Esta página debe ser accesible para todos los usuarios autenticados.
 
-### 5. Configurar enrutamiento básico React Router
-- [x] Implementar BrowserRouter en App.tsx
-- [x] Configurar rutas principales
-- [x] Implementar rutas anidadas con layout
-- **Estado:** Completado
-- **Notas:** Se han implementado las rutas principales para Home, Login, Register y Dashboard. También se han añadido rutas para las secciones en desarrollo (Equipos, Jugadores, Partidos, Tabla de Posiciones).
-
-### 6. Implementar layout principal responsive
-- [x] Crear componente MainLayout
-- [x] Implementar AppHeader
-- [x] Implementar Sidebar responsive
-- [x] Implementar Footer
-- **Estado:** Completado
-- **Notas:** Se ha creado un layout principal responsive con AppBar, Sidebar (que se adapta a dispositivos móviles) y Footer.
-
-### 7. Establecer base de pruebas y calidad de código
-- [x] Configurar entorno de pruebas con Vitest para frontend
-- [x] Configurar Jest para pruebas de backend
-- [x] Implementar primeras pruebas unitarias para componentes críticos
-- [x] Configurar análisis estático de código (ESLint)
-- [x] Implementar hooks de pre-commit para verificación de calidad
-- **Estado:** Completado
-- **Notas:** Se ha configurado el entorno de pruebas con Vitest para frontend y Jest para backend. Se han implementado pruebas para los componentes principales (MainLayout, AppHeader, Sidebar, Footer) y para el controlador de autenticación. Se ha configurado ESLint para ambos proyectos. Se han implementado hooks de pre-commit con husky y lint-staged para verificar que el código cumple con los estándares de calidad antes de ser comprometido.
-
-### 8. Implementar integración frontend-backend para autenticación
-- [x] Crear estructura de servicios API en frontend
-- [x] Implementar servicio de autenticación (registro, login, perfil)
-- [x] Integrar componentes Register y Login con el backend
-- [x] Armonizar nombres de campos entre frontend y backend
-- [x] Implementar gestión de tokens JWT en frontend
-- [x] Añadir protección de rutas para páginas autenticadas
-- **Estado:** Completado
-- **Notas:** Se ha implementado la integración de autenticación entre frontend y backend. Se ha creado un servicio authService que maneja el registro, login y obtención de perfil de usuario. Se han modificado los componentes Register y Login para usar este servicio en lugar de la lógica simulada. Se han mapeado los nombres de campos y roles entre frontend y backend. Se ha implementado un componente ProtectedRoute para proteger las rutas que requieren autenticación y control de acceso basado en roles.
+### 5. Mejorar cobertura de pruebas
+- [ ] Añadir pruebas para componentes de UI principales
+- [ ] Implementar pruebas para slices de Redux
+- [ ] Crear pruebas para hooks personalizados
+- [ ] Mejorar cobertura de pruebas en backend
+- **Estado:** Pendiente
+- **Notas:** Objetivo: alcanzar al menos 70% de cobertura en el código frontend y backend.
 
 ## Registro Diario
 
-### [18-03-2025]
+### [31-03-2025]
 - **Avances:**
-  - Configurado repositorio Git
-  - Creada estructura básica de carpetas para frontend y backend
-  - Configurados archivos de configuración principales (package.json, tsconfig.json)
-  - Creados archivos básicos para frontend y backend
-  - Migrado frontend de Create React App a Vite para resolver problemas de compatibilidad con TypeScript 5.x
+  - Inicio oficial del Sprint 2
+  - Análisis detallado de requisitos para implementación de Redux
+  - Revisión del código existente para planificar la integración
 - **Problemas encontrados:**
-  - Incompatibilidad entre react-scripts (Create React App) y TypeScript 5.x
-  - Solución: Migración completa a Vite, que ofrece mejor compatibilidad y rendimiento
+  - Ninguno por el momento
 - **Plan para mañana:**
-  - Instalar dependencias y verificar configuración
-  - Comenzar implementación de esquemas MongoDB
+  - Instalar dependencias de Redux Toolkit
+  - Crear estructura inicial del store
+  - Implementar configuración base de Redux
 
-### [19-03-2025]
+### [01-04-2025]
 - **Avances:**
-  - Implementados todos los esquemas MongoDB iniciales (Usuario, Equipo, Jugador, Partido)
-  - Añadido esquema adicional de Liga para mejorar las relaciones entre entidades
-  - Creado archivo de índice para facilitar la exportación de modelos
+  - Implementada la configuración base de Redux Toolkit
+  - Creados los tipos compartidos para la autenticación
+  - Implementado el slice de autenticación con acciones, reducers, thunks y selectores
+  - Creado hook personalizado useAuth para facilitar el uso de Redux en componentes
+  - Actualizado el componente raíz para incluir el Provider de Redux
 - **Problemas encontrados:**
-  - Ninguno
+  - Algunos errores de linting que se han corregido
+  - Problema al usar useAppSelector dentro de un callback en el hook personalizado (resuelto con un enfoque diferente)
 - **Plan para mañana:**
-  - Comenzar implementación de autenticación JWT
-
-### [20-03-2025]
-- **Avances:**
-  - Implementada la autenticación JWT completa
-  - Creadas utilidades para generar y verificar tokens JWT
-  - Implementados middlewares de autenticación y autorización
-  - Creados controladores para registro, login y perfil de usuario
-  - Configuradas rutas de autenticación
-- **Problemas encontrados:**
-  - Algunos errores de tipo en la implementación de JWT que fueron resueltos
-- **Plan para mañana:**
-  - Comenzar con la configuración del enrutamiento en React Router
-
-### [21-03-2025]
-- **Avances:**
-  - Implementadas pruebas automatizadas para las rutas de autenticación
-  - Creado script para pruebas manuales de las APIs
-  - Configurado entorno Jest para pruebas
-- **Problemas encontrados:**
-  - Persistencia de algunos errores de tipado en el módulo JWT, pendientes de resolver
-- **Plan para mañana:**
-  - Comenzar con la configuración del enrutamiento en React Router
-
-### [22-03-2025]
-- **Avances:**
-  - Implementado sistema de manejo flexible de base de datos
-  - Añadido soporte para MongoDB en memoria para desarrollo y pruebas
-  - Mejorado el manejo de conexiones a la base de datos
-  - Actualizado archivo .env con variables de entorno para configuración
-  - Verificado funcionamiento de rutas de autenticación con base de datos en memoria
-- **Problemas encontrados:**
-  - Problemas de conexión a MongoDB local (resuelto con implementación de MongoDB en memoria)
-  - Algunos problemas de tipado en el soporte de MongoDB en memoria (resueltos)
-- **Plan para mañana:**
-  - Comenzar con la configuración del enrutamiento en React Router
-
-### [23-03-2025]
-- **Avances:**
-  - Configurado el enrutamiento básico con React Router
-  - Creada la estructura de páginas y componentes
-  - Implementado layout principal responsive con AppBar, Sidebar y Footer
-  - Implementadas las páginas básicas: Home, Login, Register y Dashboard
-  - Verificado y confirmado el correcto funcionamiento del pipeline CI/CD en GitHub Actions
-- **Problemas encontrados:**
-  - Ninguno significativo
-- **Plan para mañana:**
-  - Configurar GitHub Actions para CI básico
-  - Realizar testing de componentes creados
-  - Finalizar la documentación del sprint
+  - Implementar slices para usuarios
+  - Comenzar la implementación del CRUD de usuarios en el backend
 
 ## Métricas del Sprint
-- **Completado:** 85%
-- **Velocidad:** 6 tareas principales completadas en 7 días
-- **Calidad de código:** Alta - Código bien estructurado con componentes reutilizables y responsive
+- **Completado:** 15%
+- **Velocidad:** 3 subtareas completadas en 1 día
+- **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**
-  - Migración exitosa de Create React App a Vite
-  - Implementación eficiente de la autenticación JWT
-  - Creación de un layout principal responsive y atractivo
-  - Buen manejo de la base de datos flexible (MongoDB en memoria)
-  - Configuración y verificación exitosa del pipeline CI/CD en GitHub Actions
+  - Por determinar
 - **Lo que podría mejorar:**
-  - Añadir más pruebas automatizadas para los componentes frontend
-  - Mejorar la documentación del código
-  - Completar la integración frontend-backend para autenticación
+  - Por determinar
 - **Acciones para el próximo sprint:**
-  - Completar la integración frontend-backend para autenticación si no se finaliza en el Sprint 1
-  - Configurar Redux para gestión de estado global
-    - Priorizar la implementación completa de Redux Toolkit
-    - Crear slices para autenticación, usuarios y equipos
-    - Implementar persistencia del token JWT
-    - Desarrollar middlewares personalizados para manejo de errores y logging
-    - Crear hooks tipados para facilitar el uso de Redux en componentes
-  - Implementar pruebas para componentes de UI
-  - Mejorar la integración entre frontend y backend 
+  - Por determinar 
