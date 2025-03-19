@@ -1,7 +1,3 @@
-import authService from './authService';
-import userService from './userService';
-
-export {
-  authService,
-  userService
-}; 
+export { default as authService } from './authService';
+export { default as userService } from './userService';
+export { default as teamService } from './teamService'; 
