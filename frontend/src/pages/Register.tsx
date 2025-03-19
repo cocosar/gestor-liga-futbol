@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -22,7 +22,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { authService } from '../api';
+import { useAuth } from '../hooks/useAuth';
 
 // Tipos disponibles de usuario
 const userRoles = [
@@ -33,6 +33,8 @@ const userRoles = [
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
+  const { register, error: authError, loading: authLoading, isAuthenticated } = useAuth();
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -43,9 +45,15 @@ const Register: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  // Redireccionar si ya está autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -70,56 +78,39 @@ const Register: React.FC = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
+    setValidationError(null);
     setSuccess(null);
     
     // Validación básica del formulario
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword || !formData.role) {
-      setError('Por favor complete todos los campos');
+      setValidationError('Por favor complete todos los campos');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setValidationError('Las contraseñas no coinciden');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setValidationError('La contraseña debe tener al menos 6 caracteres');
       return;
     }
 
-    try {
-      setLoading(true);
-      
-      // Llamada real al API para registro
-      const response = await authService.register({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role
-      });
-      
-      if (response.success) {
-        setSuccess('¡Registro exitoso! Redirigiendo al inicio de sesión...');
-        
-        // Redirección después de registro exitoso
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      } else {
-        setError(response.message || 'Error al registrarse. Intente nuevamente más tarde.');
-      }
-    } catch (error) {
-      setError('Error al registrarse. Intente nuevamente más tarde.');
-      console.error('Error de registro:', error);
-    } finally {
-      setLoading(false);
-    }
+    // Utilizar el hook de autenticación para registrarse
+    register({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      role: formData.role
+    });
   };
+
+  // Mostrar error (validación del formulario o error de autenticación)
+  const displayError = validationError || authError;
 
   return (
     <Container component="main" maxWidth="sm">
@@ -157,9 +148,9 @@ const Register: React.FC = () => {
             Crear una Cuenta
           </Typography>
           
-          {error && (
+          {displayError && (
             <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-              {error}
+              {displayError}
             </Alert>
           )}
           
@@ -284,9 +275,9 @@ const Register: React.FC = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={loading}
+              disabled={authLoading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Registrarse'}
+              {authLoading ? <CircularProgress size={24} /> : 'Registrarse'}
             </Button>
             <Box sx={{ textAlign: 'center' }}>
               <Link component={RouterLink} to="/login" variant="body2">

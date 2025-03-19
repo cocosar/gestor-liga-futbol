@@ -1,5 +1,7 @@
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from './hooks/useAuth';
 
 // Importar layout principal
 import MainLayout from './components/layout/MainLayout';
@@ -33,6 +35,15 @@ const theme = createTheme({
 
 // Componente principal
 function App() {
+  const { getCurrentUser } = useAuth();
+
+  // Verificar el estado de autenticación al iniciar la aplicación
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      getCurrentUser();
+    }
+  }, [getCurrentUser]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,17 +16,25 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { authService } from '../api';
+import { useAuth } from '../hooks/useAuth';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { login, error: authError, loading: authLoading, isAuthenticated } = useAuth();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  // Redireccionar si ya está autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -42,36 +50,23 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
+    setValidationError(null);
     
     // Validación básica del formulario
     if (!formData.email || !formData.password) {
-      setError('Por favor complete todos los campos');
+      setValidationError('Por favor complete todos los campos');
       return;
     }
 
-    try {
-      setLoading(true);
-      
-      // Llamada real al API para login
-      const response = await authService.login({
-        email: formData.email,
-        password: formData.password
-      });
-      
-      if (response.success) {
-        // Redirección después de inicio de sesión exitoso
-        navigate('/dashboard');
-      } else {
-        setError(response.message || 'Credenciales inválidas. Intente nuevamente.');
-      }
-    } catch (error) {
-      setError('Error al iniciar sesión. Intente nuevamente más tarde.');
-      console.error('Error de inicio de sesión:', error);
-    } finally {
-      setLoading(false);
-    }
+    // Utilizar el hook de autenticación para iniciar sesión
+    login({
+      email: formData.email,
+      password: formData.password
+    });
   };
+
+  // Mostrar error (validación del formulario o error de autenticación)
+  const displayError = validationError || authError;
 
   return (
     <Container component="main" maxWidth="xs">
@@ -108,9 +103,9 @@ const Login: React.FC = () => {
             Iniciar Sesión
           </Typography>
           
-          {error && (
+          {displayError && (
             <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-              {error}
+              {displayError}
             </Alert>
           )}
           
@@ -157,9 +152,9 @@ const Login: React.FC = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={loading}
+              disabled={authLoading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
+              {authLoading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
             </Button>
             <Box sx={{ textAlign: 'center' }}>
               <Link component={RouterLink} to="/register" variant="body2">
