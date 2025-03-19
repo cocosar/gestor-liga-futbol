@@ -5,6 +5,7 @@ node_modules/
 
 # Producción
 /frontend/build
+/frontend/dist
 /backend/dist
 
 # Archivos de desarrollo
@@ -50,3 +51,6 @@ yarn-error.log*
 
 # Local history
 .history/ 
+
+# Repomix
+repomix.config.json
