@@ -19,9 +19,9 @@
   - [x] Crear acciones para login, logout y registro
   - [x] Implementar reducers para manejo de estado de autenticación
   - [x] Configurar persistencia del token JWT en localStorage
-- [ ] Implementar funcionalidad UI de autenticación
-  - [ ] Actualizar AppHeader para mostrar botones de autenticación dinámicamente (login/register o logout)
-  - [ ] Implementar funcionalidad de cierre de sesión en la interfaz de usuario
+- [x] Implementar funcionalidad UI de autenticación
+  - [x] Actualizar AppHeader para mostrar botones de autenticación dinámicamente (login/register o logout)
+  - [x] Implementar funcionalidad de cierre de sesión en la interfaz de usuario
 - [ ] Implementar slices para usuarios
   - [ ] Crear acciones para gestión de usuarios (CRUD)
   - [ ] Implementar reducers para manejo del estado de usuarios
