@@ -1,42 +1,8 @@
 import axios from 'axios';
+import { RegisterData, LoginData, AuthResponse } from '../types';
 
 // Configuración base para axios
 const API_URL = 'http://localhost:5000/api';
-
-// Interfaz para datos de registro
-interface RegisterData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  role: string;
-}
-
-// Interfaz para datos de login
-interface LoginData {
-  email: string;
-  password: string;
-}
-
-// Interfaz para el usuario
-interface Usuario {
-  _id: string;
-  nombre: string;
-  apellido: string;
-  email: string;
-  rol: string;
-  activo: boolean;
-  fechaCreacion: string;
-  ultimoAcceso?: string;
-}
-
-// Interfaz para respuesta de autenticación
-interface AuthResponse {
-  success: boolean;
-  token?: string;
-  usuario?: Usuario;
-  message?: string;
-}
 
 // Transformar datos de registro para adaptarlos al backend
 const transformRegisterData = (data: RegisterData) => {
