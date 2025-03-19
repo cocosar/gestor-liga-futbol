@@ -5,15 +5,24 @@
 ### Backend
 
 #### Usuarios
-- [ ] Implementar endpoints CRUD para usuarios
+- [ ] Implementar endpoints para gestión de usuarios
+  - [ ] Crear controlador para usuarios con métodos CRUD
+  - [ ] Implementar validación de datos con middleware
+  - [ ] Configurar rutas REST para usuarios
+  - [ ] Implementar paginación y filtrado en listados
+  - [ ] Añadir manejo de roles y permisos
 - [ ] Mejorar validación de datos
 - [ ] Añadir funcionalidad para cambio de contraseña
 - [ ] Implementar recuperación de contraseña (opcional)
 - [ ] Crear pruebas para endpoints de usuario
 
 #### Equipos
-- [ ] Implementar modelo y controlador para equipos
-- [ ] Crear endpoints CRUD para equipos
+- [ ] Desarrollar endpoints para equipos
+  - [ ] Crear modelo de datos para equipos
+  - [ ] Implementar controlador con métodos CRUD
+  - [ ] Configurar rutas REST para equipos
+  - [ ] Añadir relaciones con usuarios (entrenadores/manager)
+  - [ ] Implementar paginación y filtrado
 - [ ] Añadir validación de datos para equipos
 - [ ] Implementar asignación de entrenadores a equipos
 - [ ] Crear pruebas para endpoints de equipos
@@ -21,50 +30,101 @@
 ### Frontend
 
 #### Redux
-- [ ] Configurar Redux Toolkit
-  - [ ] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
-  - [ ] Crear archivo de configuración de store
-  - [ ] Implementar provider en componente raíz
-- [ ] Implementar slices para autenticación
-  - [ ] Crear acciones para login, logout y registro
-  - [ ] Implementar reducers para manejo de estado de autenticación
-  - [ ] Configurar persistencia del token JWT en localStorage
-- [ ] Implementar slices para usuarios
-  - [ ] Crear acciones para gestión de usuarios (CRUD)
-  - [ ] Implementar reducers para manejo del estado de usuarios
-  - [ ] Crear selectores para acceso eficiente a datos de usuarios
-- [ ] Implementar slices para equipos
-  - [ ] Crear acciones para gestión de equipos (CRUD)
-  - [ ] Implementar reducers para manejo del estado de equipos
-  - [ ] Crear selectores para acceso eficiente a datos de equipos
-- [ ] Crear middlewares personalizados
-  - [ ] Middleware para manejo de errores de API
-  - [ ] Middleware para logging de acciones (desarrollo)
-- [ ] Implementar hooks personalizados para Redux
-  - [ ] Crear useAppSelector y useAppDispatch tipados
-  - [ ] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
+- [x] Configurar Redux Toolkit
+  - [x] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
+  - [x] Crear archivo de configuración de store
+  - [x] Implementar provider en componente raíz
+- [x] Implementar slices para autenticación
+  - [x] Crear acciones para login, logout y registro
+  - [x] Implementar reducers para manejo de estado de autenticación
+  - [x] Configurar persistencia del token JWT en localStorage
+- [x] Implementar funcionalidad UI de autenticación
+  - [x] Actualizar AppHeader para mostrar botones de autenticación dinámicamente
+  - [x] Implementar funcionalidad de cierre de sesión en la interfaz de usuario
+- [x] Implementar slices para usuarios
+  - [x] Crear acciones para gestión de usuarios (CRUD)
+  - [x] Implementar reducers para manejo del estado de usuarios
+  - [x] Crear selectores para acceso eficiente a datos de usuarios
+- [x] Implementar slices para equipos
+  - [x] Crear acciones para gestión de equipos (CRUD)
+  - [x] Implementar reducers para manejo del estado de equipos
+  - [x] Crear selectores para acceso eficiente a datos de equipos
+- [x] Crear middlewares personalizados
+  - [x] Middleware para manejo de errores de API
+  - [x] Middleware para logging de acciones (desarrollo)
+- [x] Implementar hooks personalizados para Redux
+  - [x] Crear useAppSelector y useAppDispatch tipados
+  - [x] Crear hooks para operaciones comunes (useAuth, useUsers, useTeams)
 
 #### Funcionalidades de usuario
-- [ ] Crear página de perfil de usuario
-- [ ] Implementar formulario para edición de perfil
-- [ ] Añadir página de administración de usuarios (admin)
+- [ ] Crear página de administración de usuarios
+  - [ ] Implementar tabla de listado con paginación y filtros
+  - [ ] Añadir acciones de edición/eliminación en la tabla
+  - [ ] Implementar modal de confirmación para eliminación
+- [ ] Implementar formularios para creación/edición de usuarios
+  - [ ] Crear formulario con validación de campos
+  - [ ] Implementar manejo de errores de API
+  - [ ] Añadir feedback visual durante operaciones (loading, success, error)
+- [ ] Añadir página de perfil de usuario
+  - [ ] Crear layout responsivo con información del usuario
+  - [ ] Implementar vista de datos personales
+  - [ ] Añadir sección de preferencias
+- [ ] Crear formulario para edición de datos de perfil
+  - [ ] Implementar campos editables con validación
+  - [ ] Añadir previsualización de cambios
+  - [ ] Implementar feedback visual (loading, success, error)
+- [ ] Implementar funcionalidad de cambio de contraseña
+  - [ ] Crear formulario específico con validación
+  - [ ] Implementar comprobación de contraseña actual
+  - [ ] Añadir medidor de seguridad de contraseña
+- [ ] Añadir historial de actividad del usuario
+  - [ ] Implementar timeline de acciones recientes
+  - [ ] Añadir filtros por tipo de actividad
 - [ ] Implementar lógica para gestión de roles
 
 #### Gestión de equipos
-- [ ] Crear página para listado de equipos
+- [ ] Crear página de listado de equipos
+  - [ ] Implementar tabla con paginación y filtros
+  - [ ] Añadir acciones de gestión (editar, eliminar, ver detalle)
+  - [ ] Implementar búsqueda avanzada
 - [ ] Implementar formulario para creación/edición de equipos
+  - [ ] Crear campos con validación
+  - [ ] Añadir selector de categoría y tipo
+  - [ ] Implementar subida de logo/imagen del equipo
 - [ ] Crear página de detalle de equipo
+  - [ ] Mostrar información general del equipo
+  - [ ] Listar jugadores asociados
+  - [ ] Implementar estadísticas básicas
 - [ ] Implementar asignación de entrenadores a equipos
-- [ ] Añadir funcionalidad para carga de logo/imagen de equipo
+  - [ ] Crear selector de entrenadores disponibles
+  - [ ] Implementar gestión de roles en el equipo
 
 ### DevOps
 - [ ] Mejorar pipeline CI/CD
 - [ ] Añadir análisis de cobertura de código
+  - [ ] Configurar herramientas de medición de cobertura (Jest/Vitest)
+  - [ ] Implementar pipeline para validar cobertura de pruebas antes de cada commit
+  - [ ] Establecer umbrales mínimos de cobertura (80% para código crítico)
+  - [ ] Generar informes de cobertura en el pipeline de CI/CD
 - [ ] Configurar despliegue automático a entorno de desarrollo
 
-### Pruebas y Refactorización (Sprint Actual)
-- [ ] Implementar pruebas unitarias para servicios de autenticación
-- [ ] Implementar pruebas de componentes para formularios de login/registro
+### Pruebas y Refactorización
+- [x] Implementar pruebas para slices de Redux
+  - [x] Crear tests para reducers
+  - [x] Implementar tests para selectores
+  - [x] Añadir tests para thunks
+- [x] Crear pruebas para hooks personalizados
+  - [x] Implementar tests para useAuth
+  - [x] Crear tests para useUsers
+  - [x] Añadir tests para useTeams
+- [x] Implementar pruebas para middlewares personalizados
+  - [x] Crear tests para middleware de manejo de errores
+  - [x] Implementar tests para middleware de logging
+- [ ] Mejorar cobertura de pruebas en backend
+  - [ ] Implementar tests para controladores
+  - [ ] Crear tests para middleware
+  - [ ] Añadir tests de integración para rutas principales
+  - [ ] Implementar mocks para servicios externos
 - [ ] Refactorizar código de autenticación para mejorar mantenibilidad
 - [ ] Configurar análisis estático de código en GitHub Actions
 - [ ] Documentar decisiones técnicas tomadas durante el sprint
