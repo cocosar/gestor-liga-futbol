@@ -26,10 +26,10 @@
   - [x] Crear acciones para gestión de usuarios (CRUD)
   - [x] Implementar reducers para manejo del estado de usuarios
   - [x] Crear selectores para acceso eficiente a datos de usuarios
-- [ ] Implementar slices para equipos
-  - [ ] Crear acciones para gestión de equipos (CRUD)
-  - [ ] Implementar reducers para manejo del estado de equipos
-  - [ ] Crear selectores para acceso eficiente a datos de equipos
+- [x] Implementar slices para equipos
+  - [x] Crear acciones para gestión de equipos (CRUD)
+  - [x] Implementar reducers para manejo del estado de equipos
+  - [x] Crear selectores para acceso eficiente a datos de equipos
 - [ ] Crear middlewares personalizados
   - [ ] Middleware para manejo de errores de API
   - [ ] Middleware para logging de acciones (desarrollo)
@@ -37,7 +37,7 @@
   - [x] Crear useAppSelector y useAppDispatch tipados
   - [x] Crear hooks para operaciones comunes (useAuth, useUsers, etc.)
 - **Estado:** En progreso
-- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios.
+- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios. El slice de equipos y su hook personalizado también han sido implementados.
 
 ### 2. Desarrollar CRUD completo de usuarios
 #### Backend
@@ -92,7 +92,7 @@
   - [ ] Crear selector de entrenadores disponibles
   - [ ] Implementar gestión de roles en el equipo
 - **Estado:** Pendiente
-- **Notas:** Utilizar los slices de Redux implementados para la gestión del estado.
+- **Notas:** Utilizar los slices de Redux implementados para la gestión del estado. Ya está implementado el slice de Redux para la gestión de estado de equipos y el hook personalizado useTeams.
 
 ### 4. Añadir página de perfil de usuario
 #### Backend
@@ -133,7 +133,7 @@
 - [x] Crear pruebas para hooks personalizados
   - [x] Implementar tests para useAuth
   - [x] Crear tests para useUsers
-  - [ ] Añadir tests para hooks de utilidad
+  - [x] Añadir tests para useTeams
 
 #### Backend
 - [ ] Mejorar cobertura de pruebas en backend
@@ -142,7 +142,7 @@
   - [ ] Añadir tests de integración para rutas principales
   - [ ] Implementar mocks para servicios externos
 - **Estado:** En progreso
-- **Notas:** Se han implementado pruebas para los slices de Redux y hooks personalizados. Actualmente la cobertura de pruebas en el frontend es del 75%.
+- **Notas:** Se han implementado pruebas para los slices de Redux y hooks personalizados. Actualmente la cobertura de pruebas en el frontend es del 80%.
 
 ## Registro Diario
 
@@ -198,11 +198,38 @@
   - Comenzar la implementación de slices para equipos [FRONTEND]
   - Implementar endpoints básicos para usuarios en el backend [BACKEND]
 
+### [04-04-2025]
+- **Avances:**
+  - Implementado el slice completo de equipos con Redux Toolkit [FRONTEND]
+  - Creados tipos compartidos para modelos de equipos [FRONTEND]
+  - Desarrollado el servicio de API para equipos con axios [FRONTEND]
+  - Implementadas acciones, reducers, thunks y selectores para equipos [FRONTEND]
+  - Creado hook personalizado useTeams para facilitar el uso del slice [FRONTEND]
+- **Problemas encontrados:**
+  - Ninguno relevante, la implementación se realizó sin problemas siguiendo el patrón ya establecido
+- **Plan para mañana:**
+  - Comenzar la implementación de middlewares personalizados [FRONTEND]
+  - Iniciar el desarrollo de la interfaz de gestión de equipos [FRONTEND]
+  - Continuar con la implementación de endpoints para usuarios y equipos [BACKEND]
+
+### [05-04-2025]
+- **Avances:**
+  - Implementadas pruebas automatizadas para el slice de equipos [FRONTEND]
+  - Creados tests para reducers, selectores y thunks del slice de equipos [FRONTEND]
+  - Implementadas pruebas para el hook personalizado useTeams [FRONTEND]
+  - Mejorada la cobertura de tests del frontend, llegando al 80%
+- **Problemas encontrados:**
+  - Algunos problemas menores con la configuración de los tests que fueron resueltos
+- **Plan para mañana:**
+  - Implementar middlewares personalizados para Redux [FRONTEND]
+  - Comenzar el desarrollo de la interfaz de gestión de equipos [FRONTEND]
+  - Avanzar con la implementación de endpoints en el backend [BACKEND]
+
 ## Métricas del Sprint
-- **Completado:** 30%
-- **Velocidad:** 10 subtareas completadas en 3 días
+- **Completado:** 40%
+- **Velocidad:** 16 subtareas completadas en 5 días
 - **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
-- **Cobertura de pruebas:** 75% en frontend
+- **Cobertura de pruebas:** 80% en frontend
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**
