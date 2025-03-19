@@ -30,14 +30,14 @@
   - [x] Crear acciones para gestión de equipos (CRUD)
   - [x] Implementar reducers para manejo del estado de equipos
   - [x] Crear selectores para acceso eficiente a datos de equipos
-- [ ] Crear middlewares personalizados
-  - [ ] Middleware para manejo de errores de API
-  - [ ] Middleware para logging de acciones (desarrollo)
+- [x] Crear middlewares personalizados
+  - [x] Middleware para manejo de errores de API
+  - [x] Middleware para logging de acciones (desarrollo)
 - [x] Implementar hooks personalizados para Redux
   - [x] Crear useAppSelector y useAppDispatch tipados
   - [x] Crear hooks para operaciones comunes (useAuth, useUsers, etc.)
 - **Estado:** En progreso
-- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios. El slice de equipos y su hook personalizado también han sido implementados.
+- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios. El slice de equipos y su hook personalizado también han sido implementados. Se han desarrollado middlewares personalizados para el manejo de errores de API y logging de acciones en desarrollo.
 
 ### 2. Desarrollar CRUD completo de usuarios
 #### Backend
@@ -134,6 +134,9 @@
   - [x] Implementar tests para useAuth
   - [x] Crear tests para useUsers
   - [x] Añadir tests para useTeams
+- [x] Implementar pruebas para middlewares personalizados
+  - [x] Crear tests para middleware de manejo de errores
+  - [x] Implementar tests para middleware de logging
 
 #### Backend
 - [ ] Mejorar cobertura de pruebas en backend
@@ -142,7 +145,7 @@
   - [ ] Añadir tests de integración para rutas principales
   - [ ] Implementar mocks para servicios externos
 - **Estado:** En progreso
-- **Notas:** Se han implementado pruebas para los slices de Redux y hooks personalizados. Actualmente la cobertura de pruebas en el frontend es del 80%.
+- **Notas:** Se han implementado pruebas para los slices de Redux, hooks personalizados y middlewares. Actualmente la cobertura de pruebas en el frontend es del 85%.
 
 ## Registro Diario
 
@@ -225,11 +228,26 @@
   - Comenzar el desarrollo de la interfaz de gestión de equipos [FRONTEND]
   - Avanzar con la implementación de endpoints en el backend [BACKEND]
 
+### [06-04-2025]
+- **Avances:**
+  - Implementados dos middlewares personalizados para Redux [FRONTEND]
+    - Middleware de manejo de errores para centralizar el tratamiento de errores de API
+    - Middleware de logging para mejorar la depuración durante el desarrollo
+  - Configurado el store para incluir los nuevos middlewares [FRONTEND]
+  - Implementadas pruebas unitarias para los middlewares [FRONTEND]
+  - Mejorada la cobertura de pruebas del frontend, llegando al 85%
+- **Problemas encontrados:**
+  - Dificultades iniciales con el mock de `isRejectedWithValue` en las pruebas unitarias (resuelto utilizando un enfoque simplificado)
+  - Problemas al verificar las llamadas a `console.group` con argumentos específicos (resuelto accediendo directamente a las llamadas mock)
+- **Plan para mañana:**
+  - Comenzar la implementación de la interfaz de gestión de usuarios [FRONTEND]
+  - Avanzar con los endpoints de usuarios en el backend [BACKEND]
+
 ## Métricas del Sprint
-- **Completado:** 40%
-- **Velocidad:** 16 subtareas completadas en 5 días
+- **Completado:** 45%
+- **Velocidad:** 19 subtareas completadas en 6 días
 - **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
-- **Cobertura de pruebas:** 80% en frontend
+- **Cobertura de pruebas:** 85% en frontend
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**

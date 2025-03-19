@@ -7,6 +7,9 @@ import authReducer from './slices/auth/authSlice';
 import usersReducer from './slices/users';
 import teamsReducer from './slices/teams';
 
+// Importar middlewares personalizados
+import middlewares from './middleware';
+
 // Configuración del store
 export const store = configureStore({
   reducer: {
@@ -23,7 +26,9 @@ export const store = configureStore({
         ignoredActions: [],
         ignoredPaths: [],
       },
-    }),
+    })
+    .concat(middlewares.errorMiddleware)
+    .concat(middlewares.loggerMiddleware),
   devTools: process.env.NODE_ENV !== 'production',
 });
 
