@@ -41,6 +41,27 @@ const localStorageMock = (() => {
   };
 })();
 
+// Mock para componentes React Router y MUI para evitar renderizados costosos
+vi.mock('react-router-dom', () => ({
+  BrowserRouter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Routes: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Route: () => <div data-testid="route"></div>,
+}));
+
+vi.mock('@mui/material', () => ({
+  CssBaseline: () => null,
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  createTheme: () => ({}),
+}));
+
+// Mock de los componentes de páginas para evitar su renderizado completo
+vi.mock('../../pages/Home', () => ({ default: () => <div>Home</div> }));
+vi.mock('../../pages/Login', () => ({ default: () => <div>Login</div> }));
+vi.mock('../../pages/Register', () => ({ default: () => <div>Register</div> }));
+vi.mock('../../pages/Dashboard', () => ({ default: () => <div>Dashboard</div> }));
+vi.mock('../../components/layout/MainLayout', () => ({ default: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }));
+vi.mock('../../components/auth/ProtectedRoute', () => ({ default: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }));
+
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock
 });

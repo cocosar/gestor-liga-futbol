@@ -46,6 +46,8 @@ The content is organized as follows:
 .cursor/rules/coding-preferences.mdc
 .github/workflows/ci.yml
 .gitignore
+.husky/pre-commit
+backend/.eslintrc.js
 backend/jest.config.js
 backend/package.json
 backend/README.md
@@ -61,6 +63,7 @@ backend/src/models/User.ts
 backend/src/routes/authRoutes.ts
 backend/src/routes/index.ts
 backend/src/tests/auth.test.ts
+backend/src/tests/controllers/authController.test.ts
 backend/src/utils/jwt.ts
 backend/tsconfig.json
 docs/plan-de-implementacion.md
@@ -71,8 +74,14 @@ frontend/package.json
 frontend/public/index.html
 frontend/public/manifest.json
 frontend/README.md
+frontend/src/api/authService.ts
+frontend/src/api/index.ts
 frontend/src/App.tsx
+frontend/src/components/auth/ProtectedRoute.tsx
+frontend/src/components/layout/__tests__/AppHeader.test.tsx
+frontend/src/components/layout/__tests__/Footer.test.tsx
 frontend/src/components/layout/__tests__/MainLayout.test.tsx
+frontend/src/components/layout/__tests__/Sidebar.test.tsx
 frontend/src/components/layout/AppHeader.tsx
 frontend/src/components/layout/Footer.tsx
 frontend/src/components/layout/MainLayout.tsx
@@ -106,105 +115,6 @@ tracking/TRACKING.md
 <files>
 This section contains the contents of the repository's files.
 
-<file path="tracking/sprints/sprint-2.md">
-# Sprint 2: Gestión de Usuarios y Equipos
-**Período:** [31-03-2025] - [11-04-2025]
-
-## Objetivos del Sprint
-1. Implementar Redux para gestión de estado global
-2. Desarrollar CRUD completo de usuarios
-3. Implementar gestión de equipos
-4. Añadir página de perfil de usuario
-5. Mejorar cobertura de pruebas
-
-## Tareas Específicas
-
-### 1. Implementar Redux para gestión de estado global
-- [ ] Configurar Redux Toolkit
-  - [ ] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
-  - [ ] Crear archivo de configuración de store
-  - [ ] Implementar provider en componente raíz
-- [ ] Implementar slices para autenticación
-  - [ ] Crear acciones para login, logout y registro
-  - [ ] Implementar reducers para manejo de estado de autenticación
-  - [ ] Configurar persistencia del token JWT en localStorage
-- [ ] Implementar slices para usuarios
-  - [ ] Crear acciones para gestión de usuarios (CRUD)
-  - [ ] Implementar reducers para manejo del estado de usuarios
-  - [ ] Crear selectores para acceso eficiente a datos de usuarios
-- [ ] Implementar slices para equipos
-  - [ ] Crear acciones para gestión de equipos (CRUD)
-  - [ ] Implementar reducers para manejo del estado de equipos
-  - [ ] Crear selectores para acceso eficiente a datos de equipos
-- [ ] Crear middlewares personalizados
-  - [ ] Middleware para manejo de errores de API
-  - [ ] Middleware para logging de acciones (desarrollo)
-- [ ] Implementar hooks personalizados para Redux
-  - [ ] Crear useAppSelector y useAppDispatch tipados
-  - [ ] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
-- **Estado:** Pendiente
-- **Notas:** Prioridad alta. Esta tarea es fundamental para las demás funcionalidades del sprint.
-
-### 2. Desarrollar CRUD completo de usuarios
-- [ ] Implementar endpoints en backend para gestión de usuarios
-- [ ] Crear página de administración de usuarios
-- [ ] Implementar formularios para creación/edición de usuarios
-- [ ] Añadir funcionalidad para cambio de contraseña
-- [ ] Implementar gestión de roles de usuario
-- **Estado:** Pendiente
-- **Notas:** Depende de la implementación de Redux para la gestión de estado.
-
-### 3. Implementar gestión de equipos
-- [ ] Desarrollar endpoints en backend para equipos
-- [ ] Crear página de listado de equipos
-- [ ] Implementar formulario para creación/edición de equipos
-- [ ] Crear página de detalle de equipo
-- [ ] Implementar asignación de entrenadores a equipos
-- **Estado:** Pendiente
-- **Notas:** Utilizar los slices de Redux implementados para la gestión del estado.
-
-### 4. Añadir página de perfil de usuario
-- [ ] Diseñar e implementar página de perfil
-- [ ] Crear formulario para edición de datos de perfil
-- [ ] Implementar funcionalidad de cambio de contraseña
-- [ ] Añadir historial de actividad del usuario
-- **Estado:** Pendiente
-- **Notas:** Esta página debe ser accesible para todos los usuarios autenticados.
-
-### 5. Mejorar cobertura de pruebas
-- [ ] Añadir pruebas para componentes de UI principales
-- [ ] Implementar pruebas para slices de Redux
-- [ ] Crear pruebas para hooks personalizados
-- [ ] Mejorar cobertura de pruebas en backend
-- **Estado:** Pendiente
-- **Notas:** Objetivo: alcanzar al menos 70% de cobertura en el código frontend y backend.
-
-## Registro Diario
-
-### [31-03-2025]
-- **Avances:**
-  - Planificación detallada del sprint
-  - Configuración inicial del entorno para Redux
-- **Problemas encontrados:**
-  - Ninguno por el momento
-- **Plan para mañana:**
-  - Comenzar implementación de Redux Toolkit
-  - Configurar store inicial
-
-## Métricas del Sprint
-- **Completado:** 0%
-- **Velocidad:** Por determinar
-- **Calidad de código:** Por evaluar
-
-## Retrospectiva (al finalizar)
-- **Lo que salió bien:**
-  - Por determinar
-- **Lo que podría mejorar:**
-  - Por determinar
-- **Acciones para el próximo sprint:**
-  - Por determinar
-</file>
-
 <file path=".cursor/rules/coding-preferences.mdc">
 ---
 description: Coding pattern preferences
@@ -225,7 +135,6 @@ alwaysApply: false
 - Mocking data is only needed for tests, never mock data for dev or prod.
 - Never add stubbing or fake data patterns to code that affects the dev or prod environments
 - Never overwrite my .env file without first asking and confirming
--
 </file>
 
 <file path=".gitignore">
@@ -281,6 +190,36 @@ yarn-error.log*
 
 # Local history
 .history/
+</file>
+
+<file path=".husky/pre-commit">
+npx lint-staged
+</file>
+
+<file path="backend/.eslintrc.js">
+module.exports = {
+  parser: '@typescript-eslint/parser',
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+  ],
+  plugins: ['@typescript-eslint'],
+  parserOptions: {
+    ecmaVersion: 2021,
+    sourceType: 'module',
+    project: './tsconfig.json',
+  },
+  env: {
+    node: true,
+    jest: true,
+  },
+  rules: {
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+  },
+};
 </file>
 
 <file path="backend/jest.config.js">
@@ -354,298 +293,6 @@ El servidor estará disponible en [http://localhost:5000](http://localhost:5000)
 ## API Endpoints
 
 La documentación detallada de la API estará disponible en `/api/docs` una vez que el servidor esté en funcionamiento.
-</file>
-
-<file path="backend/src/controllers/authController.ts">
-import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import bcrypt from 'bcrypt';
-import { generateToken } from '../utils/jwt';
-import User from '../models/User';
-
-/**
- * Registrar un nuevo usuario
- * @route POST /api/auth/register
- * @access Public
- */
-export const register = async (req: Request, res: Response) => {
-  try {
-    // Validar errores de la solicitud
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        errors: errors.array(),
-      });
-    }
-
-    const { nombre, apellido, email, password, rol } = req.body;
-
-    // Verificar si el usuario ya existe
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({
-        success: false,
-        message: 'El email ya está registrado.',
-      });
-    }
-
-    // Si se especifica un rol, verificar que sea válido
-    if (rol && !['admin', 'manager', 'arbitro', 'usuario'].includes(rol)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Rol inválido.',
-      });
-    }
-
-    // Crear el usuario
-    const user = await User.create({
-      nombre,
-      apellido,
-      email,
-      password, // La contraseña será hasheada en el pre-save hook del modelo
-      rol: rol || 'usuario', // Por defecto es 'usuario'
-    });
-
-    // Generar token JWT
-    const token = generateToken(user);
-
-    // Responder con el token y los datos del usuario (sin la contraseña)
-    const userWithoutPassword = {
-      _id: user._id,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      rol: user.rol,
-      activo: user.activo,
-      fechaCreacion: user.fechaCreacion,
-    };
-
-    res.status(201).json({
-      success: true,
-      token,
-      usuario: userWithoutPassword,
-    });
-  } catch (error) {
-    console.error('Error en registro:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error en el servidor al registrar usuario.',
-    });
-  }
-};
-
-/**
- * Iniciar sesión de usuario
- * @route POST /api/auth/login
- * @access Public
- */
-export const login = async (req: Request, res: Response) => {
-  try {
-    // Validar errores de la solicitud
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        errors: errors.array(),
-      });
-    }
-
-    const { email, password } = req.body;
-
-    // Buscar el usuario
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Credenciales inválidas.',
-      });
-    }
-
-    // Verificar si el usuario está activo
-    if (!user.activo) {
-      return res.status(403).json({
-        success: false,
-        message: 'Usuario desactivado. Contacte al administrador.',
-      });
-    }
-
-    // Verificar la contraseña
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: 'Credenciales inválidas.',
-      });
-    }
-
-    // Actualizar último acceso
-    user.ultimoAcceso = new Date();
-    await user.save();
-
-    // Generar token JWT
-    const token = generateToken(user);
-
-    // Responder con el token y los datos del usuario (sin la contraseña)
-    const userWithoutPassword = {
-      _id: user._id,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      rol: user.rol,
-      activo: user.activo,
-      fechaCreacion: user.fechaCreacion,
-      ultimoAcceso: user.ultimoAcceso,
-    };
-
-    res.status(200).json({
-      success: true,
-      token,
-      usuario: userWithoutPassword,
-    });
-  } catch (error) {
-    console.error('Error en login:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error en el servidor al iniciar sesión.',
-    });
-  }
-};
-
-/**
- * Obtener el perfil del usuario actual
- * @route GET /api/auth/me
- * @access Private
- */
-export const getMe = async (req: Request, res: Response) => {
-  try {
-    // El usuario ya está en req.user gracias al middleware de autenticación
-    res.status(200).json({
-      success: true,
-      usuario: req.user,
-    });
-  } catch (error) {
-    console.error('Error al obtener perfil:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error en el servidor al obtener perfil.',
-    });
-  }
-};
-
-export default {
-  register,
-  login,
-  getMe,
-};
-</file>
-
-<file path="backend/src/middleware/auth.ts">
-import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '../utils/jwt';
-import User from '../models/User';
-
-// Extender el tipo Request para incluir el usuario autenticado
-declare global {
-  namespace Express {
-    interface Request {
-      user?: any;
-    }
-  }
-}
-
-/**
- * Middleware para proteger rutas que requieren autenticación
- */
-export const authenticate = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Obtener el token del header Authorization
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        success: false,
-        message: 'Acceso no autorizado. Token no proporcionado.',
-      });
-    }
-
-    // Extraer el token
-    const token = authHeader.split(' ')[1];
-
-    // Verificar el token
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return res.status(401).json({
-        success: false,
-        message: 'Token inválido o expirado.',
-      });
-    }
-
-    // Buscar el usuario en la base de datos
-    const user = await User.findById(decoded.id).select('-password');
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Usuario no encontrado.',
-      });
-    }
-
-    // Verificar si el usuario está activo
-    if (!user.activo) {
-      return res.status(403).json({
-        success: false,
-        message: 'Usuario desactivado. Contacte al administrador.',
-      });
-    }
-
-    // Añadir el usuario a la solicitud
-    req.user = user;
-
-    // Actualizar el último acceso del usuario
-    user.ultimoAcceso = new Date();
-    await user.save();
-
-    next();
-  } catch (error) {
-    console.error('Error en middleware de autenticación:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Error en la autenticación.',
-    });
-  }
-};
-
-/**
- * Middleware para verificar roles de usuario
- * @param roles Array de roles permitidos
- */
-export const authorize = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Acceso no autorizado. Usuario no autenticado.',
-      });
-    }
-
-    if (!roles.includes(req.user.rol)) {
-      return res.status(403).json({
-        success: false,
-        message: 'Acceso prohibido. No tiene los permisos necesarios.',
-      });
-    }
-
-    next();
-  };
-};
-
-export default {
-  authenticate,
-  authorize,
-};
 </file>
 
 <file path="backend/src/models/index.ts">
@@ -1438,6 +1085,298 @@ export default tseslint.config(
 }
 </file>
 
+<file path="frontend/src/api/authService.ts">
+import axios from 'axios';
+
+// Configuración base para axios
+const API_URL = 'http://localhost:5000/api';
+
+// Interfaz para datos de registro
+interface RegisterData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+}
+
+// Interfaz para datos de login
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+// Interfaz para el usuario
+interface Usuario {
+  _id: string;
+  nombre: string;
+  apellido: string;
+  email: string;
+  rol: string;
+  activo: boolean;
+  fechaCreacion: string;
+  ultimoAcceso?: string;
+}
+
+// Interfaz para respuesta de autenticación
+interface AuthResponse {
+  success: boolean;
+  token?: string;
+  usuario?: Usuario;
+  message?: string;
+}
+
+// Transformar datos de registro para adaptarlos al backend
+const transformRegisterData = (data: RegisterData) => {
+  return {
+    nombre: data.firstName,
+    apellido: data.lastName,
+    email: data.email,
+    password: data.password,
+    rol: transformRole(data.role)
+  };
+};
+
+// Mapeo de roles del frontend al backend
+const transformRole = (role: string): string => {
+  const roleMap: { [key: string]: string } = {
+    'player': 'usuario',
+    'coach': 'manager',
+    'admin': 'admin'
+  };
+  return roleMap[role] || 'usuario';
+};
+
+// Servicio de autenticación
+const authService = {
+  // Registrar usuario
+  register: async (userData: RegisterData): Promise<AuthResponse> => {
+    try {
+      const transformedData = transformRegisterData(userData);
+      const response = await axios.post(`${API_URL}/auth/register`, transformedData);
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.usuario));
+      }
+      
+      return response.data;
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error) && error.response?.data?.message 
+        ? error.response.data.message 
+        : 'Error en el registro';
+      return { success: false, message };
+    }
+  },
+  
+  // Iniciar sesión
+  login: async (userData: LoginData): Promise<AuthResponse> => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, userData);
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.usuario));
+      }
+      
+      return response.data;
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error) && error.response?.data?.message 
+        ? error.response.data.message 
+        : 'Error en el inicio de sesión';
+      return { success: false, message };
+    }
+  },
+  
+  // Cerrar sesión
+  logout: (): void => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  },
+  
+  // Obtener perfil del usuario
+  getCurrentUser: async (): Promise<AuthResponse> => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        return { success: false, message: 'No hay usuario autenticado' };
+      }
+      
+      const response = await axios.get(`${API_URL}/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return { success: true, usuario: response.data.usuario };
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error) && error.response?.data?.message 
+        ? error.response.data.message 
+        : 'Error al obtener perfil de usuario';
+      return { success: false, message };
+    }
+  },
+  
+  // Verificar si el usuario está autenticado
+  isAuthenticated: (): boolean => {
+    return !!localStorage.getItem('token');
+  }
+};
+
+export default authService;
+</file>
+
+<file path="frontend/src/api/index.ts">
+import authService from './authService';
+
+export {
+  authService
+};
+</file>
+
+<file path="frontend/src/components/auth/ProtectedRoute.tsx">
+import React from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { authService } from '../../api';
+
+interface ProtectedRouteProps {
+  allowedRoles?: string[];
+}
+
+/**
+ * Componente para proteger rutas que requieren autenticación
+ * Si no hay un usuario autenticado, redirige a la página de login
+ * Si se especifican roles permitidos, verifica que el usuario tenga uno de esos roles
+ */
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
+  const location = useLocation();
+  const isAuthenticated = authService.isAuthenticated();
+  
+  // Si no hay un usuario autenticado, redirigir a login
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  // Si hay roles permitidos especificados, verificar que el usuario tenga uno de ellos
+  if (allowedRoles && allowedRoles.length > 0) {
+    const userString = localStorage.getItem('user');
+    
+    if (!userString) {
+      // Si no hay datos de usuario en localStorage pero hay un token,
+      // es posible que la sesión esté corrupta
+      authService.logout(); // Limpiar la sesión
+      return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+    
+    try {
+      const user = JSON.parse(userString);
+      const userRole = user.rol;
+      
+      // Mapear rol del backend al frontend si es necesario
+      const roleMap: Record<string, string> = {
+        'usuario': 'player',
+        'manager': 'coach',
+        'admin': 'admin',
+        'arbitro': 'referee'
+      };
+      
+      const mappedRole = roleMap[userRole] || userRole;
+      
+      // Verificar si el rol del usuario está entre los permitidos
+      if (!allowedRoles.includes(mappedRole)) {
+        // El usuario no tiene un rol permitido, redirigir a una página de acceso denegado
+        return <Navigate to="/unauthorized" replace />;
+      }
+    } catch (error) {
+      // Error al parsear los datos del usuario, limpiar la sesión
+      console.error('Error al verificar permisos:', error);
+      authService.logout();
+      return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+  }
+  
+  // El usuario está autenticado y tiene los permisos necesarios
+  return <Outlet />;
+};
+
+export default ProtectedRoute;
+</file>
+
+<file path="frontend/src/components/layout/__tests__/AppHeader.test.tsx">
+import { render, screen, fireEvent } from '@testing-library/react';
+import AppHeader from '../AppHeader';
+import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material';
+import { describe, it, expect, vi } from 'vitest';
+
+describe('AppHeader', () => {
+  const theme = createTheme();
+  const drawerWidth = 240;
+  const mockDrawerToggle = vi.fn();
+  
+  const renderAppHeader = () => {
+    return render(
+      <ThemeProvider theme={theme}>
+        <MemoryRouter>
+          <AppHeader drawerWidth={drawerWidth} onDrawerToggle={mockDrawerToggle} />
+        </MemoryRouter>
+      </ThemeProvider>
+    );
+  };
+  
+  it('renders app title correctly', () => {
+    renderAppHeader();
+    expect(screen.getByText('Liga Fútbol 8v8')).toBeInTheDocument();
+  });
+  
+  it('renders login and register buttons', () => {
+    renderAppHeader();
+    expect(screen.getByText('Iniciar Sesión')).toBeInTheDocument();
+    expect(screen.getByText('Registrarse')).toBeInTheDocument();
+  });
+  
+  it('calls onDrawerToggle when menu button is clicked', () => {
+    renderAppHeader();
+    const menuButton = screen.getByLabelText('open drawer');
+    fireEvent.click(menuButton);
+    expect(mockDrawerToggle).toHaveBeenCalledTimes(1);
+  });
+});
+</file>
+
+<file path="frontend/src/components/layout/__tests__/Footer.test.tsx">
+import { render, screen } from '@testing-library/react';
+import Footer from '../Footer';
+import { describe, it, expect } from 'vitest';
+
+describe('Footer', () => {
+  it('renders copyright text', () => {
+    render(<Footer />);
+    
+    // Verificar que el año actual está en el documento
+    const currentYear = new Date().getFullYear().toString();
+    expect(screen.getByText(new RegExp(currentYear))).toBeInTheDocument();
+  });
+  
+  it('renders application name', () => {
+    render(<Footer />);
+    expect(screen.getByText('Sistema de Gestión de Ligas de Fútbol 8v8')).toBeInTheDocument();
+  });
+  
+  it('renders version information', () => {
+    render(<Footer />);
+    expect(screen.getByText('Versión 1.0.0')).toBeInTheDocument();
+  });
+  
+  it('renders "todos los derechos reservados" text', () => {
+    render(<Footer />);
+    // Usar una expresión regular para buscar el texto que puede estar separado por elementos
+    expect(screen.getByText(/Todos los derechos reservados/)).toBeInTheDocument();
+  });
+});
+</file>
+
 <file path="frontend/src/components/layout/__tests__/MainLayout.test.tsx">
 import { render, screen } from '@testing-library/react';
 import MainLayout from '../MainLayout';
@@ -1482,6 +1421,81 @@ describe('MainLayout', () => {
     expect(screen.getByTestId('sidebar')).toBeInTheDocument();
     expect(screen.getByTestId('outlet')).toBeInTheDocument();
     expect(screen.getByTestId('footer')).toBeInTheDocument();
+  });
+});
+</file>
+
+<file path="frontend/src/components/layout/__tests__/Sidebar.test.tsx">
+import { render, screen, fireEvent } from '@testing-library/react';
+import Sidebar from '../Sidebar';
+import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi } from 'vitest';
+
+// Mock para react-router-dom
+vi.mock('react-router-dom', () => {
+  return {
+    // Importar el MemoryRouter real
+    MemoryRouter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    // Mock de funciones
+    useNavigate: () => vi.fn(),
+    useLocation: () => ({ pathname: '/' }),
+  };
+});
+
+describe('Sidebar', () => {
+  const drawerWidth = 240;
+  const mockDrawerClose = vi.fn();
+  
+  const renderSidebar = (isMobile = false) => {
+    return render(
+      <MemoryRouter>
+        <Sidebar 
+          drawerWidth={drawerWidth} 
+          mobileOpen={true} 
+          onDrawerClose={mockDrawerClose}
+          isMobile={isMobile}
+        />
+      </MemoryRouter>
+    );
+  };
+  
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  
+  it('renders navigation items correctly', () => {
+    renderSidebar();
+    
+    // Usar getAllByText para obtener todos los elementos con el texto específico
+    // y verificar que existan
+    expect(screen.getAllByText('Inicio').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Dashboard').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Equipos').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Jugadores').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Partidos').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Tabla de Posiciones').length).toBeGreaterThan(0);
+  });
+  
+  it('calls onDrawerClose when clicked in mobile view', () => {
+    renderSidebar(true);
+    
+    // Obtener el primer elemento dashboard
+    const dashboardElements = screen.getAllByText('Dashboard');
+    fireEvent.click(dashboardElements[0]);
+    
+    // Verificar que se llamó onDrawerClose
+    expect(mockDrawerClose).toHaveBeenCalledTimes(1);
+  });
+  
+  it('does not call onDrawerClose when clicked in desktop view', () => {
+    renderSidebar(false);
+    
+    // Obtener el primer elemento dashboard
+    const dashboardElements = screen.getAllByText('Dashboard');
+    fireEvent.click(dashboardElements[0]);
+    
+    // En vista desktop no debería llamar a onDrawerClose
+    expect(mockDrawerClose).not.toHaveBeenCalled();
   });
 });
 </file>
@@ -2178,466 +2192,6 @@ const Home: React.FC = () => {
 export default Home;
 </file>
 
-<file path="frontend/src/pages/Login.tsx">
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  TextField,
-  Typography,
-  Alert,
-  Link,
-  InputAdornment,
-  IconButton
-} from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
-const Login: React.FC = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-    
-    // Validación básica del formulario
-    if (!formData.email || !formData.password) {
-      setError('Por favor complete todos los campos');
-      return;
-    }
-
-    try {
-      // Aquí iría la lógica de autenticación real con la API
-      console.log('Datos de inicio de sesión:', formData);
-      
-      // Simulamos un error para mostrar la funcionalidad
-      // En implementación real, esto se reemplazaría con la integración de la API
-      if (formData.email !== 'admin@example.com') {
-        setError('Credenciales inválidas. Intente nuevamente.');
-        return;
-      }
-      
-      // Redirección después de inicio de sesión exitoso
-      // En implementación real, esto se manejaría después de la respuesta de la API
-      window.location.href = '/dashboard';
-    } catch (error) {
-      setError('Error al iniciar sesión. Intente nuevamente más tarde.');
-      console.error('Error de inicio de sesión:', error);
-    }
-  };
-
-  return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Box
-            sx={{
-              bgcolor: 'primary.main',
-              color: 'white',
-              borderRadius: '50%',
-              p: 1,
-              mb: 1,
-            }}
-          >
-            <LockOutlinedIcon />
-          </Box>
-          <Typography component="h1" variant="h5">
-            Iniciar Sesión
-          </Typography>
-          
-          {error && (
-            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-              {error}
-            </Alert>
-          )}
-          
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Correo Electrónico"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Contraseña"
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              autoComplete="current-password"
-              value={formData.password}
-              onChange={handleInputChange}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleTogglePassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Iniciar Sesión
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link component={RouterLink} to="/register" variant="body2">
-                ¿No tienes una cuenta? Regístrate
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
-  );
-};
-
-export default Login;
-</file>
-
-<file path="frontend/src/pages/Register.tsx">
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  TextField,
-  Typography,
-  Alert,
-  Link,
-  Grid,
-  InputAdornment,
-  IconButton,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  SelectChangeEvent
-} from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
-// Tipos disponibles de usuario
-const userRoles = [
-  { value: 'player', label: 'Jugador' },
-  { value: 'coach', label: 'Entrenador' },
-  { value: 'admin', label: 'Administrador' }
-];
-
-const Register: React.FC = () => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
-  const handleSelectChange = (e: SelectChangeEvent) => {
-    setFormData({
-      ...formData,
-      role: e.target.value
-    });
-  };
-
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleToggleConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-    
-    // Validación básica del formulario
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword || !formData.role) {
-      setError('Por favor complete todos los campos');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
-      return;
-    }
-
-    try {
-      // Aquí iría la lógica de registro real con la API
-      console.log('Datos de registro:', formData);
-      
-      // Simulamos un registro exitoso
-      // En implementación real, esto se reemplazaría con la integración de la API
-      setSuccess('¡Registro exitoso! Redirigiendo al inicio de sesión...');
-      
-      // Redirección después de registro exitoso (simulado)
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 2000);
-    } catch (error) {
-      setError('Error al registrarse. Intente nuevamente más tarde.');
-      console.error('Error de registro:', error);
-    }
-  };
-
-  return (
-    <Container component="main" maxWidth="sm">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          mb: 4
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Box
-            sx={{
-              bgcolor: 'primary.main',
-              color: 'white',
-              borderRadius: '50%',
-              p: 1,
-              mb: 1,
-            }}
-          >
-            <HowToRegIcon />
-          </Box>
-          <Typography component="h1" variant="h5">
-            Crear una Cuenta
-          </Typography>
-          
-          {error && (
-            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-              {error}
-            </Alert>
-          )}
-          
-          {success && (
-            <Alert severity="success" sx={{ mt: 2, width: '100%' }}>
-              {success}
-            </Alert>
-          )}
-          
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="Nombre"
-                  autoFocus
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Apellido"
-                  name="lastName"
-                  autoComplete="family-name"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Correo Electrónico"
-                  name="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Contraseña"
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  autoComplete="new-password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleTogglePassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="confirmPassword"
-                  label="Confirmar Contraseña"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle confirm password visibility"
-                          onClick={handleToggleConfirmPassword}
-                          edge="end"
-                        >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth required>
-                  <InputLabel id="role-label">Tipo de Usuario</InputLabel>
-                  <Select
-                    labelId="role-label"
-                    id="role"
-                    value={formData.role}
-                    label="Tipo de Usuario"
-                    name="role"
-                    onChange={handleSelectChange}
-                  >
-                    {userRoles.map((role) => (
-                      <MenuItem key={role.value} value={role.value}>
-                        {role.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Registrarse
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link component={RouterLink} to="/login" variant="body2">
-                ¿Ya tienes una cuenta? Inicia Sesión
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
-  );
-};
-
-export default Register;
-</file>
-
 <file path="frontend/src/test/setup.ts">
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
@@ -3222,36 +2776,103 @@ La arquitectura propuesta está diseñada para ser escalable y personalizable, f
 El éxito del producto dependerá en gran medida de su usabilidad, fiabilidad y capacidad para ofrecer valor real a los administradores de ligas, entrenadores y jugadores, simplificando tareas administrativas y mejorando la experiencia general de participación en la liga.
 </file>
 
-<file path="package.json">
-{
-  "name": "gestor-liga-futbol",
-  "version": "0.1.0",
-  "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
-  "scripts": {
-    "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && npm run dev",
-    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "build:frontend": "cd frontend && npm run build",
-    "build:backend": "cd backend && npm run build",
-    "build": "npm run build:frontend && npm run build:backend",
-    "test:frontend": "cd frontend && npm test",
-    "test:backend": "cd backend && npm test",
-    "test": "npm run test:frontend && npm run test:backend",
-    "lint:frontend": "cd frontend && npm run lint",
-    "lint:backend": "cd backend && npm run lint",
-    "lint": "npm run lint:frontend && npm run lint:backend"
-  },
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  }
-}
+<file path="tracking/sprints/sprint-2.md">
+# Sprint 2: Gestión de Usuarios y Equipos
+**Período:** [31-03-2025] - [11-04-2025]
+
+## Objetivos del Sprint
+1. Implementar Redux para gestión de estado global
+2. Desarrollar CRUD completo de usuarios
+3. Implementar gestión de equipos
+4. Añadir página de perfil de usuario
+5. Mejorar cobertura de pruebas
+
+## Tareas Específicas
+
+### 1. Implementar Redux para gestión de estado global
+- [ ] Configurar Redux Toolkit
+  - [ ] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
+  - [ ] Crear archivo de configuración de store
+  - [ ] Implementar provider en componente raíz
+- [ ] Implementar slices para autenticación
+  - [ ] Crear acciones para login, logout y registro
+  - [ ] Implementar reducers para manejo de estado de autenticación
+  - [ ] Configurar persistencia del token JWT en localStorage
+- [ ] Implementar slices para usuarios
+  - [ ] Crear acciones para gestión de usuarios (CRUD)
+  - [ ] Implementar reducers para manejo del estado de usuarios
+  - [ ] Crear selectores para acceso eficiente a datos de usuarios
+- [ ] Implementar slices para equipos
+  - [ ] Crear acciones para gestión de equipos (CRUD)
+  - [ ] Implementar reducers para manejo del estado de equipos
+  - [ ] Crear selectores para acceso eficiente a datos de equipos
+- [ ] Crear middlewares personalizados
+  - [ ] Middleware para manejo de errores de API
+  - [ ] Middleware para logging de acciones (desarrollo)
+- [ ] Implementar hooks personalizados para Redux
+  - [ ] Crear useAppSelector y useAppDispatch tipados
+  - [ ] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
+- **Estado:** Pendiente
+- **Notas:** Prioridad alta. Esta tarea es fundamental para las demás funcionalidades del sprint.
+
+### 2. Desarrollar CRUD completo de usuarios
+- [ ] Implementar endpoints en backend para gestión de usuarios
+- [ ] Crear página de administración de usuarios
+- [ ] Implementar formularios para creación/edición de usuarios
+- [ ] Añadir funcionalidad para cambio de contraseña
+- [ ] Implementar gestión de roles de usuario
+- **Estado:** Pendiente
+- **Notas:** Depende de la implementación de Redux para la gestión de estado.
+
+### 3. Implementar gestión de equipos
+- [ ] Desarrollar endpoints en backend para equipos
+- [ ] Crear página de listado de equipos
+- [ ] Implementar formulario para creación/edición de equipos
+- [ ] Crear página de detalle de equipo
+- [ ] Implementar asignación de entrenadores a equipos
+- **Estado:** Pendiente
+- **Notas:** Utilizar los slices de Redux implementados para la gestión del estado.
+
+### 4. Añadir página de perfil de usuario
+- [ ] Diseñar e implementar página de perfil
+- [ ] Crear formulario para edición de datos de perfil
+- [ ] Implementar funcionalidad de cambio de contraseña
+- [ ] Añadir historial de actividad del usuario
+- **Estado:** Pendiente
+- **Notas:** Esta página debe ser accesible para todos los usuarios autenticados.
+
+### 5. Mejorar cobertura de pruebas
+- [ ] Añadir pruebas para componentes de UI principales
+- [ ] Implementar pruebas para slices de Redux
+- [ ] Crear pruebas para hooks personalizados
+- [ ] Mejorar cobertura de pruebas en backend
+- **Estado:** Pendiente
+- **Notas:** Objetivo: alcanzar al menos 70% de cobertura en el código frontend y backend.
+
+## Registro Diario
+
+### [31-03-2025]
+- **Avances:**
+  - Planificación detallada del sprint
+  - Configuración inicial del entorno para Redux
+- **Problemas encontrados:**
+  - Ninguno por el momento
+- **Plan para mañana:**
+  - Comenzar implementación de Redux Toolkit
+  - Configurar store inicial
+
+## Métricas del Sprint
+- **Completado:** 0%
+- **Velocidad:** Por determinar
+- **Calidad de código:** Por evaluar
+
+## Retrospectiva (al finalizar)
+- **Lo que salió bien:**
+  - Por determinar
+- **Lo que podría mejorar:**
+  - Por determinar
+- **Acciones para el próximo sprint:**
+  - Por determinar
 </file>
 
 <file path="tracking/sprints/sprint-template.md">
@@ -3505,52 +3126,131 @@ describe('Pruebas de autenticación', () => {
 });
 </file>
 
-<file path="backend/src/utils/jwt.ts">
-import jwt from 'jsonwebtoken';
-import { IUser } from '../models/User';
+<file path="backend/src/tests/controllers/authController.test.ts">
+import { Request, Response } from 'express';
+import { login } from '../../controllers/authController';
+import User from '../../models/User';
+import bcrypt from 'bcrypt';
+import * as jwt from '../../utils/jwt';
 
-// Obtener la clave secreta del entorno o usar una predeterminada (¡solo para desarrollo!)
-const JWT_SECRET = process.env.JWT_SECRET || 'liga-futbol-jwt-secret-dev';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+// Mock de los módulos necesarios
+jest.mock('../../models/User');
+jest.mock('bcrypt');
+jest.mock('../../utils/jwt');
 
-/**
- * Genera un token JWT para el usuario especificado
- * @param user Usuario para el que se genera el token
- * @returns Token JWT generado
- */
-export const generateToken = (user: IUser): string => {
-  const payload = {
-    id: user._id,
-    email: user.email,
-    rol: user.rol,
-  };
+describe('Auth Controller', () => {
+  let req: Partial<Request>;
+  let res: Partial<Response>;
+  let statusMock: jest.Mock;
+  let jsonMock: jest.Mock;
 
-  // Usar @ts-ignore para evitar el error de tipo
-  // @ts-ignore
-  return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
+  beforeEach(() => {
+    // Preparar mocks para request y response
+    jsonMock = jest.fn().mockReturnThis();
+    statusMock = jest.fn().mockReturnValue({ json: jsonMock });
+    
+    req = {
+      body: {
+        email: 'test@example.com',
+        password: 'password123'
+      }
+    };
+    
+    res = {
+      status: statusMock,
+      json: jsonMock
+    };
+    
+    // Limpiar todos los mocks
+    jest.clearAllMocks();
   });
-};
 
-/**
- * Verifica y decodifica un token JWT
- * @param token Token JWT a verificar
- * @returns Payload decodificado o null si el token es inválido
- */
-export const verifyToken = (token: string): jwt.JwtPayload | null => {
-  try {
-    // Usar @ts-ignore para evitar el error de tipo
-    // @ts-ignore
-    return jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
-  } catch (error) {
-    return null;
-  }
-};
-
-export default {
-  generateToken,
-  verifyToken,
-};
+  describe('login', () => {
+    it('should return 400 if email or password is missing', async () => {
+      req.body = {};
+      
+      await login(req as Request, res as Response);
+      
+      expect(statusMock).toHaveBeenCalledWith(400);
+      expect(jsonMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: false,
+          message: expect.any(String)
+        })
+      );
+    });
+    
+    it('should return 404 if user does not exist', async () => {
+      // Mock para User.findOne que retorna null (usuario no encontrado)
+      (User.findOne as jest.Mock).mockResolvedValue(null);
+      
+      await login(req as Request, res as Response);
+      
+      expect(statusMock).toHaveBeenCalledWith(404);
+      expect(jsonMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: false,
+          message: 'Usuario no encontrado'
+        })
+      );
+    });
+    
+    it('should return 401 if password is incorrect', async () => {
+      // Mock para User.findOne que retorna un usuario
+      (User.findOne as jest.Mock).mockResolvedValue({
+        _id: '123',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        role: 'user',
+        comparePassword: jest.fn().mockResolvedValue(false)
+      });
+      
+      // Mock para bcrypt.compare que retorna false (contraseña incorrecta)
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      
+      await login(req as Request, res as Response);
+      
+      expect(statusMock).toHaveBeenCalledWith(401);
+      expect(jsonMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: false,
+          message: 'Credenciales inválidas'
+        })
+      );
+    });
+    
+    it('should return 200 with token if login is successful', async () => {
+      const mockUser = {
+        _id: '123',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        role: 'user',
+        ultimoAcceso: undefined,
+        comparePassword: jest.fn().mockResolvedValue(true),
+        save: jest.fn().mockResolvedValue(undefined)
+      };
+      
+      // Mock para User.findOne que retorna un usuario
+      (User.findOne as jest.Mock).mockResolvedValue(mockUser);
+      
+      // Mock para bcrypt.compare que retorna true (contraseña correcta)
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      
+      // Mock para generateToken que retorna un token
+      (jwt.generateToken as jest.Mock).mockReturnValue('mock-token');
+      
+      await login(req as Request, res as Response);
+      
+      expect(statusMock).toHaveBeenCalledWith(200);
+      expect(jsonMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          token: 'mock-token'
+        })
+      );
+    });
+  });
+});
 </file>
 
 <file path="docs/plan-de-pruebas.md">
@@ -3980,68 +3680,6 @@ src/
 - Formik & Yup
 </file>
 
-<file path="frontend/src/App.tsx">
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-// Importar layout principal
-import MainLayout from './components/layout/MainLayout';
-
-// Importar páginas
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-
-// Tema personalizado
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-  typography: {
-    fontFamily: [
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif'
-    ].join(','),
-  },
-});
-
-// Componente principal
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <Routes>
-          {/* Rutas públicas */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          
-          {/* Rutas con layout principal */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/teams" element={<div>Gestión de Equipos (En desarrollo)</div>} />
-            <Route path="/players" element={<div>Gestión de Jugadores (En desarrollo)</div>} />
-            <Route path="/matches" element={<div>Gestión de Partidos (En desarrollo)</div>} />
-            <Route path="/standings" element={<div>Tabla de Posiciones (En desarrollo)</div>} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
-  );
-}
-
-export default App;
-</file>
-
 <file path="frontend/src/index.css">
 /* Estilos globales */
 body {
@@ -4059,6 +3697,491 @@ code {
 }
 
 /* Agregar más estilos globales según sea necesario */
+</file>
+
+<file path="frontend/src/pages/Login.tsx">
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  TextField,
+  Typography,
+  Alert,
+  Link,
+  InputAdornment,
+  IconButton,
+  CircularProgress
+} from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { authService } from '../api';
+
+const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    
+    // Validación básica del formulario
+    if (!formData.email || !formData.password) {
+      setError('Por favor complete todos los campos');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Llamada real al API para login
+      const response = await authService.login({
+        email: formData.email,
+        password: formData.password
+      });
+      
+      if (response.success) {
+        // Redirección después de inicio de sesión exitoso
+        navigate('/dashboard');
+      } else {
+        setError(response.message || 'Credenciales inválidas. Intente nuevamente.');
+      }
+    } catch (error) {
+      setError('Error al iniciar sesión. Intente nuevamente más tarde.');
+      console.error('Error de inicio de sesión:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              bgcolor: 'primary.main',
+              color: 'white',
+              borderRadius: '50%',
+              p: 1,
+              mb: 1,
+            }}
+          >
+            <LockOutlinedIcon />
+          </Box>
+          <Typography component="h1" variant="h5">
+            Iniciar Sesión
+          </Typography>
+          
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+          
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Correo Electrónico"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Contraseña"
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleInputChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleTogglePassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
+            </Button>
+            <Box sx={{ textAlign: 'center' }}>
+              <Link component={RouterLink} to="/register" variant="body2">
+                ¿No tienes una cuenta? Regístrate
+              </Link>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
+  );
+};
+
+export default Login;
+</file>
+
+<file path="frontend/src/pages/Register.tsx">
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  TextField,
+  Typography,
+  Alert,
+  Link,
+  Grid,
+  InputAdornment,
+  IconButton,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+  CircularProgress
+} from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { authService } from '../api';
+
+// Tipos disponibles de usuario
+const userRoles = [
+  { value: 'player', label: 'Jugador' },
+  { value: 'coach', label: 'Entrenador' },
+  { value: 'admin', label: 'Administrador' }
+];
+
+const Register: React.FC = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent) => {
+    setFormData({
+      ...formData,
+      role: e.target.value
+    });
+  };
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleToggleConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    
+    // Validación básica del formulario
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword || !formData.role) {
+      setError('Por favor complete todos los campos');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Llamada real al API para registro
+      const response = await authService.register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role
+      });
+      
+      if (response.success) {
+        setSuccess('¡Registro exitoso! Redirigiendo al inicio de sesión...');
+        
+        // Redirección después de registro exitoso
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        setError(response.message || 'Error al registrarse. Intente nuevamente más tarde.');
+      }
+    } catch (error) {
+      setError('Error al registrarse. Intente nuevamente más tarde.');
+      console.error('Error de registro:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container component="main" maxWidth="sm">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          mb: 4
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              bgcolor: 'primary.main',
+              color: 'white',
+              borderRadius: '50%',
+              p: 1,
+              mb: 1,
+            }}
+          >
+            <HowToRegIcon />
+          </Box>
+          <Typography component="h1" variant="h5">
+            Crear una Cuenta
+          </Typography>
+          
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+          
+          {success && (
+            <Alert severity="success" sx={{ mt: 2, width: '100%' }}>
+              {success}
+            </Alert>
+          )}
+          
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="firstName"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="Nombre"
+                  autoFocus
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Apellido"
+                  name="lastName"
+                  autoComplete="family-name"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Correo Electrónico"
+                  name="email"
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Contraseña"
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  autoComplete="new-password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleTogglePassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirmar Contraseña"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  id="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle confirm password visibility"
+                          onClick={handleToggleConfirmPassword}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth required>
+                  <InputLabel id="role-label">Tipo de Usuario</InputLabel>
+                  <Select
+                    labelId="role-label"
+                    id="role"
+                    value={formData.role}
+                    label="Tipo de Usuario"
+                    name="role"
+                    onChange={handleSelectChange}
+                  >
+                    {userRoles.map((role) => (
+                      <MenuItem key={role.value} value={role.value}>
+                        {role.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : 'Registrarse'}
+            </Button>
+            <Box sx={{ textAlign: 'center' }}>
+              <Link component={RouterLink} to="/login" variant="body2">
+                ¿Ya tienes una cuenta? Inicia Sesión
+              </Link>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
+  );
+};
+
+export default Register;
 </file>
 
 <file path="frontend/src/reportWebVitals.ts">
@@ -4103,6 +4226,612 @@ export default defineConfig({
     open: true
   }
 })
+</file>
+
+<file path=".github/workflows/ci.yml">
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    # Instalar dependencias del proyecto raíz
+    - name: Install root dependencies
+      run: npm install
+    
+    # Frontend
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm install
+      
+    - name: Build frontend
+      run: npm run build:frontend
+      
+    - name: Run frontend tests
+      run: npm run test:frontend -- --run
+      
+    - name: Check frontend linting
+      run: npm run lint:frontend
+      
+    # Backend
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: npm install
+      
+    - name: Run backend tests
+      run: npm run test:backend
+</file>
+
+<file path="backend/src/controllers/authController.ts">
+import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
+import { generateToken } from '../utils/jwt';
+import User from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth';
+
+/**
+ * Registrar un nuevo usuario
+ * @route POST /api/auth/register
+ * @access Public
+ */
+export const register = async (req: Request, res: Response) => {
+  try {
+    // Validar errores de la solicitud
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    const { nombre, apellido, email, password, rol } = req.body;
+
+    // Verificar si el usuario ya existe
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({
+        success: false,
+        message: 'El email ya está registrado.',
+      });
+    }
+
+    // Si se especifica un rol, verificar que sea válido
+    if (rol && !['admin', 'manager', 'arbitro', 'usuario'].includes(rol)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rol inválido.',
+      });
+    }
+
+    // Crear el usuario
+    const user = await User.create({
+      nombre,
+      apellido,
+      email,
+      password, // La contraseña será hasheada en el pre-save hook del modelo
+      rol: rol || 'usuario', // Por defecto es 'usuario'
+    });
+
+    // Generar token JWT
+    const token = generateToken(user);
+
+    // Responder con el token y los datos del usuario (sin la contraseña)
+    const userWithoutPassword = {
+      _id: user._id,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      email: user.email,
+      rol: user.rol,
+      activo: user.activo,
+      fechaCreacion: user.fechaCreacion,
+    };
+
+    res.status(201).json({
+      success: true,
+      token,
+      usuario: userWithoutPassword,
+    });
+  } catch (error) {
+    console.error('Error en registro:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor al registrar usuario.',
+    });
+  }
+};
+
+/**
+ * Iniciar sesión de usuario
+ * @route POST /api/auth/login
+ * @access Public
+ */
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Verificar si email o password están presentes
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Se requiere email y password.',
+      });
+    }
+
+    // Validar errores de la solicitud
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    // Buscar el usuario
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado',
+      });
+    }
+
+    // Verificar si el usuario está activo
+    // Solo verificamos si la propiedad activo existe y es explícitamente false
+    if (user.activo === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Usuario desactivado. Contacte al administrador.',
+      });
+    }
+
+    // Verificar la contraseña
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Credenciales inválidas',
+      });
+    }
+
+    // Actualizar último acceso
+    user.ultimoAcceso = new Date();
+    await user.save();
+
+    // Generar token JWT
+    const token = generateToken(user);
+
+    // Responder con el token y los datos del usuario (sin la contraseña)
+    const userWithoutPassword = {
+      _id: user._id,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      email: user.email,
+      rol: user.rol,
+      activo: user.activo,
+      fechaCreacion: user.fechaCreacion,
+      ultimoAcceso: user.ultimoAcceso,
+    };
+
+    res.status(200).json({
+      success: true,
+      token,
+      usuario: userWithoutPassword,
+    });
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor al iniciar sesión.',
+    });
+  }
+};
+
+/**
+ * Obtener el perfil del usuario actual
+ * @route GET /api/auth/me
+ * @access Private
+ */
+export const getMe = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    // El usuario ya está en req.user gracias al middleware de autenticación
+    res.status(200).json({
+      success: true,
+      usuario: req.user,
+    });
+  } catch (error) {
+    console.error('Error al obtener perfil:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor al obtener perfil.',
+    });
+  }
+};
+
+export default {
+  register,
+  login,
+  getMe,
+};
+</file>
+
+<file path="backend/src/middleware/auth.ts">
+import { Request, Response, NextFunction } from 'express';
+import { verifyToken } from '../utils/jwt';
+import User from '../models/User';
+
+// Extender el tipo Request para incluir el usuario autenticado
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    rol: string;
+  };
+}
+
+/**
+ * Middleware para proteger rutas que requieren autenticación
+ */
+export const authenticate = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // Obtener el token del header Authorization
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Acceso no autorizado. Token no proporcionado.',
+      });
+    }
+
+    // Extraer el token
+    const token = authHeader.split(' ')[1];
+
+    // Verificar el token
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token inválido o expirado.',
+      });
+    }
+
+    // Buscar el usuario en la base de datos
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Usuario no encontrado.',
+      });
+    }
+
+    // Verificar si el usuario está activo
+    if (!user.activo) {
+      return res.status(403).json({
+        success: false,
+        message: 'Usuario desactivado. Contacte al administrador.',
+      });
+    }
+
+    // Añadir el usuario a la solicitud
+    req.user = {
+      id: user.id,
+      email: user.email,
+      rol: user.rol
+    };
+
+    // Actualizar el último acceso del usuario
+    user.ultimoAcceso = new Date();
+    await user.save();
+
+    next();
+  } catch (error) {
+    console.error('Error en middleware de autenticación:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error en la autenticación.',
+    });
+  }
+};
+
+/**
+ * Middleware para verificar roles de usuario
+ * @param roles Array de roles permitidos
+ */
+export const authorize = (roles: string[]) => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Acceso no autorizado. Usuario no autenticado.',
+      });
+    }
+
+    if (!roles.includes(req.user.rol)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Acceso prohibido. No tiene los permisos necesarios.',
+      });
+    }
+
+    next();
+  };
+};
+
+export default {
+  authenticate,
+  authorize,
+};
+</file>
+
+<file path="frontend/src/App.tsx">
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Importar layout principal
+import MainLayout from './components/layout/MainLayout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
+// Importar páginas
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+
+// Tema personalizado
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+  typography: {
+    fontFamily: [
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif'
+    ].join(','),
+  },
+});
+
+// Componente principal
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Routes>
+          {/* Rutas públicas */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Home />} />
+          
+          {/* Rutas protegidas con layout principal */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<MainLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              
+              {/* Rutas con roles específicos */}
+              <Route element={<ProtectedRoute allowedRoles={['admin', 'coach']} />}>
+                <Route path="/teams" element={<div>Gestión de Equipos (En desarrollo)</div>} />
+              </Route>
+              
+              <Route element={<ProtectedRoute allowedRoles={['admin', 'coach']} />}>
+                <Route path="/players" element={<div>Gestión de Jugadores (En desarrollo)</div>} />
+              </Route>
+              
+              <Route path="/matches" element={<div>Gestión de Partidos (En desarrollo)</div>} />
+              <Route path="/standings" element={<div>Tabla de Posiciones (En desarrollo)</div>} />
+            </Route>
+          </Route>
+          
+          {/* Ruta para acceso no autorizado */}
+          <Route path="/unauthorized" element={<div>No tienes permisos para acceder a esta página</div>} />
+          
+          {/* Ruta por defecto (404) */}
+          <Route path="*" element={<div>Página no encontrada</div>} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+}
+
+export default App;
+</file>
+
+<file path="package.json">
+{
+  "name": "gestor-liga-futbol",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build": "npm run build:frontend && npm run build:backend",
+    "test:frontend": "cd frontend && npm test",
+    "test:frontend:ci": "cd frontend && npm run test:ci",
+    "test:backend": "cd backend && npm test",
+    "test": "npm run test:frontend && npm run test:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx}": [
+      "npm run lint:frontend",
+      "npm run test:frontend:ci"
+    ],
+    "backend/**/*.ts": [
+      "npm run lint:backend",
+      "npm run test:backend -- --passWithNoTests"
+    ]
+  }
+}
+</file>
+
+<file path="README.md">
+# Sistema de Gestión de Ligas de Fútbol 8v8
+
+Este repositorio contiene la documentación y el código para un sistema completo de gestión de ligas de fútbol 8v8, diseñado para administrar equipos, jugadores, partidos, estadísticas y contenido multimedia.
+
+## Descripción del Proyecto
+
+El Sistema de Gestión de Ligas de Fútbol 8v8 es una plataforma web y móvil que permite la administración integral de ligas deportivas, con capacidad para gestionar múltiples ligas simultáneamente como servicio SaaS.
+
+### Características Principales
+
+- Gestión completa de equipos y jugadores
+- Calendarización y seguimiento de partidos
+- Registro de estadísticas y tabla de posiciones
+- Sistema de sanciones y arbitraje
+- Galería multimedia y sistema de noticias
+- Dashboard administrativo con analíticas
+- Integración con sistemas de pago
+- Soporte multi-liga (multi-tenancy)
+
+## Estructura del Repositorio
+
+```
+/
+├── docs/                      # Documentación del proyecto
+│   ├── plan-de-pruebas.md     # Plan detallado de pruebas
+│   └── plan-de-implementacion.md  # Plan de implementación por fases
+├── tracking/                  # Sistema de seguimiento de desarrollo
+│   ├── TRACKING.md            # Estado general del proyecto
+│   ├── SPRINT-ACTUAL.md       # Detalle del sprint en curso
+│   ├── NOTAS-DESARROLLO.md    # Notas técnicas y decisiones
+│   ├── TAREAS-PENDIENTES.md   # Backlog y tareas pendientes
+│   └── sprints/               # Historial de sprints completados
+├── liga-futbol-prd.md         # Documento de requisitos del producto (PRD)
+└── README.md                  # Este archivo
+```
+
+## Documentación Principal
+
+El proyecto incluye los siguientes documentos clave:
+
+1. **PRD (Product Requirements Document)**: [liga-futbol-prd.md](liga-futbol-prd.md)
+   - Visión general y objetivos
+   - Público objetivo
+   - Características y funcionalidades detalladas
+   - Recomendaciones técnicas
+   - Modelo conceptual de datos
+   - Consideraciones de diseño y seguridad
+   - Fases de desarrollo propuestas
+
+2. **Plan de Pruebas**: [docs/plan-de-pruebas.md](docs/plan-de-pruebas.md)
+   - Estrategia de pruebas adaptada para un solo desarrollador
+   - Tipos de pruebas y priorización
+   - Plan por fase de desarrollo
+   - Automatización y uso de IA para pruebas
+   - Gestión de defectos
+   - Criterios de aceptación
+
+3. **Plan de Implementación**: [docs/plan-de-implementacion.md](docs/plan-de-implementacion.md)
+   - Enfoque y metodología de desarrollo
+   - Plan detallado por fases con estimaciones
+   - Stack tecnológico y arquitectura
+   - Tareas específicas para el MVP
+   - Gestión de riesgos
+   - Métricas de progreso
+
+## Sistema de Seguimiento
+
+El proyecto utiliza un sistema de seguimiento basado en Markdown diseñado para facilitar la colaboración con asistentes de IA:
+
+1. **Estado General**: [tracking/TRACKING.md](tracking/TRACKING.md)
+   - Visión global del progreso del proyecto
+   - Estado actual de fases y sprints
+   - Métricas de avance
+
+2. **Sprint Actual**: [tracking/SPRINT-ACTUAL.md](tracking/SPRINT-ACTUAL.md)
+   - Detalle de tareas del sprint en curso
+   - Registro diario de avances
+   - Problemas encontrados y soluciones
+
+3. **Notas de Desarrollo**: [tracking/NOTAS-DESARROLLO.md](tracking/NOTAS-DESARROLLO.md)
+   - Decisiones técnicas y arquitectónicas
+   - Soluciones a problemas encontrados
+   - Referencias y recursos útiles
+
+4. **Backlog**: [tracking/TAREAS-PENDIENTES.md](tracking/TAREAS-PENDIENTES.md)
+   - Tareas pendientes priorizadas
+   - Mejoras técnicas planeadas
+   - Ideas para futuras fases
+
+## Cómo Usar Esta Documentación
+
+- **Para entender el producto**: Comienza con el [PRD](liga-futbol-prd.md)
+- **Para planificar el desarrollo**: Consulta el [Plan de Implementación](docs/plan-de-implementacion.md)
+- **Para definir estrategia de pruebas**: Revisa el [Plan de Pruebas](docs/plan-de-pruebas.md)
+- **Para ver el estado actual**: Consulta [TRACKING.md](tracking/TRACKING.md)
+
+## Stack Tecnológico
+
+El proyecto está diseñado para implementarse con las siguientes tecnologías:
+
+- **Frontend**: React 19 con TypeScript, Vite, Material UI
+- **Backend**: Node.js, Express, TypeScript
+- **Base de Datos**: MongoDB
+- **Almacenamiento**: Cloudinary
+- **Despliegue**: Vercel (frontend), Railway (backend)
+- **Otros**: Stripe para pagos, GitHub Actions para CI/CD
+
+## Estado Actual
+
+Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la estructura básica del frontend con Vite y React 19, y el backend con Express y TypeScript.
+
+## Próximos Pasos
+
+1. Configuración del entorno de desarrollo
+2. Implementación de la arquitectura base
+3. Desarrollo del MVP según el plan de implementación
+4. Pruebas continuas siguiendo el plan de pruebas
+
+## Licencia
+
+[MIT License](LICENSE)
 </file>
 
 <file path="tracking/NOTAS-DESARROLLO.md">
@@ -4313,58 +5042,6 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - Ninguno por el momento
 </file>
 
-<file path=".github/workflows/ci.yml">
-name: CI
-
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    
-    # Instalar dependencias del proyecto raíz
-    - name: Install root dependencies
-      run: npm install
-    
-    # Frontend
-    - name: Install frontend dependencies
-      working-directory: ./frontend
-      run: npm install
-      
-    - name: Build frontend
-      run: npm run build:frontend
-      
-    - name: Run frontend tests
-      run: npm run test:frontend -- --run
-      
-    - name: Check frontend linting
-      run: npm run lint:frontend
-      
-    # Backend
-    - name: Install backend dependencies
-      working-directory: ./backend
-      run: npm install
-      
-    - name: Run backend tests
-      run: npm run test:backend
-</file>
-
 <file path="backend/package.json">
 {
   "name": "liga-futbol-backend",
@@ -4376,7 +5053,7 @@ jobs:
     "build": "tsc",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -4413,6 +5090,181 @@ jobs:
     "typescript": "^5.3.3"
   }
 }
+</file>
+
+<file path="backend/src/index.ts">
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import routes from './routes';
+
+// Cargar variables de entorno
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 5000;
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true
+}));
+app.use(helmet());
+app.use(morgan('dev'));
+
+// Rutas API
+app.use('/api', routes);
+
+// Ruta de salud
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'API funcionando correctamente' });
+});
+
+// Variable para almacenar la instancia de MongoMemoryServer
+let mongoMemoryServer: MongoMemoryServer | null = null;
+
+// Conexión a la base de datos
+export const connectDB = async () => {
+  try {
+    // Evitar conectarse si ya hay una conexión activa
+    if (mongoose.connection.readyState !== 0) {
+      console.log('MongoDB ya está conectado');
+      return;
+    }
+
+    // Intentar conectar a la base de datos configurada en .env
+    const mongoUri = process.env.MONGODB_URI;
+    
+    if (mongoUri) {
+      try {
+        // Intentar conectar a MongoDB usando la URI de .env
+        console.log('Intentando conectar a MongoDB usando la URI configurada...');
+        const conn = await mongoose.connect(mongoUri);
+        console.log(`MongoDB conectado: ${conn.connection.host}`);
+        return;
+      } catch (error) {
+        console.log('No se pudo conectar a MongoDB usando la URI configurada, usando base de datos en memoria...');
+      }
+    }
+    
+    // Si no hay URI configurada o falla la conexión, usar MongoDB en memoria
+    console.log('Configurando MongoDB en memoria para desarrollo/pruebas...');
+    mongoMemoryServer = await MongoMemoryServer.create();
+    const memoryServerUri = mongoMemoryServer.getUri();
+    const conn = await mongoose.connect(memoryServerUri);
+    console.log(`MongoDB en memoria conectado: ${conn.connection.host}`);
+    console.log('ADVERTENCIA: Estás usando una base de datos en memoria. Los datos se perderán al reiniciar la aplicación.');
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Error al conectar a MongoDB: ${error.message}`);
+    } else {
+      console.error('Error desconocido al conectar a MongoDB');
+    }
+    process.exit(1);
+  }
+};
+
+// Función para cerrar la conexión a la base de datos
+export const closeDB = async () => {
+  try {
+    await mongoose.disconnect();
+    if (mongoMemoryServer) {
+      await mongoMemoryServer.stop();
+      mongoMemoryServer = null;
+    }
+    console.log('Conexión a MongoDB cerrada');
+  } catch (error) {
+    console.error('Error al cerrar la conexión a MongoDB:', error);
+  }
+};
+
+// Función para iniciar el servidor
+export const startServer = () => {
+  return app.listen(port, () => {
+    console.log(`Servidor ejecutándose en el puerto ${port}`);
+  });
+};
+
+// Iniciar servidor solo si este archivo es el punto de entrada principal
+// y no es importado por otro (como en pruebas)
+if (require.main === module) {
+  connectDB().then(() => {
+    startServer();
+  });
+}
+
+// Manejo de errores no capturados
+process.on('unhandledRejection', (error) => {
+  console.error('Error no manejado:', error);
+});
+
+// Manejo de cierre de la aplicación
+process.on('SIGINT', async () => {
+  console.log('Cerrando la aplicación...');
+  await closeDB();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Cerrando la aplicación...');
+  await closeDB();
+  process.exit(0);
+});
+
+export default app;
+</file>
+
+<file path="backend/src/utils/jwt.ts">
+import jwt, { SignOptions, JwtPayload } from 'jsonwebtoken';
+import { IUser } from '../models/User';
+
+// Obtener la clave secreta del entorno o usar una predeterminada (¡solo para desarrollo!)
+const JWT_SECRET = Buffer.from(process.env.JWT_SECRET || 'liga-futbol-jwt-secret-dev');
+// 7 días en segundos
+const JWT_EXPIRES_IN = 7 * 24 * 60 * 60; // 7 días en segundos
+
+/**
+ * Genera un token JWT para el usuario especificado
+ * @param user Usuario para el que se genera el token
+ * @returns Token JWT generado
+ */
+export const generateToken = (user: IUser): string => {
+  const payload = {
+    id: user._id,
+    email: user.email,
+    rol: user.rol,
+  };
+
+  const options: SignOptions = {
+    expiresIn: JWT_EXPIRES_IN,
+  };
+
+  return jwt.sign(payload, JWT_SECRET, options);
+};
+
+/**
+ * Verifica y decodifica un token JWT
+ * @param token Token JWT a verificar
+ * @returns Payload decodificado o null si el token es inválido
+ */
+export const verifyToken = (token: string): JwtPayload | null => {
+  try {
+    return jwt.verify(token, JWT_SECRET) as JwtPayload;
+  } catch (error) {
+    return null;
+  }
+};
+
+export default {
+  generateToken,
+  verifyToken,
+};
 </file>
 
 <file path="docs/plan-de-implementacion.md">
@@ -4841,6 +5693,7 @@ Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del
     "lint": "eslint src --ext ts,tsx",
     "preview": "vite preview",
     "test": "vitest",
+    "test:ci": "vitest run --passWithNoTests",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\""
   },
   "dependencies": {
@@ -4883,130 +5736,6 @@ Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del
 }
 </file>
 
-<file path="README.md">
-# Sistema de Gestión de Ligas de Fútbol 8v8
-
-Este repositorio contiene la documentación y el código para un sistema completo de gestión de ligas de fútbol 8v8, diseñado para administrar equipos, jugadores, partidos, estadísticas y contenido multimedia.
-
-## Descripción del Proyecto
-
-El Sistema de Gestión de Ligas de Fútbol 8v8 es una plataforma web y móvil que permite la administración integral de ligas deportivas, con capacidad para gestionar múltiples ligas simultáneamente como servicio SaaS.
-
-### Características Principales
-
-- Gestión completa de equipos y jugadores
-- Calendarización y seguimiento de partidos
-- Registro de estadísticas y tabla de posiciones
-- Sistema de sanciones y arbitraje
-- Galería multimedia y sistema de noticias
-- Dashboard administrativo con analíticas
-- Integración con sistemas de pago
-- Soporte multi-liga (multi-tenancy)
-
-## Estructura del Repositorio
-
-```
-/
-├── docs/                      # Documentación del proyecto
-│   ├── plan-de-pruebas.md     # Plan detallado de pruebas
-│   └── plan-de-implementacion.md  # Plan de implementación por fases
-├── tracking/                  # Sistema de seguimiento de desarrollo
-│   ├── TRACKING.md            # Estado general del proyecto
-│   ├── SPRINT-ACTUAL.md       # Detalle del sprint en curso
-│   ├── NOTAS-DESARROLLO.md    # Notas técnicas y decisiones
-│   ├── TAREAS-PENDIENTES.md   # Backlog y tareas pendientes
-│   └── sprints/               # Historial de sprints completados
-├── liga-futbol-prd.md         # Documento de requisitos del producto (PRD)
-└── README.md                  # Este archivo
-```
-
-## Documentación Principal
-
-El proyecto incluye los siguientes documentos clave:
-
-1. **PRD (Product Requirements Document)**: [liga-futbol-prd.md](liga-futbol-prd.md)
-   - Visión general y objetivos
-   - Público objetivo
-   - Características y funcionalidades detalladas
-   - Recomendaciones técnicas
-   - Modelo conceptual de datos
-   - Consideraciones de diseño y seguridad
-   - Fases de desarrollo propuestas
-
-2. **Plan de Pruebas**: [docs/plan-de-pruebas.md](docs/plan-de-pruebas.md)
-   - Estrategia de pruebas adaptada para un solo desarrollador
-   - Tipos de pruebas y priorización
-   - Plan por fase de desarrollo
-   - Automatización y uso de IA para pruebas
-   - Gestión de defectos
-   - Criterios de aceptación
-
-3. **Plan de Implementación**: [docs/plan-de-implementacion.md](docs/plan-de-implementacion.md)
-   - Enfoque y metodología de desarrollo
-   - Plan detallado por fases con estimaciones
-   - Stack tecnológico y arquitectura
-   - Tareas específicas para el MVP
-   - Gestión de riesgos
-   - Métricas de progreso
-
-## Sistema de Seguimiento
-
-El proyecto utiliza un sistema de seguimiento basado en Markdown diseñado para facilitar la colaboración con asistentes de IA:
-
-1. **Estado General**: [tracking/TRACKING.md](tracking/TRACKING.md)
-   - Visión global del progreso del proyecto
-   - Estado actual de fases y sprints
-   - Métricas de avance
-
-2. **Sprint Actual**: [tracking/SPRINT-ACTUAL.md](tracking/SPRINT-ACTUAL.md)
-   - Detalle de tareas del sprint en curso
-   - Registro diario de avances
-   - Problemas encontrados y soluciones
-
-3. **Notas de Desarrollo**: [tracking/NOTAS-DESARROLLO.md](tracking/NOTAS-DESARROLLO.md)
-   - Decisiones técnicas y arquitectónicas
-   - Soluciones a problemas encontrados
-   - Referencias y recursos útiles
-
-4. **Backlog**: [tracking/TAREAS-PENDIENTES.md](tracking/TAREAS-PENDIENTES.md)
-   - Tareas pendientes priorizadas
-   - Mejoras técnicas planeadas
-   - Ideas para futuras fases
-
-## Cómo Usar Esta Documentación
-
-- **Para entender el producto**: Comienza con el [PRD](liga-futbol-prd.md)
-- **Para planificar el desarrollo**: Consulta el [Plan de Implementación](docs/plan-de-implementacion.md)
-- **Para definir estrategia de pruebas**: Revisa el [Plan de Pruebas](docs/plan-de-pruebas.md)
-- **Para ver el estado actual**: Consulta [TRACKING.md](tracking/TRACKING.md)
-
-## Stack Tecnológico
-
-El proyecto está diseñado para implementarse con las siguientes tecnologías:
-
-- **Frontend**: React 19 con TypeScript, Vite, Material UI
-- **Backend**: Node.js, Express, TypeScript
-- **Base de Datos**: MongoDB
-- **Almacenamiento**: Cloudinary
-- **Despliegue**: Vercel (frontend), Railway (backend)
-- **Otros**: Stripe para pagos, GitHub Actions para CI/CD
-
-## Estado Actual
-
-Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la estructura básica del frontend con Vite y React 19, y el backend con Express y TypeScript.
-
-## Próximos Pasos
-
-1. Configuración del entorno de desarrollo
-2. Implementación de la arquitectura base
-3. Desarrollo del MVP según el plan de implementación
-4. Pruebas continuas siguiendo el plan de pruebas
-
-## Licencia
-
-[MIT License](LICENSE)
-</file>
-
 <file path="tracking/TRACKING.md">
 # Seguimiento del Proyecto: Sistema de Gestión de Ligas de Fútbol 8v8
 
@@ -5040,134 +5769,6 @@ Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la e
 - **Contexto actual:** Proyecto inicializado con estructura básica para frontend y backend
 - **Necesito ayuda con:** Implementación de autenticación JWT
 - **Referencias:** Ver `docs/plan-de-implementacion.md` y `docs/plan-de-pruebas.md`
-</file>
-
-<file path="backend/src/index.ts">
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import routes from './routes';
-
-// Cargar variables de entorno
-dotenv.config();
-
-const app = express();
-const port = process.env.PORT || 5000;
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
-}));
-app.use(helmet());
-app.use(morgan('dev'));
-
-// Rutas API
-app.use('/api', routes);
-
-// Ruta de salud
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'API funcionando correctamente' });
-});
-
-// Variable para almacenar la instancia de MongoMemoryServer
-let mongoMemoryServer: MongoMemoryServer | null = null;
-
-// Conexión a la base de datos
-export const connectDB = async () => {
-  try {
-    // Evitar conectarse si ya hay una conexión activa
-    if (mongoose.connection.readyState !== 0) {
-      console.log('MongoDB ya está conectado');
-      return;
-    }
-
-    // Intentar conectar a la base de datos configurada en .env
-    const mongoUri = process.env.MONGODB_URI;
-    
-    if (mongoUri) {
-      try {
-        // Intentar conectar a MongoDB usando la URI de .env
-        console.log('Intentando conectar a MongoDB usando la URI configurada...');
-        const conn = await mongoose.connect(mongoUri);
-        console.log(`MongoDB conectado: ${conn.connection.host}`);
-        return;
-      } catch (error) {
-        console.log('No se pudo conectar a MongoDB usando la URI configurada, usando base de datos en memoria...');
-      }
-    }
-    
-    // Si no hay URI configurada o falla la conexión, usar MongoDB en memoria
-    console.log('Configurando MongoDB en memoria para desarrollo/pruebas...');
-    mongoMemoryServer = await MongoMemoryServer.create();
-    const memoryServerUri = mongoMemoryServer.getUri();
-    const conn = await mongoose.connect(memoryServerUri);
-    console.log(`MongoDB en memoria conectado: ${conn.connection.host}`);
-    console.log('ADVERTENCIA: Estás usando una base de datos en memoria. Los datos se perderán al reiniciar la aplicación.');
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(`Error al conectar a MongoDB: ${error.message}`);
-    } else {
-      console.error('Error desconocido al conectar a MongoDB');
-    }
-    process.exit(1);
-  }
-};
-
-// Función para cerrar la conexión a la base de datos
-export const closeDB = async () => {
-  try {
-    await mongoose.disconnect();
-    if (mongoMemoryServer) {
-      await mongoMemoryServer.stop();
-      mongoMemoryServer = null;
-    }
-    console.log('Conexión a MongoDB cerrada');
-  } catch (error) {
-    console.error('Error al cerrar la conexión a MongoDB:', error);
-  }
-};
-
-// Función para iniciar el servidor
-export const startServer = () => {
-  return app.listen(port, () => {
-    console.log(`Servidor ejecutándose en el puerto ${port}`);
-  });
-};
-
-// Iniciar servidor solo si este archivo es el punto de entrada principal
-// y no es importado por otro (como en pruebas)
-if (require.main === module) {
-  connectDB().then(() => {
-    startServer();
-  });
-}
-
-// Manejo de errores no capturados
-process.on('unhandledRejection', (error) => {
-  console.error('Error no manejado:', error);
-});
-
-// Manejo de cierre de la aplicación
-process.on('SIGINT', async () => {
-  console.log('Cerrando la aplicación...');
-  await closeDB();
-  process.exit(0);
-});
-
-process.on('SIGTERM', async () => {
-  console.log('Cerrando la aplicación...');
-  await closeDB();
-  process.exit(0);
-});
-
-export default app;
 </file>
 
 <file path="tracking/SPRINT-ACTUAL.md">
@@ -5233,13 +5834,23 @@ export default app;
 - **Notas:** Se ha creado un layout principal responsive con AppBar, Sidebar (que se adapta a dispositivos móviles) y Footer.
 
 ### 7. Establecer base de pruebas y calidad de código
-- [ ] Configurar entorno de pruebas con Vitest para frontend
-- [ ] Configurar Jest para pruebas de backend
-- [ ] Implementar primeras pruebas unitarias para componentes críticos
-- [ ] Configurar análisis estático de código (ESLint)
-- [ ] Implementar hooks de pre-commit para verificación de calidad
-- **Estado:** En progreso
-- **Notas:** Siguiendo el plan actualizado, se dedicará 1 día cada 2 semanas específicamente a pruebas y refactorización.
+- [x] Configurar entorno de pruebas con Vitest para frontend
+- [x] Configurar Jest para pruebas de backend
+- [x] Implementar primeras pruebas unitarias para componentes críticos
+- [x] Configurar análisis estático de código (ESLint)
+- [x] Implementar hooks de pre-commit para verificación de calidad
+- **Estado:** Completado
+- **Notas:** Se ha configurado el entorno de pruebas con Vitest para frontend y Jest para backend. Se han implementado pruebas para los componentes principales (MainLayout, AppHeader, Sidebar, Footer) y para el controlador de autenticación. Se ha configurado ESLint para ambos proyectos. Se han implementado hooks de pre-commit con husky y lint-staged para verificar que el código cumple con los estándares de calidad antes de ser comprometido.
+
+### 8. Implementar integración frontend-backend para autenticación
+- [x] Crear estructura de servicios API en frontend
+- [x] Implementar servicio de autenticación (registro, login, perfil)
+- [x] Integrar componentes Register y Login con el backend
+- [x] Armonizar nombres de campos entre frontend y backend
+- [x] Implementar gestión de tokens JWT en frontend
+- [x] Añadir protección de rutas para páginas autenticadas
+- **Estado:** Completado
+- **Notas:** Se ha implementado la integración de autenticación entre frontend y backend. Se ha creado un servicio authService que maneja el registro, login y obtención de perfil de usuario. Se han modificado los componentes Register y Login para usar este servicio en lugar de la lógica simulada. Se han mapeado los nombres de campos y roles entre frontend y backend. Se ha implementado un componente ProtectedRoute para proteger las rutas que requieren autenticación y control de acceso basado en roles.
 
 ## Registro Diario
 
@@ -5331,8 +5942,9 @@ export default app;
 - **Lo que podría mejorar:**
   - Añadir más pruebas automatizadas para los componentes frontend
   - Mejorar la documentación del código
-  - Implementar un sistema de gestión de estados más robusto (Redux)
+  - Completar la integración frontend-backend para autenticación
 - **Acciones para el próximo sprint:**
+  - Completar la integración frontend-backend para autenticación si no se finaliza en el Sprint 1
   - Configurar Redux para gestión de estado global
     - Priorizar la implementación completa de Redux Toolkit
     - Crear slices para autenticación, usuarios y equipos
