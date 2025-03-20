@@ -13,7 +13,7 @@ const JWT_EXPIRES_IN = 7 * 24 * 60 * 60; // 7 días en segundos
  */
 export const generateToken = (user: IUser): string => {
   const payload = {
-    id: user._id,
+    _id: user._id,
     email: user.email,
     rol: user.rol,
   };

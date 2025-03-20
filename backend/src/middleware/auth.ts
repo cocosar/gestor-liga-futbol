@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/jwt';
 import User from '../models/User';
+import mongoose from 'mongoose';
 
 // Extender el tipo Request para incluir el usuario autenticado
 export interface AuthenticatedRequest extends Request {
   user?: {
-    id: string;
+    _id: string;
     email: string;
     rol: string;
   };
@@ -42,7 +43,7 @@ export const authenticate = async (
     }
 
     // Buscar el usuario en la base de datos
-    const user = await User.findById(decoded.id).select('-password');
+    const user = await User.findById(decoded._id).select('-password');
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -60,7 +61,11 @@ export const authenticate = async (
 
     // Añadir el usuario a la solicitud
     req.user = {
-      id: user.id,
+      _id: user._id instanceof mongoose.Types.ObjectId 
+           ? user._id.toString() 
+           : typeof user._id === 'string' 
+             ? user._id 
+             : String(user._id),
       email: user.email,
       rol: user.rol
     };

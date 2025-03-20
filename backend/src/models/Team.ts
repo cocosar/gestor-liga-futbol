@@ -2,16 +2,15 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ITeam extends Document {
   nombre: string;
-  logo?: string;
-  colorPrimario: string;
-  colorSecundario?: string;
-  fechaCreacion: Date;
-  manager: mongoose.Types.ObjectId;
-  ubicacion?: string;
   descripcion?: string;
+  categoria: 'juvenil' | 'adulto' | 'senior' | 'femenino' | 'masculino';
+  tipo: 'futbol' | 'futsal' | 'futbol7';
+  fechaCreacion: Date;
+  entrenador?: mongoose.Types.ObjectId;
+  manager?: mongoose.Types.ObjectId;
+  jugadores?: mongoose.Types.ObjectId[];
+  logo?: string;
   activo: boolean;
-  ligaActual?: mongoose.Types.ObjectId;
-  historialLigas?: mongoose.Types.ObjectId[];
 }
 
 const TeamSchema = new Schema<ITeam>(
@@ -19,60 +18,58 @@ const TeamSchema = new Schema<ITeam>(
     nombre: {
       type: String,
       required: [true, 'El nombre del equipo es obligatorio'],
-      unique: true,
       trim: true,
+      maxlength: [100, 'El nombre no puede exceder los 100 caracteres'],
     },
-    logo: {
+    descripcion: {
       type: String,
-      default: '/default-team-logo.png',
+      maxlength: [500, 'La descripción no puede exceder los 500 caracteres'],
     },
-    colorPrimario: {
+    categoria: {
       type: String,
-      required: [true, 'El color primario es obligatorio'],
-      default: '#000000',
+      required: [true, 'La categoría del equipo es obligatoria'],
+      enum: ['juvenil', 'adulto', 'senior', 'femenino', 'masculino'],
     },
-    colorSecundario: {
+    tipo: {
       type: String,
-      default: '#FFFFFF',
+      required: [true, 'El tipo de equipo es obligatorio'],
+      enum: ['futbol', 'futsal', 'futbol7'],
+      default: 'futbol',
     },
     fechaCreacion: {
       type: Date,
       default: Date.now,
     },
+    entrenador: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
     manager: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'El manager del equipo es obligatorio'],
     },
-    ubicacion: {
+    jugadores: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    }],
+    logo: {
       type: String,
-      trim: true,
-    },
-    descripcion: {
-      type: String,
-      maxlength: [500, 'La descripción no puede tener más de 500 caracteres'],
     },
     activo: {
       type: Boolean,
       default: true,
     },
-    ligaActual: {
-      type: Schema.Types.ObjectId,
-      ref: 'League',
-    },
-    historialLigas: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'League',
-      },
-    ],
   },
   {
     timestamps: true,
   }
 );
 
-// Índice para búsquedas más rápidas por nombre
+// Índices para mejorar el rendimiento de búsquedas comunes
 TeamSchema.index({ nombre: 1 });
+TeamSchema.index({ categoria: 1 });
+TeamSchema.index({ tipo: 1 });
+TeamSchema.index({ entrenador: 1 });
+TeamSchema.index({ manager: 1 });
 
 export default mongoose.model<ITeam>('Team', TeamSchema); 
