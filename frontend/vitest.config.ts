@@ -4,9 +4,25 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  cacheDir: '.vite/cache',
   test: {
-    globals: true,
     environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
+    globals: true,
+    pool: 'forks',
+    isolate: false,
+    include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.git/**'],
+    testTransformMode: {
+      web: ['.[jt]sx']
+    },
+    testTimeout: 5000,
+    deps: {
+      optimizer: {
+        web: {
+          include: ['@testing-library/react']
+        }
+      },
+      interopDefault: true,
+    },
   }
 }) 

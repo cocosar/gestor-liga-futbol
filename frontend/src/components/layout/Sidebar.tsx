@@ -18,6 +18,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import GroupsIcon from '@mui/icons-material/Groups';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import { useAuth } from '../../hooks/useAuth';
 
 interface SidebarProps {
   drawerWidth: number;
@@ -32,15 +34,6 @@ interface MenuItem {
   icon: React.ReactNode;
 }
 
-const menuItems: MenuItem[] = [
-  { text: 'Inicio', path: '/', icon: <HomeIcon /> },
-  { text: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
-  { text: 'Equipos', path: '/teams', icon: <GroupsIcon /> },
-  { text: 'Jugadores', path: '/players', icon: <PeopleIcon /> },
-  { text: 'Partidos', path: '/matches', icon: <CalendarMonthIcon /> },
-  { text: 'Tabla de Posiciones', path: '/standings', icon: <EmojiEventsIcon /> },
-];
-
 const Sidebar: React.FC<SidebarProps> = ({ 
   drawerWidth, 
   mobileOpen, 
@@ -49,6 +42,32 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { hasRole } = useAuth();
+
+  // Menú items dinámicos según rol
+  const getMenuItems = (): MenuItem[] => {
+    const items: MenuItem[] = [
+      { text: 'Inicio', path: '/', icon: <HomeIcon /> },
+      { text: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+    ];
+
+    // Menú de administración solo para administradores
+    if (hasRole('admin')) {
+      items.push(
+        { text: 'Usuarios', path: '/users', icon: <SupervisorAccountIcon /> }
+      );
+    }
+
+    // Opciones de gestión deportiva
+    items.push(
+      { text: 'Equipos', path: '/teams', icon: <GroupsIcon /> },
+      { text: 'Jugadores', path: '/players', icon: <PeopleIcon /> },
+      { text: 'Partidos', path: '/matches', icon: <CalendarMonthIcon /> },
+      { text: 'Tabla de Posiciones', path: '/standings', icon: <EmojiEventsIcon /> }
+    );
+
+    return items;
+  };
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -66,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       </Toolbar>
       <Divider />
       <List>
-        {menuItems.map((item) => (
+        {getMenuItems().map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton 
               selected={location.pathname === item.path}

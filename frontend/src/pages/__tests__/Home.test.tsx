@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import Home from '../Home';
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 import { ThemeProvider, createTheme } from '@mui/material';
+import '@testing-library/jest-dom';
 
 // Mock para react-router-dom
 vi.mock('react-router-dom', () => ({

@@ -16,7 +16,7 @@ export const getTeams = async (req: AuthenticatedRequest, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 10;
     const search = req.query.search as string || '';
     const sortBy = req.query.sortBy as string || 'nombre';
-    const sortOrder = req.query.sortOrder as string === 'desc' ? -1 : 1;
+    const sortOrder = req.query.sortOrder as string;
     const categoria = req.query.categoria as string;
     const tipo = req.query.tipo as string;
     const activo = req.query.activo as string;
@@ -51,8 +51,8 @@ export const getTeams = async (req: AuthenticatedRequest, res: Response) => {
     const skip = (page - 1) * limit;
     
     // Ordenamiento
-    const sort: Record<string, number> = {};
-    sort[sortBy] = sortOrder;
+    const sort: { [key: string]: 1 | -1 } = {};
+    sort[sortBy] = sortOrder && sortOrder.toString().toLowerCase() === 'desc' ? -1 : 1;
     
     // Obtener equipos paginados y filtrados
     const teams = await Team.find(filter)

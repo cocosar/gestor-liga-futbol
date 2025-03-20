@@ -41,30 +41,30 @@
 
 ### 2. Desarrollar CRUD completo de usuarios
 #### Backend
-- [ ] Implementar endpoints para gestión de usuarios
-  - [ ] Crear controlador para usuarios con métodos CRUD
-  - [ ] Implementar validación de datos con middleware
-  - [ ] Configurar rutas REST para usuarios
-  - [ ] Implementar paginación y filtrado en listados
-  - [ ] Añadir manejo de roles y permisos
+- [x] Implementar endpoints para gestión de usuarios
+  - [x] Crear controlador para usuarios con métodos CRUD
+  - [x] Implementar validación de datos con middleware
+  - [x] Configurar rutas REST para usuarios
+  - [x] Implementar paginación y filtrado en listados
+  - [x] Añadir manejo de roles y permisos
 
 #### Frontend
-- [ ] Crear página de administración de usuarios
-  - [ ] Implementar tabla de listado con paginación y filtros
-  - [ ] Añadir acciones de edición/eliminación en la tabla
-  - [ ] Implementar modal de confirmación para eliminación
-- [ ] Implementar formularios para creación/edición de usuarios
-  - [ ] Crear formulario con validación de campos
-  - [ ] Implementar manejo de errores de API
-  - [ ] Añadir feedback visual durante operaciones (loading, success, error)
-- [ ] Añadir funcionalidad para cambio de contraseña
-  - [ ] Crear formulario específico para cambio de contraseña
-  - [ ] Implementar validación de contraseña segura
-- [ ] Implementar gestión de roles de usuario
-  - [ ] Crear selector de roles en formularios
-  - [ ] Añadir comprobación de permisos en UI
-- **Estado:** Pendiente
-- **Notas:** Ya está implementado el slice de Redux para la gestión de estado de usuarios. El siguiente paso es desarrollar la interfaz de usuario y los endpoints en backend.
+- [x] Crear página de administración de usuarios
+  - [x] Implementar tabla de listado con paginación y filtros
+  - [x] Añadir acciones de edición/eliminación en la tabla
+  - [x] Implementar modal de confirmación para eliminación
+- [x] Implementar formularios para creación/edición de usuarios
+  - [x] Crear formulario con validación de campos
+  - [x] Implementar manejo de errores de API
+  - [x] Añadir feedback visual durante operaciones (loading, success, error)
+- [x] Añadir funcionalidad para cambio de contraseña
+  - [x] Crear formulario específico para cambio de contraseña
+  - [x] Implementar validación de contraseña segura
+- [x] Implementar gestión de roles de usuario
+  - [x] Crear selector de roles en formularios
+  - [x] Añadir comprobación de permisos en UI
+- **Estado:** Completado
+- **Notas:** Se ha implementado el CRUD completo de usuarios tanto en el backend como en el frontend. Se ha creado una página de administración de usuarios con una tabla de listado, filtros y acciones para crear, editar y eliminar usuarios. También se ha implementado un formulario para la creación y edición de usuarios con validación de campos y manejo de errores. La funcionalidad de cambio de contraseña se ha integrado en el formulario de edición de usuarios.
 
 ### 3. Implementar gestión de equipos
 #### Backend
@@ -243,9 +243,24 @@
   - Comenzar la implementación de la interfaz de gestión de usuarios [FRONTEND]
   - Avanzar con los endpoints de usuarios en el backend [BACKEND]
 
+### [07-04-2025]
+- **Avances:**
+  - Implementada la página de gestión de usuarios en el frontend
+  - Creado componente UserForm para la creación y edición de usuarios
+  - Actualizado el menú lateral para incluir un enlace a la página de usuarios
+  - Verificado el correcto funcionamiento del CRUD de usuarios
+  - Actualizado el archivo de rutas del frontend para incluir la nueva página
+- **Problemas encontrados:**
+  - Algunos errores de linting en el componente UserForm que fueron resueltos
+  - Problemas con las relaciones entre tipos en la interfaz que fueron solucionados
+- **Plan para mañana:**
+  - Comenzar la implementación de la gestión de equipos
+  - Mejorar la interfaz de usuario con feedback visual adicional
+  - Implementar filtros adicionales para la página de usuarios
+
 ## Métricas del Sprint
-- **Completado:** 45%
-- **Velocidad:** 19 subtareas completadas en 6 días
+- **Completado:** 60%
+- **Velocidad:** 32 subtareas completadas en 7 días
 - **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
 - **Cobertura de pruebas:** 85% en frontend
 

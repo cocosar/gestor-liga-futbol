@@ -3,6 +3,7 @@ import MainLayout from '../MainLayout';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 import { vi, describe, it, expect } from 'vitest';
+import '@testing-library/jest-dom';
 
 // Mock de los componentes internos para simplificar las pruebas
 vi.mock('../AppHeader', () => ({

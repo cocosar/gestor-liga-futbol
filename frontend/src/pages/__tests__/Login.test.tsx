@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 import Login from '../Login';
 import { useAuth } from '../../hooks/useAuth';

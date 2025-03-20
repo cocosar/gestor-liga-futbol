@@ -3,6 +3,7 @@ import AppHeader from '../AppHeader';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import '@testing-library/jest-dom';
 import { useAuth } from '../../../hooks/useAuth';
 
 // Tipo para el mock de usuario

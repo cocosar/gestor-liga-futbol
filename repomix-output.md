@@ -42,12 +42,15 @@ The content is organized as follows:
 .github/workflows/ci.yml
 .gitignore
 .husky/pre-commit
-.repomixignore
 backend/.eslintrc.js
 backend/jest.config.js
 backend/package.json
+backend/pruebas-manuales-equipos.md
+backend/pruebas-manuales-usuarios.md
 backend/README.md
 backend/src/controllers/authController.ts
+backend/src/controllers/teamController.ts
+backend/src/controllers/userController.ts
 backend/src/index.ts
 backend/src/middleware/auth.ts
 backend/src/models/index.ts
@@ -58,8 +61,12 @@ backend/src/models/Team.ts
 backend/src/models/User.ts
 backend/src/routes/authRoutes.ts
 backend/src/routes/index.ts
+backend/src/routes/teamRoutes.ts
+backend/src/routes/userRoutes.ts
 backend/src/tests/auth.test.ts
 backend/src/tests/controllers/authController.test.ts
+backend/src/tests/controllers/userController.test.ts
+backend/src/tests/middleware/auth.test.ts
 backend/src/utils/jwt.ts
 backend/tsconfig.json
 docs/plan-de-implementacion.md
@@ -101,6 +108,9 @@ frontend/src/pages/Home.tsx
 frontend/src/pages/Login.tsx
 frontend/src/pages/Register.tsx
 frontend/src/reportWebVitals.ts
+frontend/src/store/__tests__/middleware/errorMiddleware.test.ts
+frontend/src/store/__tests__/middleware/index.test.ts
+frontend/src/store/__tests__/middleware/loggerMiddleware.test.ts
 frontend/src/store/__tests__/slices/auth/authSlice.test.ts
 frontend/src/store/__tests__/slices/auth/selectors.test.ts
 frontend/src/store/__tests__/slices/auth/thunks.test.ts
@@ -111,6 +121,10 @@ frontend/src/store/__tests__/slices/users/selectors.test.ts
 frontend/src/store/__tests__/slices/users/thunks.test.ts
 frontend/src/store/__tests__/slices/users/usersSlice.test.ts
 frontend/src/store/index.ts
+frontend/src/store/middleware/errorMiddleware.ts
+frontend/src/store/middleware/index.ts
+frontend/src/store/middleware/loggerMiddleware.ts
+frontend/src/store/middleware/README.md
 frontend/src/store/slices/auth/authSlice.ts
 frontend/src/store/slices/auth/selectors.ts
 frontend/src/store/slices/auth/thunks.ts
@@ -129,6 +143,7 @@ frontend/src/types/css.d.ts
 frontend/src/types/index.ts
 frontend/src/types/teams.ts
 frontend/src/types/users.ts
+frontend/src/vite-env.d.ts
 frontend/tsconfig.app.json
 frontend/tsconfig.json
 frontend/tsconfig.node.json
@@ -148,14 +163,6 @@ tracking/TRACKING.md
 
 # Files
 
-## File: .repomixignore
-````
-# Add patterns to ignore here, one per line
-# Example:
-# *.log
-# tmp/
-````
-
 ## File: .husky/pre-commit
 ````
 npx lint-staged
@@ -169,6 +176,594 @@ npx lint-staged
 ## File: backend/jest.config.js
 ````javascript
 
+````
+
+## File: backend/pruebas-manuales-equipos.md
+````markdown
+# Pruebas Manuales: CRUD de Equipos
+
+Este documento describe las pruebas manuales para verificar el funcionamiento correcto de las operaciones CRUD de equipos a través de la API REST.
+
+## Requisitos Previos
+
+- [Postman](https://www.postman.com/downloads/) o [Insomnia](https://insomnia.rest/download) instalado.
+- Servidor backend ejecutándose en `http://localhost:5000`
+- MongoDB corriendo localmente o en Atlas.
+- Un usuario administrador o manager creado en la base de datos.
+
+## Configuración de Pruebas
+
+1. Antes de iniciar las pruebas, asegúrate de tener un token JWT válido para un usuario con rol de administrador o manager.
+2. Para obtenerlo, inicia sesión con un administrador o manager usando el endpoint `/api/auth/login`.
+3. Guarda el token JWT recibido para usarlo en las siguientes pruebas.
+
+## Pruebas
+
+### 1. Obtener Lista de Equipos
+
+**Objetivo:** Verificar que se puede obtener un listado de equipos con filtros y paginación.
+
+#### Petición básica:
+
+```
+GET http://localhost:5000/api/equipos
+Headers:
+  Authorization: Bearer <token_jwt>
+```
+
+#### Petición con paginación y filtros:
+
+```
+GET http://localhost:5000/api/equipos?page=1&limit=10&search=team&sortBy=nombre&sortOrder=asc&categoria=adulto&tipo=futbol&activo=true
+Headers:
+  Authorization: Bearer <token_jwt>
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "equipos": [...],
+    "totalEquipos": 10,
+    "paginaActual": 1,
+    "totalPaginas": 1,
+    "limite": 10
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta acceder sin un token JWT (debería devolver 401)
+- Prueba diferentes combinaciones de filtros y verifica resultados
+
+### 2. Obtener Equipo por ID
+
+**Objetivo:** Verificar que se puede obtener la información de un equipo específico.
+
+#### Petición:
+
+```
+GET http://localhost:5000/api/equipos/<id_equipo>
+Headers:
+  Authorization: Bearer <token_jwt>
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "equipo": {
+      "_id": "...",
+      "nombre": "...",
+      "descripcion": "...",
+      "categoria": "...",
+      "tipo": "...",
+      "entrenador": { ... },
+      "manager": { ... },
+      "jugadores": [ ... ],
+      "logo": "...",
+      "activo": true,
+      "fechaCreacion": "..."
+    }
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta obtener un equipo que no existe (debería devolver 404)
+- Intenta acceder sin un token JWT (debería devolver 401)
+
+### 3. Crear Equipo
+
+**Objetivo:** Verificar que un administrador o manager puede crear un nuevo equipo.
+
+#### Petición:
+
+```
+POST http://localhost:5000/api/equipos
+Headers:
+  Authorization: Bearer <token_jwt>
+  Content-Type: application/json
+Body:
+  {
+    "nombre": "Nuevo Equipo",
+    "descripcion": "Descripción del equipo",
+    "categoria": "adulto",
+    "tipo": "futbol",
+    "entrenador": "<id_entrenador>",
+    "manager": "<id_manager>",
+    "logo": "https://example.com/logo.png"
+  }
+```
+
+**Resultados esperados:**
+- Código 201 Created
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "message": "Equipo creado exitosamente",
+    "equipo": {
+      "_id": "...",
+      "nombre": "Nuevo Equipo",
+      "descripcion": "Descripción del equipo",
+      "categoria": "adulto",
+      "tipo": "futbol",
+      "entrenador": { ... },
+      "manager": { ... },
+      "activo": true,
+      "fechaCreacion": "..."
+    }
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta crear un equipo sin un campo obligatorio como nombre o categoría (debería devolver 400)
+- Intenta crear un equipo con una categoría o tipo inválido (debería devolver 400)
+- Intenta crear un equipo como usuario regular (debería devolver 403)
+- Intenta asignar un manager o entrenador inexistente (debería devolver 404)
+- Intenta asignar como manager/entrenador a un usuario con rol no adecuado (debería devolver 400)
+
+### 4. Actualizar Equipo
+
+**Objetivo:** Verificar que se puede actualizar la información de un equipo existente.
+
+#### Petición:
+
+```
+PUT http://localhost:5000/api/equipos/<id_equipo>
+Headers:
+  Authorization: Bearer <token_jwt>
+  Content-Type: application/json
+Body:
+  {
+    "nombre": "Nombre Actualizado",
+    "descripcion": "Descripción actualizada",
+    "categoria": "juvenil",
+    "entrenador": "<id_nuevo_entrenador>"
+  }
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "message": "Equipo actualizado exitosamente",
+    "equipo": {
+      "_id": "...",
+      "nombre": "Nombre Actualizado",
+      "descripcion": "Descripción actualizada",
+      "categoria": "juvenil",
+      "entrenador": { ... },
+      "manager": { ... },
+      "activo": true,
+      "fechaCreacion": "..."
+    }
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta actualizar un equipo como usuario no administrador o no manager del equipo (debería devolver 403)
+- Intenta actualizar con una categoría o tipo inválido (debería devolver 400)
+- Intenta actualizar un equipo que no existe (debería devolver 404)
+- Intenta como manager cambiar el estado "activo" del equipo (debería ignorar el cambio, solo admin puede hacerlo)
+
+### 5. Añadir/Eliminar Jugadores
+
+**Objetivo:** Verificar que se pueden añadir o eliminar jugadores de un equipo.
+
+#### Petición para añadir jugadores:
+
+```
+PUT http://localhost:5000/api/equipos/<id_equipo>/jugadores
+Headers:
+  Authorization: Bearer <token_jwt>
+  Content-Type: application/json
+Body:
+  {
+    "jugadores": ["<id_jugador1>", "<id_jugador2>"],
+    "accion": "agregar"
+  }
+```
+
+#### Petición para eliminar jugadores:
+
+```
+PUT http://localhost:5000/api/equipos/<id_equipo>/jugadores
+Headers:
+  Authorization: Bearer <token_jwt>
+  Content-Type: application/json
+Body:
+  {
+    "jugadores": ["<id_jugador1>", "<id_jugador2>"],
+    "accion": "eliminar"
+  }
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "message": "Jugadores añadidos exitosamente", // o "Jugadores eliminados exitosamente"
+    "equipo": {
+      "_id": "...",
+      "nombre": "...",
+      "jugadores": [ ... ],
+      // otros campos
+    }
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta modificar jugadores como usuario no autorizado (debería devolver 403)
+- Intenta añadir jugadores no existentes (debería devolver 404)
+- Intenta usar una acción inválida diferente de "agregar" o "eliminar" (debería devolver 400)
+- Intenta añadir jugadores que ya están en el equipo (debería funcionar sin duplicados)
+- Intenta eliminar jugadores que no están en el equipo (debería funcionar sin errores)
+
+### 6. Eliminar Equipo
+
+**Objetivo:** Verificar que un administrador puede eliminar un equipo.
+
+#### Petición:
+
+```
+DELETE http://localhost:5000/api/equipos/<id_equipo>
+Headers:
+  Authorization: Bearer <token_jwt>
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "message": "Equipo eliminado exitosamente"
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta eliminar un equipo como usuario no administrador (debería devolver 403)
+- Intenta eliminar un equipo que no existe (debería devolver 404)
+
+## Verificación de Integridad
+
+Después de realizar las pruebas, verifica la integridad del sistema:
+
+1. Accede a la lista de equipos para asegurarte de que los cambios se reflejan correctamente.
+2. Verifica que los usuarios asignados como entrenadores y managers se reflejen correctamente.
+3. Comprueba que los jugadores añadidos o eliminados se actualizan correctamente en el equipo.
+
+## Notas sobre Posibles Errores
+
+- **400 Bad Request**: Indica un problema con los datos enviados (por ejemplo, categoría inválida, datos de validación que fallan).
+- **401 Unauthorized**: Indica problemas de autenticación (token faltante o inválido).
+- **403 Forbidden**: Indica problemas de permisos (el usuario no tiene el rol requerido).
+- **404 Not Found**: Indica que el recurso solicitado (equipo, jugador, etc.) no existe.
+- **500 Internal Server Error**: Indica un problema en el servidor. Revisa los logs para más detalles.
+
+## Consejos para Debugging
+
+1. Revisa los encabezados de la solicitud, especialmente el token JWT.
+2. Verifica el formato del cuerpo de la solicitud, especialmente para POST y PUT.
+3. Comprueba los logs del servidor para mensajes de error detallados.
+4. Para problemas con los ID de MongoDB, asegúrate de que son strings hexadecimales de 24 caracteres.
+5. Si hay problemas al añadir jugadores, verifica que los usuarios existan y estén activos.
+````
+
+## File: backend/pruebas-manuales-usuarios.md
+````markdown
+# Pruebas Manuales: CRUD de Usuarios
+
+Este documento describe las pruebas manuales para verificar el funcionamiento correcto de las operaciones CRUD de usuarios a través de la API REST.
+
+## Requisitos Previos
+
+- [Postman](https://www.postman.com/downloads/) o [Insomnia](https://insomnia.rest/download) instalado.
+- Servidor backend ejecutándose en `http://localhost:5000`
+- MongoDB corriendo localmente o en Atlas.
+- Un usuario administrador creado en la base de datos.
+
+## Configuración de Pruebas
+
+1. Antes de iniciar las pruebas, asegúrate de tener un token JWT válido para un usuario con rol de administrador.
+2. Para obtenerlo, inicia sesión con un administrador usando el endpoint `/api/auth/login`.
+3. Guarda el token JWT recibido para usarlo en las siguientes pruebas.
+
+## Pruebas
+
+### 1. Obtener Lista de Usuarios
+
+**Objetivo:** Verificar que se puede obtener un listado de usuarios con filtros y paginación.
+
+#### Petición básica:
+
+```
+GET http://localhost:5000/api/usuarios
+Headers:
+  Authorization: Bearer <token_jwt>
+```
+
+#### Petición con paginación y filtros:
+
+```
+GET http://localhost:5000/api/usuarios?page=1&limit=10&search=test&sortBy=nombre&sortOrder=asc&rol=admin&activo=true
+Headers:
+  Authorization: Bearer <token_jwt>
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "usuarios": [...],
+    "totalUsuarios": 10,
+    "paginaActual": 1,
+    "totalPaginas": 1,
+    "limite": 10
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta acceder sin un token JWT (debería devolver 401)
+- Intenta acceder con un token que no tiene rol de administrador (debería devolver 403)
+- Prueba diferentes combinaciones de filtros y verificar resultados
+
+### 2. Obtener Usuario por ID
+
+**Objetivo:** Verificar que se puede obtener la información de un usuario específico.
+
+#### Petición:
+
+```
+GET http://localhost:5000/api/usuarios/<id_usuario>
+Headers:
+  Authorization: Bearer <token_jwt>
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "usuario": {
+      "_id": "...",
+      "nombre": "...",
+      "apellido": "...",
+      "email": "...",
+      "rol": "...",
+      "activo": true,
+      "fechaCreacion": "..."
+    }
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta obtener un usuario que no existe (debería devolver 404)
+- Como usuario regular, intenta obtener información de otro usuario (debería devolver 403)
+- Como usuario regular, obtén tu propia información (debería funcionar)
+
+### 3. Crear Usuario
+
+**Objetivo:** Verificar que un administrador puede crear un nuevo usuario.
+
+#### Petición:
+
+```
+POST http://localhost:5000/api/usuarios
+Headers:
+  Authorization: Bearer <token_jwt>
+  Content-Type: application/json
+Body:
+  {
+    "nombre": "Nuevo",
+    "apellido": "Usuario",
+    "email": "nuevo@example.com",
+    "password": "password123",
+    "rol": "usuario",
+    "activo": true
+  }
+```
+
+**Resultados esperados:**
+- Código 201 Created
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "message": "Usuario creado exitosamente",
+    "usuario": {
+      "_id": "...",
+      "nombre": "Nuevo",
+      "apellido": "Usuario",
+      "email": "nuevo@example.com",
+      "rol": "usuario",
+      "activo": true,
+      "fechaCreacion": "..."
+    }
+  }
+  ```
+
+**Pruebas adicionales:**
+- Intenta crear un usuario con un email ya existente (debería devolver 400)
+- Intenta crear un usuario con un rol inválido (debería devolver 400)
+- Como usuario no administrador, intenta crear un administrador (debería devolver 403)
+- Omite campos obligatorios como nombre, apellido, email o password (debería devolver 400)
+
+### 4. Actualizar Usuario
+
+**Objetivo:** Verificar que se puede actualizar la información de un usuario existente.
+
+#### Petición:
+
+```
+PUT http://localhost:5000/api/usuarios/<id_usuario>
+Headers:
+  Authorization: Bearer <token_jwt>
+  Content-Type: application/json
+Body:
+  {
+    "nombre": "Nombre Actualizado",
+    "apellido": "Apellido Actualizado",
+    "email": "actualizado@example.com",
+    "rol": "manager",
+    "activo": true
+  }
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "message": "Usuario actualizado exitosamente",
+    "usuario": {
+      "_id": "...",
+      "nombre": "Nombre Actualizado",
+      "apellido": "Apellido Actualizado",
+      "email": "actualizado@example.com",
+      "rol": "manager",
+      "activo": true,
+      "fechaCreacion": "..."
+    }
+  }
+  ```
+
+**Pruebas adicionales:**
+- Como usuario no administrador, intenta actualizar a otro usuario (debería devolver 403)
+- Como usuario no administrador, actualiza tu propio perfil (debería funcionar)
+- Como usuario no administrador, intenta cambiar tu rol (debería devolver 403)
+- Como usuario regular, intenta desactivar tu cuenta (debería devolver 403)
+- Como administrador, intenta quitarte a ti mismo los privilegios de administrador (debería devolver 403)
+- Intenta actualizar con un email ya usado por otro usuario (debería devolver 400)
+
+### 5. Cambiar Contraseña
+
+**Objetivo:** Verificar que se puede cambiar la contraseña de un usuario.
+
+#### Petición (como administrador):
+
+```
+PUT http://localhost:5000/api/usuarios/<id_usuario>/password
+Headers:
+  Authorization: Bearer <token_jwt>
+  Content-Type: application/json
+Body:
+  {
+    "password": "nuevaContraseña123"
+  }
+```
+
+#### Petición (como el propio usuario):
+
+```
+PUT http://localhost:5000/api/usuarios/<tu_id>/password
+Headers:
+  Authorization: Bearer <token_jwt>
+  Content-Type: application/json
+Body:
+  {
+    "currentPassword": "contraseñaActual",
+    "password": "nuevaContraseña123"
+  }
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "message": "Contraseña actualizada exitosamente"
+  }
+  ```
+
+**Pruebas adicionales:**
+- Como usuario regular, intenta cambiar tu contraseña sin proporcionar la contraseña actual (debería devolver 400)
+- Como usuario regular, intenta cambiar tu contraseña con una contraseña actual incorrecta (debería devolver 401)
+- Como usuario regular, intenta cambiar la contraseña de otro usuario (debería devolver 403)
+
+### 6. Eliminar Usuario
+
+**Objetivo:** Verificar que un administrador puede eliminar un usuario.
+
+#### Petición:
+
+```
+DELETE http://localhost:5000/api/usuarios/<id_usuario>
+Headers:
+  Authorization: Bearer <token_jwt>
+```
+
+**Resultados esperados:**
+- Código 200 OK
+- Respuesta JSON con la estructura:
+  ```json
+  {
+    "success": true,
+    "message": "Usuario eliminado exitosamente"
+  }
+  ```
+
+**Pruebas adicionales:**
+- Como administrador, intenta eliminarte a ti mismo (debería devolver 403)
+- Como usuario regular, intenta eliminar un usuario (debería devolver 403)
+- Intenta eliminar un usuario que no existe (debería devolver 404)
+
+## Verificación de Integridad
+
+Después de realizar las pruebas, verifica la integridad del sistema:
+
+1. Accede a la lista de usuarios para asegurarte de que los cambios se reflejan correctamente.
+2. Intenta iniciar sesión con un usuario eliminado (debería fallar).
+3. Intenta iniciar sesión con las credenciales actualizadas (debería funcionar).
+4. Verifica que un usuario desactivado no pueda iniciar sesión.
+
+## Notas sobre Posibles Errores
+
+- **400 Bad Request**: Indica un problema con los datos enviados (por ejemplo, email duplicado, rol inválido, datos de validación que fallan).
+- **401 Unauthorized**: Indica problemas de autenticación (token faltante o inválido).
+- **403 Forbidden**: Indica problemas de permisos (el usuario no tiene el rol requerido).
+- **404 Not Found**: Indica que el recurso solicitado no existe.
+- **500 Internal Server Error**: Indica un problema en el servidor. Revisa los logs para más detalles.
+
+## Consejos para Debugging
+
+1. Revisa los encabezados de la solicitud, especialmente el token JWT.
+2. Verifica el formato del cuerpo de la solicitud, especialmente para POST y PUT.
+3. Comprueba los logs del servidor para mensajes de error detallados.
+4. Para problemas con ID de MongoDB, asegúrate de que son strings hexadecimales de 24 caracteres.
 ````
 
 ## File: backend/README.md
@@ -230,6 +825,290 @@ El servidor estará disponible en [http://localhost:5000](http://localhost:5000)
 ## API Endpoints
 
 La documentación detallada de la API estará disponible en `/api/docs` una vez que el servidor esté en funcionamiento.
+````
+
+## File: backend/src/controllers/teamController.ts
+````typescript
+import { Response } from 'express';
+import { validationResult } from 'express-validator';
+import Team from '../models/Team';
+import User from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth';
+import mongoose from 'mongoose';
+⋮----
+/**
+ * Obtener todos los equipos (con paginación y filtros)
+ * @route GET /api/equipos
+ * @access Private
+ */
+export const getTeams = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Construir filtros
+⋮----
+// Filtro de búsqueda por nombre o descripción
+⋮----
+// Filtro por categoría
+⋮----
+// Filtro por tipo
+⋮----
+// Filtro por estado (activo/inactivo)
+⋮----
+// Calcular el índice de inicio para la paginación
+⋮----
+// Ordenamiento
+⋮----
+// Obtener equipos paginados y filtrados
+⋮----
+// Contar el total de equipos que coinciden con los filtros
+⋮----
+// Calcular el total de páginas
+⋮----
+/**
+ * Obtener un equipo por ID
+ * @route GET /api/equipos/:id
+ * @access Private
+ */
+export const getTeamById = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Obtener el equipo con los datos de entrenador, manager y jugadores
+⋮----
+/**
+ * Crear un nuevo equipo
+ * @route POST /api/equipos
+ * @access Private (Admin/Manager)
+ */
+export const createTeam = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar permisos (solo admin o manager pueden crear equipos)
+⋮----
+// Verificar que el entrenador exista y tenga el rol adecuado
+⋮----
+// Verificar que el manager exista y tenga el rol adecuado
+⋮----
+// Crear el equipo
+⋮----
+// Obtener el equipo con los datos de entrenador y manager
+⋮----
+/**
+ * Actualizar un equipo existente
+ * @route PUT /api/equipos/:id
+ * @access Private (Admin/Manager del equipo)
+ */
+export const updateTeam = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Buscar el equipo a actualizar
+⋮----
+// Verificar permisos: solo admin o el manager del equipo puede actualizar
+⋮----
+// Verificar que el entrenador exista y tenga el rol adecuado
+⋮----
+// Verificar que el manager exista y tenga el rol adecuado
+⋮----
+// Actualizar los campos del equipo
+⋮----
+if (activo !== undefined && isAdmin) team.activo = activo; // Solo admin puede cambiar el estado
+⋮----
+// Guardar los cambios
+⋮----
+// Obtener equipo actualizado con los datos de entrenador y manager
+⋮----
+/**
+ * Añadir/eliminar jugadores de un equipo
+ * @route PUT /api/equipos/:id/jugadores
+ * @access Private (Admin/Manager del equipo)
+ */
+export const updateTeamPlayers = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+const { jugadores, accion } = req.body; // accion: 'agregar' o 'eliminar'
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Verificar que se proporcionó una lista de jugadores
+⋮----
+// Buscar el equipo
+⋮----
+// Verificar permisos: solo admin o el manager del equipo puede actualizar jugadores
+⋮----
+// Verificar que todos los IDs de jugadores sean válidos
+⋮----
+// Inicializar el array de jugadores si no existe
+⋮----
+// Convertir los IDs de jugadores a ObjectId
+⋮----
+// Añadir o eliminar jugadores según la acción
+⋮----
+// Verificar que los jugadores existan
+⋮----
+// Añadir jugadores que no estén ya en el equipo
+⋮----
+// Eliminar jugadores del equipo
+⋮----
+// Guardar los cambios
+⋮----
+// Obtener equipo actualizado con los datos de jugadores
+⋮----
+/**
+ * Eliminar un equipo
+ * @route DELETE /api/equipos/:id
+ * @access Private (Admin)
+ */
+export const deleteTeam = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Verificar que solo los admin puedan eliminar equipos
+⋮----
+// Buscar el equipo a eliminar
+⋮----
+// Eliminar el equipo
+⋮----
+// Exportar controlador como objeto
+````
+
+## File: backend/src/controllers/userController.ts
+````typescript
+import { Response } from 'express';
+import { validationResult } from 'express-validator';
+import User from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth';
+import mongoose from 'mongoose';
+⋮----
+/**
+ * Obtener todos los usuarios (con paginación y filtros)
+ * @route GET /api/usuarios
+ * @access Private (Admin)
+ */
+export const getUsers = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Construir filtros
+⋮----
+// Filtro de búsqueda por nombre, apellido o email
+⋮----
+// Filtro por rol
+⋮----
+// Filtro por estado (activo/inactivo)
+⋮----
+// Calcular el índice de inicio para la paginación
+⋮----
+// Ordenamiento
+⋮----
+// Obtener usuarios paginados y filtrados
+⋮----
+.select('-password'); // Excluir el campo de contraseña
+⋮----
+// Contar el total de usuarios que coinciden con los filtros
+⋮----
+/**
+ * Obtener un usuario por ID
+ * @route GET /api/usuarios/:id
+ * @access Private (Admin/Self)
+ */
+export const getUserById = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Obtener el usuario (sin incluir la contraseña)
+⋮----
+// Verificar permisos: solo el propio usuario o un admin puede ver los detalles
+⋮----
+/**
+ * Crear un nuevo usuario
+ * @route POST /api/usuarios
+ * @access Private (Admin)
+ */
+export const createUser = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar si el usuario ya existe
+⋮----
+// Si se especifica un rol, verificar que sea válido
+⋮----
+// Verificar que solo admin pueda crear otros usuarios admin
+⋮----
+// Crear el usuario
+⋮----
+// Obtener usuario sin contraseña
+⋮----
+/**
+ * Actualizar un usuario existente
+ * @route PUT /api/usuarios/:id
+ * @access Private (Admin/Self)
+ */
+export const updateUser = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Buscar el usuario a actualizar
+⋮----
+// Verificar permisos: solo el propio usuario o un admin puede actualizar
+⋮----
+// Verificar restricciones adicionales:
+// 1. Solo admin puede cambiar roles
+⋮----
+// 2. Solo admin puede cambiar el estado de activación
+⋮----
+// 3. Si un usuario se está autoactualizando, no puede desactivarse a sí mismo
+⋮----
+// 4. Un admin no puede quitarse a sí mismo los privilegios de admin
+⋮----
+// 5. Si se cambia el email, verificar que no exista ya
+⋮----
+// Actualizar los campos del usuario
+⋮----
+// Guardar los cambios
+⋮----
+// Obtener usuario actualizado sin contraseña
+⋮----
+/**
+ * Cambiar la contraseña de un usuario
+ * @route PUT /api/usuarios/:id/password
+ * @access Private (Admin/Self)
+ */
+export const updatePassword = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Buscar el usuario
+⋮----
+// Verificar permisos: solo el propio usuario o un admin puede cambiar la contraseña
+⋮----
+// Si es el propio usuario actualizando su contraseña, verificar la contraseña actual
+⋮----
+// Actualizar la contraseña
+⋮----
+/**
+ * Eliminar un usuario
+ * @route DELETE /api/usuarios/:id
+ * @access Private (Admin)
+ */
+export const deleteUser = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Verificar que solo los admin puedan eliminar usuarios
+⋮----
+// Verificar que un admin no pueda eliminarse a sí mismo
+⋮----
+// Buscar el usuario a eliminar
+⋮----
+// Eliminar el usuario
+⋮----
+// Exportar controlador como objeto
 ````
 
 ## File: backend/src/models/index.ts
@@ -340,49 +1219,6 @@ peso?: number; // en kg
 // Índices para mejorar la búsqueda
 ````
 
-## File: backend/src/models/Team.ts
-````typescript
-import mongoose, { Document, Schema } from 'mongoose';
-⋮----
-export interface ITeam extends Document {
-  nombre: string;
-  logo?: string;
-  colorPrimario: string;
-  colorSecundario?: string;
-  fechaCreacion: Date;
-  manager: mongoose.Types.ObjectId;
-  ubicacion?: string;
-  descripcion?: string;
-  activo: boolean;
-  ligaActual?: mongoose.Types.ObjectId;
-  historialLigas?: mongoose.Types.ObjectId[];
-}
-⋮----
-// Índice para búsquedas más rápidas por nombre
-````
-
-## File: backend/src/models/User.ts
-````typescript
-import mongoose, { Document, Schema } from 'mongoose';
-import bcrypt from 'bcrypt';
-⋮----
-export interface IUser extends Document {
-  nombre: string;
-  apellido: string;
-  email: string;
-  password: string;
-  rol: 'admin' | 'manager' | 'arbitro' | 'usuario';
-  activo: boolean;
-  fechaCreacion: Date;
-  ultimoAcceso?: Date;
-  comparePassword: (candidatePassword: string) => Promise<boolean>;
-}
-⋮----
-// Hash de la contraseña antes de guardar
-⋮----
-// Método para comparar contraseñas
-````
-
 ## File: backend/src/routes/authRoutes.ts
 ````typescript
 import express from 'express';
@@ -409,12 +1245,102 @@ import { authenticate } from '../middleware/auth';
  */
 ````
 
-## File: backend/src/routes/index.ts
+## File: backend/src/routes/teamRoutes.ts
 ````typescript
 import express from 'express';
-import authRoutes from './authRoutes';
+import { body, param } from 'express-validator';
+import teamController from '../controllers/teamController';
+import { authenticate, authorize } from '../middleware/auth';
 ⋮----
-// Rutas de autenticación
+/**
+ * @route GET /api/equipos
+ * @desc Obtener todos los equipos (con paginación y filtros)
+ * @access Private
+ */
+⋮----
+/**
+ * @route GET /api/equipos/:id
+ * @desc Obtener un equipo por ID
+ * @access Private
+ */
+⋮----
+/**
+ * @route POST /api/equipos
+ * @desc Crear un nuevo equipo
+ * @access Private (Admin/Manager)
+ */
+⋮----
+/**
+ * @route PUT /api/equipos/:id
+ * @desc Actualizar un equipo existente
+ * @access Private (Admin/Manager del equipo)
+ */
+⋮----
+/**
+ * @route PUT /api/equipos/:id/jugadores
+ * @desc Añadir o eliminar jugadores de un equipo
+ * @access Private (Admin/Manager/Entrenador del equipo)
+ */
+⋮----
+/**
+ * @route DELETE /api/equipos/:id
+ * @desc Eliminar un equipo
+ * @access Private (Admin)
+ */
+````
+
+## File: backend/src/routes/userRoutes.ts
+````typescript
+import express from 'express';
+import { body, param } from 'express-validator';
+import userController from '../controllers/userController';
+import { authenticate, authorize } from '../middleware/auth';
+⋮----
+/**
+ * @route GET /api/usuarios
+ * @desc Obtener todos los usuarios (con paginación y filtros)
+ * @access Private (Admin)
+ */
+⋮----
+/**
+ * @route GET /api/usuarios/:id
+ * @desc Obtener un usuario por ID
+ * @access Private (Admin/Self)
+ */
+⋮----
+/**
+ * @route POST /api/usuarios
+ * @desc Crear un nuevo usuario
+ * @access Private (Admin)
+ */
+⋮----
+/**
+ * @route PUT /api/usuarios/:id
+ * @desc Actualizar un usuario existente
+ * @access Private (Admin/Self)
+ */
+⋮----
+/**
+ * @route PUT /api/usuarios/:id/password
+ * @desc Cambiar la contraseña de un usuario
+ * @access Private (Admin/Self)
+ */
+⋮----
+/**
+ * @route DELETE /api/usuarios/:id
+ * @desc Eliminar un usuario
+ * @access Private (Admin)
+ */
+````
+
+## File: backend/src/tests/controllers/userController.test.ts
+````typescript
+
+````
+
+## File: backend/src/tests/middleware/auth.test.ts
+````typescript
+
 ````
 
 ## File: backend/tsconfig.json
@@ -516,76 +1442,6 @@ export default tseslint.config(
   "theme_color": "#000000",
   "background_color": "#ffffff"
 }
-````
-
-## File: frontend/src/api/teamService.ts
-````typescript
-import axios from 'axios';
-import { TeamFormData, TeamResponse, TeamsResponse, PaginationParams } from '../types';
-⋮----
-/**
- * Servicio para gestionar equipos en el backend
- */
-⋮----
-/**
-   * Obtiene un listado paginado de equipos
-   * @param params Parámetros de paginación
-   * @returns Respuesta con listado de equipos
-   */
-async getTeams(params: PaginationParams): Promise<TeamsResponse>
-⋮----
-/**
-   * Obtiene un equipo por su ID
-   * @param teamId ID del equipo
-   * @returns Respuesta con datos del equipo
-   */
-async getTeamById(teamId: string): Promise<TeamResponse>
-⋮----
-/**
-   * Crea un nuevo equipo
-   * @param teamData Datos del equipo a crear
-   * @returns Respuesta con el equipo creado
-   */
-async createTeam(teamData: TeamFormData): Promise<TeamResponse>
-⋮----
-/**
-   * Actualiza un equipo existente
-   * @param teamId ID del equipo a actualizar
-   * @param teamData Datos actualizados del equipo
-   * @returns Respuesta con el equipo actualizado
-   */
-async updateTeam(teamId: string, teamData: TeamFormData): Promise<TeamResponse>
-⋮----
-/**
-   * Elimina un equipo
-   * @param teamId ID del equipo a eliminar
-   * @returns Respuesta con resultado de la operación
-   */
-async deleteTeam(teamId: string): Promise<TeamResponse>
-````
-
-## File: frontend/src/api/userService.ts
-````typescript
-import axios from 'axios';
-import { UserFormData, UserResponse, UsersResponse, PaginationParams } from '../types';
-⋮----
-// Configuración del header con token de autenticación
-const getConfig = () =>
-⋮----
-// Obtener listado de usuarios con paginación
-const getUsers = async (params: PaginationParams): Promise<UsersResponse> =>
-⋮----
-// Obtener un usuario por ID
-const getUserById = async (id: string): Promise<UserResponse> =>
-⋮----
-// Crear nuevo usuario
-const createUser = async (userData: UserFormData): Promise<UserResponse> =>
-⋮----
-// Actualizar usuario
-const updateUser = async (id: string, userData: UserFormData): Promise<UserResponse> =>
-⋮----
-// Eliminar usuario
-const deleteUser = async (id: string): Promise<
 ````
 
 ## File: frontend/src/components/auth/ProtectedRoute.tsx
@@ -970,6 +1826,32 @@ import { Link as RouterLink } from 'react-router-dom';
 {/* Features Section */}
 ````
 
+## File: frontend/src/store/__tests__/middleware/errorMiddleware.test.ts
+````typescript
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from '@reduxjs/toolkit';
+import errorMiddleware from '../../middleware/errorMiddleware';
+import { RootState } from '../../index';
+⋮----
+// Mock para console.error
+⋮----
+// Mock de la API de middleware
+⋮----
+// Arrange
+⋮----
+// Act
+⋮----
+// Assert
+````
+
+## File: frontend/src/store/__tests__/middleware/index.test.ts
+````typescript
+import { describe, test, expect } from 'vitest';
+import middlewares from '../../middleware';
+import errorMiddleware from '../../middleware/errorMiddleware';
+import loggerMiddleware from '../../middleware/loggerMiddleware';
+````
+
 ## File: frontend/src/store/__tests__/slices/auth/authSlice.test.ts
 ````typescript
 import { describe, test, expect, beforeEach, vi } from 'vitest';
@@ -1188,6 +2070,45 @@ import { UserListItem } from '../../../../types';
 // Verificar que se ha eliminado el usuario y el selectedUser se ha puesto a null
 ⋮----
 // Verificar que no se modifican otros campos
+````
+
+## File: frontend/src/store/middleware/errorMiddleware.ts
+````typescript
+import { Middleware, isRejectedWithValue } from '@reduxjs/toolkit';
+⋮----
+// Middleware para manejo de errores de API
+const errorMiddleware: Middleware = (/* { dispatch } */) => (next) => (action) => {
+// Cuando una acción asíncrona (thunk) es rechazada
+⋮----
+// Podemos obtener el payload del error
+⋮----
+// Aquí podríamos despachar una acción para mostrar un mensaje de error
+// o enviar el error a un servicio de monitoreo
+⋮----
+// También podríamos manejar diferentes tipos de errores según su código
+⋮----
+// Manejo de errores de autenticación (401)
+⋮----
+// Aquí podríamos despachar una acción para redirigir al login
+// dispatch(logout());
+⋮----
+// Manejo de errores de permisos (403)
+⋮----
+// Aquí podríamos despachar una acción para mostrar un mensaje
+⋮----
+// Manejo de errores de servidor (500)
+⋮----
+// Aquí podríamos despachar una acción para mostrar un mensaje
+⋮----
+// Siempre pasar la acción al siguiente middleware
+````
+
+## File: frontend/src/store/middleware/index.ts
+````typescript
+import errorMiddleware from './errorMiddleware';
+import loggerMiddleware from './loggerMiddleware';
+⋮----
+// Exportar todos los middlewares desde un único punto
 ````
 
 ## File: frontend/src/store/slices/auth/authSlice.ts
@@ -1616,6 +2537,22 @@ export interface UserFormData {
 }
 ⋮----
 password?: string; // Opcional para actualizaciones
+````
+
+## File: frontend/src/vite-env.d.ts
+````typescript
+/// <reference types="vite/client" />
+⋮----
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string;
+  // Agrega más variables de entorno según sea necesario
+}
+⋮----
+// Agrega más variables de entorno según sea necesario
+⋮----
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
 ````
 
 ## File: frontend/tsconfig.app.json
@@ -2430,64 +3367,60 @@ alwaysApply: false
 - Never overwrite my .env file without first asking and confirming
 ````
 
-## File: .gitignore
+## File: backend/src/models/Team.ts
+````typescript
+import mongoose, { Document, Schema } from 'mongoose';
+⋮----
+export interface ITeam extends Document {
+  nombre: string;
+  descripcion?: string;
+  categoria: 'juvenil' | 'adulto' | 'senior' | 'femenino' | 'masculino';
+  tipo: 'futbol' | 'futsal' | 'futbol7';
+  fechaCreacion: Date;
+  entrenador?: mongoose.Types.ObjectId;
+  manager?: mongoose.Types.ObjectId;
+  jugadores?: mongoose.Types.ObjectId[];
+  logo?: string;
+  activo: boolean;
+}
+⋮----
+// Índices para mejorar el rendimiento de búsquedas comunes
 ````
-# Dependencias
-node_modules/
-.pnp/
-.pnp.js
 
-# Producción
-/frontend/build
-/frontend/dist
-/backend/dist
+## File: backend/src/models/User.ts
+````typescript
+import mongoose, { Document, Schema } from 'mongoose';
+import bcrypt from 'bcrypt';
+⋮----
+export interface IUser extends Document {
+  nombre: string;
+  apellido: string;
+  email: string;
+  password: string;
+  rol: 'admin' | 'manager' | 'arbitro' | 'usuario';
+  activo: boolean;
+  fechaCreacion: Date;
+  ultimoAcceso?: Date;
+  comparePassword: (candidatePassword: string) => Promise<boolean>;
+}
+⋮----
+// Hash de la contraseña antes de guardar
+⋮----
+// Método para comparar contraseñas
+````
 
-# Archivos de desarrollo
-.DS_Store
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.*
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Archivos de cobertura
-/coverage
-
-# Archivos de configuración del IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Misc
-.DS_Store
-*.pem
-
-# Archivos de typescript
-*.tsbuildinfo
-
-# Archivos de dependencias
-package-lock.json
-yarn.lock
-
-# Archivos de debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Local history
-.history/ 
-
-# Repomix
-repomix.config.json
+## File: backend/src/routes/index.ts
+````typescript
+import express from 'express';
+import authRoutes from './authRoutes';
+import userRoutes from './userRoutes';
+import teamRoutes from './teamRoutes';
+⋮----
+// Rutas de autenticación
+⋮----
+// Rutas de usuarios
+⋮----
+// Rutas de equipos
 ````
 
 ## File: backend/src/tests/auth.test.ts
@@ -3017,6 +3950,76 @@ const transformRole = (role: string): string =>
 // Verificar si el usuario está autenticado
 ````
 
+## File: frontend/src/api/teamService.ts
+````typescript
+import axios from 'axios';
+import { TeamFormData, TeamResponse, TeamsResponse, PaginationParams } from '../types';
+⋮----
+/**
+ * Servicio para gestionar equipos en el backend
+ */
+⋮----
+/**
+   * Obtiene un listado paginado de equipos
+   * @param params Parámetros de paginación
+   * @returns Respuesta con listado de equipos
+   */
+async getTeams(params: PaginationParams): Promise<TeamsResponse>
+⋮----
+/**
+   * Obtiene un equipo por su ID
+   * @param teamId ID del equipo
+   * @returns Respuesta con datos del equipo
+   */
+async getTeamById(teamId: string): Promise<TeamResponse>
+⋮----
+/**
+   * Crea un nuevo equipo
+   * @param teamData Datos del equipo a crear
+   * @returns Respuesta con el equipo creado
+   */
+async createTeam(teamData: TeamFormData): Promise<TeamResponse>
+⋮----
+/**
+   * Actualiza un equipo existente
+   * @param teamId ID del equipo a actualizar
+   * @param teamData Datos actualizados del equipo
+   * @returns Respuesta con el equipo actualizado
+   */
+async updateTeam(teamId: string, teamData: TeamFormData): Promise<TeamResponse>
+⋮----
+/**
+   * Elimina un equipo
+   * @param teamId ID del equipo a eliminar
+   * @returns Respuesta con resultado de la operación
+   */
+async deleteTeam(teamId: string): Promise<TeamResponse>
+````
+
+## File: frontend/src/api/userService.ts
+````typescript
+import axios from 'axios';
+import { UserFormData, UserResponse, UsersResponse, PaginationParams } from '../types';
+⋮----
+// Configuración del header con token de autenticación
+const getConfig = () =>
+⋮----
+// Obtener listado de usuarios con paginación
+const getUsers = async (params: PaginationParams): Promise<UsersResponse> =>
+⋮----
+// Obtener un usuario por ID
+const getUserById = async (id: string): Promise<UserResponse> =>
+⋮----
+// Crear nuevo usuario
+const createUser = async (userData: UserFormData): Promise<UserResponse> =>
+⋮----
+// Actualizar usuario
+const updateUser = async (id: string, userData: UserFormData): Promise<UserResponse> =>
+⋮----
+// Eliminar usuario
+const deleteUser = async (id: string): Promise<
+````
+
 ## File: frontend/src/components/layout/AppHeader.tsx
 ````typescript
 import React from 'react';
@@ -3258,6 +4261,68 @@ type ReportHandler = (metric: webVitals.Metric) => void;
 const reportWebVitals = (onPerfEntry?: ReportHandler) =>
 ````
 
+## File: frontend/src/store/__tests__/middleware/loggerMiddleware.test.ts
+````typescript
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from '@reduxjs/toolkit';
+import loggerMiddleware from '../../middleware/loggerMiddleware';
+import { RootState } from '../../index';
+⋮----
+// Tipo para las llamadas mock de Vitest
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MockedFunction<T extends (...args: any[]) => any> = {
+  mock: {
+    calls: Parameters<T>[]
+  }
+} & T;
+⋮----
+// Configurar MODE para los tests
+⋮----
+// Mocks para console
+⋮----
+vi.unstubAllEnvs(); // Restaurar variables de entorno
+⋮----
+// Mock de la API de middleware
+⋮----
+// Arrange
+⋮----
+// Act
+⋮----
+// Assert
+⋮----
+expect(console.log).toHaveBeenCalledTimes(3); // Previous State, Action, Next State
+⋮----
+// Arrange
+⋮----
+// Act
+⋮----
+// Assert
+// Verificamos que console.group fue llamado con un mensaje que contiene el tipo de acción
+// y un color específico
+⋮----
+// Arrange
+⋮----
+// Act
+⋮----
+// Assert
+// Verificamos que console.group fue llamado con un mensaje que contiene el tipo de acción
+// y un color específico
+⋮----
+// Arrange
+⋮----
+// Act
+⋮----
+// Assert
+// Verificamos que console.group fue llamado con un mensaje que contiene el tipo de acción
+// y un color específico
+⋮----
+// Arrange
+⋮----
+// Act
+⋮----
+// Assert
+````
+
 ## File: frontend/src/store/__tests__/slices/teams/thunks.test.ts
 ````typescript
 import { describe, test, expect, beforeEach } from 'vitest';
@@ -3478,6 +4543,117 @@ import { vi } from 'vitest';
 // Verificar que se llama a las acciones correctas
 ````
 
+## File: frontend/src/store/middleware/loggerMiddleware.ts
+````typescript
+import { Middleware, AnyAction } from '@reduxjs/toolkit';
+⋮----
+// Middleware para logging de acciones (solo en desarrollo)
+const loggerMiddleware: Middleware = store => next => action => {
+  // Solo realizar el logging en entorno de desarrollo
+if (import.meta.env.MODE !== 'production')
+⋮----
+// Solo realizar el logging en entorno de desarrollo
+⋮----
+// Asegurar que action tiene un type
+⋮----
+// Colorizar diferentes tipos de acciones para mejorar la legibilidad
+const getActionColor = () =>
+⋮----
+// Ejecutar la acción
+⋮----
+// En producción, simplemente pasar la acción sin logging
+````
+
+## File: frontend/src/store/middleware/README.md
+````markdown
+# Middlewares de Redux
+
+Este directorio contiene los middlewares personalizados para Redux utilizados en el proyecto.
+
+## Estructura de Archivos
+
+- `errorMiddleware.ts`: Middleware para el manejo centralizado de errores de API
+- `loggerMiddleware.ts`: Middleware para logging de acciones durante el desarrollo
+- `index.ts`: Archivo que exporta todos los middlewares desde un único punto
+
+## Middlewares Implementados
+
+### Error Middleware
+
+El middleware de errores intercepta todas las acciones rechazadas (rejected) de los thunks de Redux Toolkit y proporciona un manejo centralizado de errores.
+
+**Funcionalidades:**
+- Registro de errores en consola
+- Manejo específico según el código de estado HTTP:
+  - 401: Error de autenticación (redirección al login)
+  - 403: Error de permisos
+  - 500+: Errores de servidor
+
+**Implementación futura:**
+- Despachar acciones para mostrar mensajes de error en la interfaz de usuario
+- Integración con un servicio de monitoreo de errores
+
+### Logger Middleware
+
+El middleware de logging registra todas las acciones de Redux y los cambios de estado, facilitando la depuración durante el desarrollo.
+
+**Funcionalidades:**
+- Solo funciona en entorno de desarrollo (`import.meta.env.MODE !== 'production'`)
+- Muestra en consola:
+  - La acción despachada
+  - El estado anterior
+  - El estado posterior
+- Coloriza diferentes tipos de acciones:
+  - Acciones pending: Azul
+  - Acciones fulfilled: Verde
+  - Acciones rejected: Rojo
+
+## Cómo Probar Manualmente
+
+### Probar el Logger Middleware
+
+El middleware de logging está diseñado para ser utilizado durante el desarrollo. Para probarlo:
+
+1. Asegúrate de estar en entorno de desarrollo (`import.meta.env.MODE !== 'production'`)
+2. Abre la consola del navegador (F12 > pestaña Console)
+3. Realiza alguna acción en la aplicación que despache una acción de Redux:
+   - Iniciar sesión/cerrar sesión
+   - Cargar una lista de usuarios o equipos
+   - Crear/editar/eliminar usuarios o equipos
+
+Deberías ver en la consola grupos de mensajes coloreados que muestran:
+- La acción despachada (en azul para pending, verde para fulfilled, rojo para rejected)
+- El estado anterior (en gris)
+- El estado después de la acción (en verde)
+
+### Probar el Error Middleware
+
+Para probar el middleware de manejo de errores:
+
+1. Abre la consola del navegador (F12 > pestaña Console)
+2. Provoca un error intencionalmente:
+   - Intenta acceder a un recurso protegido sin autenticación (error 401)
+   - Intenta realizar una acción para la que no tienes permisos (error 403)
+   - Configura temporalmente una URL de API incorrecta para provocar un error de servidor (error 500)
+
+Deberías ver en la consola:
+- Mensajes de error detallados
+- Mensajes específicos según el código de error (401, 403, 500, etc.)
+- En una implementación futura, estos errores también mostrarían notificaciones en la interfaz
+
+## Tests Automatizados
+
+Los middlewares tienen pruebas automatizadas que verifican su correcto funcionamiento:
+- `src/store/__tests__/middleware/errorMiddleware.test.ts`
+- `src/store/__tests__/middleware/loggerMiddleware.test.ts`
+- `src/store/__tests__/middleware/index.test.ts`
+
+Para ejecutar las pruebas:
+```bash
+npm test -- middleware
+```
+````
+
 ## File: frontend/src/store/slices/index.ts
 ````typescript
 import authReducer from './auth/authSlice';
@@ -3595,6 +4771,67 @@ jobs:
       run: npm run test:backend
 ````
 
+## File: .gitignore
+````
+# Dependencias
+node_modules/
+.pnp/
+.pnp.js
+
+# Producción
+/frontend/build
+/frontend/dist
+/backend/dist
+
+# Archivos de desarrollo
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de cobertura
+/coverage
+
+# Archivos de configuración del IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Misc
+.DS_Store
+*.pem
+
+# Archivos de typescript
+*.tsbuildinfo
+
+# Archivos de dependencias
+package-lock.json
+yarn.lock
+
+# Archivos de debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local history
+.history/ 
+
+# Repomix
+repomix.config.json
+.repomixignore
+````
+
 ## File: backend/src/controllers/authController.ts
 ````typescript
 import { Request, Response } from 'express';
@@ -3657,51 +4894,6 @@ export const login = async (req: Request, res: Response) =>
 export const getMe = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
 // El usuario ya está en req.user gracias al middleware de autenticación
-````
-
-## File: backend/src/middleware/auth.ts
-````typescript
-import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '../utils/jwt';
-import User from '../models/User';
-⋮----
-// Extender el tipo Request para incluir el usuario autenticado
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    rol: string;
-  };
-}
-⋮----
-/**
- * Middleware para proteger rutas que requieren autenticación
- */
-export const authenticate = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) =>
-⋮----
-// Obtener el token del header Authorization
-⋮----
-// Extraer el token
-⋮----
-// Verificar el token
-⋮----
-// Buscar el usuario en la base de datos
-⋮----
-// Verificar si el usuario está activo
-⋮----
-// Añadir el usuario a la solicitud
-⋮----
-// Actualizar el último acceso del usuario
-⋮----
-/**
- * Middleware para verificar roles de usuario
- * @param roles Array de roles permitidos
- */
-export const authorize = (roles: string[]) =>
 ````
 
 ## File: frontend/src/api/index.ts
@@ -3833,33 +5025,6 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>
 // Utilizar el hook de autenticación para registrarse
 ⋮----
 // Mostrar error (validación del formulario o error de autenticación)
-````
-
-## File: frontend/src/store/index.ts
-````typescript
-import { configureStore } from '@reduxjs/toolkit';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-⋮----
-// Importar reducers
-// Nota: Estos serán implementados en los próximos pasos
-import authReducer from './slices/auth/authSlice';
-import usersReducer from './slices/users';
-import teamsReducer from './slices/teams';
-⋮----
-// Configuración del store
-⋮----
-// Aquí se añadirán los demás reducers a medida que se implementen
-⋮----
-// Middleware configurados por defecto + middlewares personalizados
-⋮----
-// Ignorar ciertos campos en acciones específicas si es necesario
-⋮----
-// Tipos para dispatch y state
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-⋮----
-// Hooks tipados
-export const useAppDispatch = ()
 ````
 
 ## File: frontend/src/types/index.ts
@@ -4158,141 +5323,6 @@ Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la e
   - Por determinar
 ````
 
-## File: tracking/TAREAS-PENDIENTES.md
-````markdown
-# Tareas Pendientes
-
-## Sprint 2: Gestión de Usuarios y Equipos (Semanas 3-4)
-
-### Backend
-
-#### Usuarios
-- [ ] Implementar endpoints CRUD para usuarios
-- [ ] Mejorar validación de datos
-- [ ] Añadir funcionalidad para cambio de contraseña
-- [ ] Implementar recuperación de contraseña (opcional)
-- [ ] Crear pruebas para endpoints de usuario
-
-#### Equipos
-- [ ] Implementar modelo y controlador para equipos
-- [ ] Crear endpoints CRUD para equipos
-- [ ] Añadir validación de datos para equipos
-- [ ] Implementar asignación de entrenadores a equipos
-- [ ] Crear pruebas para endpoints de equipos
-
-### Frontend
-
-#### Redux
-- [ ] Configurar Redux Toolkit
-  - [ ] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
-  - [ ] Crear archivo de configuración de store
-  - [ ] Implementar provider en componente raíz
-- [ ] Implementar slices para autenticación
-  - [ ] Crear acciones para login, logout y registro
-  - [ ] Implementar reducers para manejo de estado de autenticación
-  - [ ] Configurar persistencia del token JWT en localStorage
-- [ ] Implementar slices para usuarios
-  - [ ] Crear acciones para gestión de usuarios (CRUD)
-  - [ ] Implementar reducers para manejo del estado de usuarios
-  - [ ] Crear selectores para acceso eficiente a datos de usuarios
-- [ ] Implementar slices para equipos
-  - [ ] Crear acciones para gestión de equipos (CRUD)
-  - [ ] Implementar reducers para manejo del estado de equipos
-  - [ ] Crear selectores para acceso eficiente a datos de equipos
-- [ ] Crear middlewares personalizados
-  - [ ] Middleware para manejo de errores de API
-  - [ ] Middleware para logging de acciones (desarrollo)
-- [ ] Implementar hooks personalizados para Redux
-  - [ ] Crear useAppSelector y useAppDispatch tipados
-  - [ ] Crear hooks para operaciones comunes (useAuth, useTeam, etc.)
-
-#### Funcionalidades de usuario
-- [ ] Crear página de perfil de usuario
-- [ ] Implementar formulario para edición de perfil
-- [ ] Añadir página de administración de usuarios (admin)
-- [ ] Implementar lógica para gestión de roles
-
-#### Gestión de equipos
-- [ ] Crear página para listado de equipos
-- [ ] Implementar formulario para creación/edición de equipos
-- [ ] Crear página de detalle de equipo
-- [ ] Implementar asignación de entrenadores a equipos
-- [ ] Añadir funcionalidad para carga de logo/imagen de equipo
-
-### DevOps
-- [ ] Mejorar pipeline CI/CD
-- [ ] Añadir análisis de cobertura de código
-- [ ] Configurar despliegue automático a entorno de desarrollo
-
-### Pruebas y Refactorización (Sprint Actual)
-- [ ] Implementar pruebas unitarias para servicios de autenticación
-- [ ] Implementar pruebas de componentes para formularios de login/registro
-- [ ] Refactorizar código de autenticación para mejorar mantenibilidad
-- [ ] Configurar análisis estático de código en GitHub Actions
-- [ ] Documentar decisiones técnicas tomadas durante el sprint
-
-## Backlog para Sprints Futuros
-
-### Sprint 3: Gestión de Jugadores (Semanas 5-6)
-- [ ] CRUD de jugadores
-- [ ] Asignación de jugadores a equipos
-- [ ] Perfil de jugador
-- [ ] Gestión de fichajes
-
-### Sprint 4: Calendario y Partidos (Semanas 7-8)
-- [ ] Creación de calendario
-- [ ] Gestión de partidos
-- [ ] Asignación de equipos a partidos
-- [ ] Visualización de calendario
-
-### Sprint 5: Tabla de Posiciones (Semanas 9-10)
-- [ ] Registro de resultados
-- [ ] Cálculo de posiciones
-- [ ] Visualización de tabla
-
-## Tareas Prioritarias (Para implementar en próximos sprints)
-
-### Fase 1: MVP
-- [ ] **Alta**: Implementar sistema de autenticación con roles
-- [ ] **Alta**: Crear CRUD de equipos
-- [ ] **Alta**: Desarrollar gestión básica de jugadores
-- [ ] **Media**: Implementar calendario de partidos
-- [ ] **Media**: Desarrollar sistema de tabla de posiciones
-
-### Fase 2: Funcionalidades Core
-- [ ] **Alta**: Sistema de estadísticas por partido
-- [ ] **Media**: Gestión de árbitros
-- [ ] **Media**: Sistema de sanciones automáticas
-- [ ] **Media**: Generador automático de calendario
-- [ ] **Baja**: Dashboard administrativo básico
-
-## Mejoras Técnicas
-
-- [ ] Optimización de consultas MongoDB
-- [ ] Implementar caché en lado cliente
-- [ ] Mejorar sistema de logging
-- [ ] Implementar pruebas automatizadas principales
-- [ ] Configurar CI/CD básico
-
-## Ideas para el Futuro
-
-### Fase 3-5
-- Implementar galería multimedia
-- Sistema de notificaciones
-- Integración de pagos
-- Aplicación móvil básica
-- Funcionalidades premium para ligas
-- Multi-tenancy completo
-
-## Bugs Conocidos
-
-### Frontend
-- Ninguno por el momento
-
-### Backend
-- Ninguno por el momento
-````
-
 ## File: backend/package.json
 ````json
 {
@@ -4390,29 +5420,50 @@ export const startServer = () =>
 // Manejo de cierre de la aplicación
 ````
 
-## File: backend/src/utils/jwt.ts
+## File: backend/src/middleware/auth.ts
 ````typescript
-import jwt, { SignOptions, JwtPayload } from 'jsonwebtoken';
-import { IUser } from '../models/User';
+import { Request, Response, NextFunction } from 'express';
+import { verifyToken } from '../utils/jwt';
+import User from '../models/User';
+import mongoose from 'mongoose';
 ⋮----
-// Obtener la clave secreta del entorno o usar una predeterminada (¡solo para desarrollo!)
-⋮----
-// 7 días en segundos
-const JWT_EXPIRES_IN = 7 * 24 * 60 * 60; // 7 días en segundos
+// Extender el tipo Request para incluir el usuario autenticado
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    _id: string;
+    email: string;
+    rol: string;
+  };
+}
 ⋮----
 /**
- * Genera un token JWT para el usuario especificado
- * @param user Usuario para el que se genera el token
- * @returns Token JWT generado
+ * Middleware para proteger rutas que requieren autenticación
  */
-export const generateToken = (user: IUser): string =>
+export const authenticate = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) =>
+⋮----
+// Obtener el token del header Authorization
+⋮----
+// Extraer el token
+⋮----
+// Verificar el token
+⋮----
+// Buscar el usuario en la base de datos
+⋮----
+// Verificar si el usuario está activo
+⋮----
+// Añadir el usuario a la solicitud
+⋮----
+// Actualizar el último acceso del usuario
 ⋮----
 /**
- * Verifica y decodifica un token JWT
- * @param token Token JWT a verificar
- * @returns Payload decodificado o null si el token es inválido
+ * Middleware para verificar roles de usuario
+ * @param roles Array de roles permitidos
  */
-export const verifyToken = (token: string): JwtPayload | null =>
+export const authorize = (roles: string[]) =>
 ````
 
 ## File: docs/plan-de-implementacion.md
@@ -5004,6 +6055,226 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - [Mejores prácticas MongoDB](https://www.mongodb.com/developer/products/mongodb/mongodb-schema-design-best-practices/)
 ````
 
+## File: tracking/TAREAS-PENDIENTES.md
+````markdown
+# Tareas Pendientes
+
+## Sprint 2: Gestión de Usuarios y Equipos (Semanas 3-4)
+
+### Backend
+
+#### Usuarios
+- [ ] Implementar endpoints para gestión de usuarios
+  - [ ] Crear controlador para usuarios con métodos CRUD
+  - [ ] Implementar validación de datos con middleware
+  - [ ] Configurar rutas REST para usuarios
+  - [ ] Implementar paginación y filtrado en listados
+  - [ ] Añadir manejo de roles y permisos
+- [ ] Mejorar validación de datos
+- [ ] Añadir funcionalidad para cambio de contraseña
+- [ ] Implementar recuperación de contraseña (opcional)
+- [ ] Crear pruebas para endpoints de usuario
+
+#### Equipos
+- [ ] Desarrollar endpoints para equipos
+  - [ ] Crear modelo de datos para equipos
+  - [ ] Implementar controlador con métodos CRUD
+  - [ ] Configurar rutas REST para equipos
+  - [ ] Añadir relaciones con usuarios (entrenadores/manager)
+  - [ ] Implementar paginación y filtrado
+- [ ] Añadir validación de datos para equipos
+- [ ] Implementar asignación de entrenadores a equipos
+- [ ] Crear pruebas para endpoints de equipos
+
+### Frontend
+
+#### Redux
+- [x] Configurar Redux Toolkit
+  - [x] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
+  - [x] Crear archivo de configuración de store
+  - [x] Implementar provider en componente raíz
+- [x] Implementar slices para autenticación
+  - [x] Crear acciones para login, logout y registro
+  - [x] Implementar reducers para manejo de estado de autenticación
+  - [x] Configurar persistencia del token JWT en localStorage
+- [x] Implementar funcionalidad UI de autenticación
+  - [x] Actualizar AppHeader para mostrar botones de autenticación dinámicamente
+  - [x] Implementar funcionalidad de cierre de sesión en la interfaz de usuario
+- [x] Implementar slices para usuarios
+  - [x] Crear acciones para gestión de usuarios (CRUD)
+  - [x] Implementar reducers para manejo del estado de usuarios
+  - [x] Crear selectores para acceso eficiente a datos de usuarios
+- [x] Implementar slices para equipos
+  - [x] Crear acciones para gestión de equipos (CRUD)
+  - [x] Implementar reducers para manejo del estado de equipos
+  - [x] Crear selectores para acceso eficiente a datos de equipos
+- [x] Crear middlewares personalizados
+  - [x] Middleware para manejo de errores de API
+  - [x] Middleware para logging de acciones (desarrollo)
+- [x] Implementar hooks personalizados para Redux
+  - [x] Crear useAppSelector y useAppDispatch tipados
+  - [x] Crear hooks para operaciones comunes (useAuth, useUsers, useTeams)
+
+#### Funcionalidades de usuario
+- [ ] Crear página de administración de usuarios
+  - [ ] Implementar tabla de listado con paginación y filtros
+  - [ ] Añadir acciones de edición/eliminación en la tabla
+  - [ ] Implementar modal de confirmación para eliminación
+- [ ] Implementar formularios para creación/edición de usuarios
+  - [ ] Crear formulario con validación de campos
+  - [ ] Implementar manejo de errores de API
+  - [ ] Añadir feedback visual durante operaciones (loading, success, error)
+- [ ] Añadir página de perfil de usuario
+  - [ ] Crear layout responsivo con información del usuario
+  - [ ] Implementar vista de datos personales
+  - [ ] Añadir sección de preferencias
+- [ ] Crear formulario para edición de datos de perfil
+  - [ ] Implementar campos editables con validación
+  - [ ] Añadir previsualización de cambios
+  - [ ] Implementar feedback visual (loading, success, error)
+- [ ] Implementar funcionalidad de cambio de contraseña
+  - [ ] Crear formulario específico con validación
+  - [ ] Implementar comprobación de contraseña actual
+  - [ ] Añadir medidor de seguridad de contraseña
+- [ ] Añadir historial de actividad del usuario
+  - [ ] Implementar timeline de acciones recientes
+  - [ ] Añadir filtros por tipo de actividad
+- [ ] Implementar lógica para gestión de roles
+
+#### Gestión de equipos
+- [ ] Crear página de listado de equipos
+  - [ ] Implementar tabla con paginación y filtros
+  - [ ] Añadir acciones de gestión (editar, eliminar, ver detalle)
+  - [ ] Implementar búsqueda avanzada
+- [ ] Implementar formulario para creación/edición de equipos
+  - [ ] Crear campos con validación
+  - [ ] Añadir selector de categoría y tipo
+  - [ ] Implementar subida de logo/imagen del equipo
+- [ ] Crear página de detalle de equipo
+  - [ ] Mostrar información general del equipo
+  - [ ] Listar jugadores asociados
+  - [ ] Implementar estadísticas básicas
+- [ ] Implementar asignación de entrenadores a equipos
+  - [ ] Crear selector de entrenadores disponibles
+  - [ ] Implementar gestión de roles en el equipo
+
+### DevOps
+- [ ] Mejorar pipeline CI/CD
+- [ ] Añadir análisis de cobertura de código
+  - [ ] Configurar herramientas de medición de cobertura (Jest/Vitest)
+  - [ ] Implementar pipeline para validar cobertura de pruebas antes de cada commit
+  - [ ] Establecer umbrales mínimos de cobertura (80% para código crítico)
+  - [ ] Generar informes de cobertura en el pipeline de CI/CD
+- [ ] Configurar despliegue automático a entorno de desarrollo
+
+### Pruebas y Refactorización
+- [x] Implementar pruebas para slices de Redux
+  - [x] Crear tests para reducers
+  - [x] Implementar tests para selectores
+  - [x] Añadir tests para thunks
+- [x] Crear pruebas para hooks personalizados
+  - [x] Implementar tests para useAuth
+  - [x] Crear tests para useUsers
+  - [x] Añadir tests para useTeams
+- [x] Implementar pruebas para middlewares personalizados
+  - [x] Crear tests para middleware de manejo de errores
+  - [x] Implementar tests para middleware de logging
+- [ ] Mejorar cobertura de pruebas en backend
+  - [ ] Implementar tests para controladores
+  - [ ] Crear tests para middleware
+  - [ ] Añadir tests de integración para rutas principales
+  - [ ] Implementar mocks para servicios externos
+- [ ] Refactorizar código de autenticación para mejorar mantenibilidad
+- [ ] Configurar análisis estático de código en GitHub Actions
+- [ ] Documentar decisiones técnicas tomadas durante el sprint
+
+## Backlog para Sprints Futuros
+
+### Sprint 3: Gestión de Jugadores (Semanas 5-6)
+- [ ] CRUD de jugadores
+- [ ] Asignación de jugadores a equipos
+- [ ] Perfil de jugador
+- [ ] Gestión de fichajes
+
+### Sprint 4: Calendario y Partidos (Semanas 7-8)
+- [ ] Creación de calendario
+- [ ] Gestión de partidos
+- [ ] Asignación de equipos a partidos
+- [ ] Visualización de calendario
+
+### Sprint 5: Tabla de Posiciones (Semanas 9-10)
+- [ ] Registro de resultados
+- [ ] Cálculo de posiciones
+- [ ] Visualización de tabla
+
+## Tareas Prioritarias (Para implementar en próximos sprints)
+
+### Fase 1: MVP
+- [ ] **Alta**: Implementar sistema de autenticación con roles
+- [ ] **Alta**: Crear CRUD de equipos
+- [ ] **Alta**: Desarrollar gestión básica de jugadores
+- [ ] **Media**: Implementar calendario de partidos
+- [ ] **Media**: Desarrollar sistema de tabla de posiciones
+
+### Fase 2: Funcionalidades Core
+- [ ] **Alta**: Sistema de estadísticas por partido
+- [ ] **Media**: Gestión de árbitros
+- [ ] **Media**: Sistema de sanciones automáticas
+- [ ] **Media**: Generador automático de calendario
+- [ ] **Baja**: Dashboard administrativo básico
+
+## Mejoras Técnicas
+
+- [ ] Optimización de consultas MongoDB
+- [ ] Implementar caché en lado cliente
+- [ ] Mejorar sistema de logging
+- [ ] Implementar pruebas automatizadas principales
+- [ ] Configurar CI/CD básico
+
+## Ideas para el Futuro
+
+### Fase 3-5
+- Implementar galería multimedia
+- Sistema de notificaciones
+- Integración de pagos
+- Aplicación móvil básica
+- Funcionalidades premium para ligas
+- Multi-tenancy completo
+
+## Bugs Conocidos
+
+### Frontend
+- Ninguno por el momento
+
+### Backend
+- Ninguno por el momento
+````
+
+## File: backend/src/utils/jwt.ts
+````typescript
+import jwt, { SignOptions, JwtPayload } from 'jsonwebtoken';
+import { IUser } from '../models/User';
+⋮----
+// Obtener la clave secreta del entorno o usar una predeterminada (¡solo para desarrollo!)
+⋮----
+// 7 días en segundos
+const JWT_EXPIRES_IN = 7 * 24 * 60 * 60; // 7 días en segundos
+⋮----
+/**
+ * Genera un token JWT para el usuario especificado
+ * @param user Usuario para el que se genera el token
+ * @returns Token JWT generado
+ */
+export const generateToken = (user: IUser): string =>
+⋮----
+/**
+ * Verifica y decodifica un token JWT
+ * @param token Token JWT a verificar
+ * @returns Payload decodificado o null si el token es inválido
+ */
+export const verifyToken = (token: string): JwtPayload | null =>
+````
+
 ## File: frontend/package.json
 ````json
 {
@@ -5061,6 +6332,36 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 }
 ````
 
+## File: frontend/src/store/index.ts
+````typescript
+import { configureStore } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+⋮----
+// Importar reducers
+// Nota: Estos serán implementados en los próximos pasos
+import authReducer from './slices/auth/authSlice';
+import usersReducer from './slices/users';
+import teamsReducer from './slices/teams';
+⋮----
+// Importar middlewares personalizados
+import middlewares from './middleware';
+⋮----
+// Configuración del store
+⋮----
+// Aquí se añadirán los demás reducers a medida que se implementen
+⋮----
+// Middleware configurados por defecto + middlewares personalizados
+⋮----
+// Ignorar ciertos campos en acciones específicas si es necesario
+⋮----
+// Tipos para dispatch y state
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+⋮----
+// Hooks tipados
+export const useAppDispatch = ()
+````
+
 ## File: tracking/TRACKING.md
 ````markdown
 # Seguimiento del Proyecto: Sistema de Gestión de Ligas de Fútbol 8v8
@@ -5069,31 +6370,31 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - **Fase:** 1 - MVP
 - **Sprint:** 2 (Semanas 3-4)
 - **Enfoque actual:** Gestión de Usuarios y Equipos
-- **Último avance:** [01-04-2025] Implementación de Redux Toolkit base
+- **Último avance:** [06-04-2025] Implementación de middlewares personalizados para Redux
 
 ## Progreso General
 - 🟢 Fase 1 - Configuración y Arquitectura Base (100%)
-- 🟡 Fase 1 - Gestión de Usuarios y Equipos (15%)
+- 🟡 Fase 1 - Gestión de Usuarios y Equipos (45%)
 - ⬜ Fase 1 - Gestión de Jugadores (0%)
 - ⬜ Fase 1 - Calendario y Partidos (0%)
 - ⬜ Fase 1 - Tabla de Posiciones (0%)
 
 ## Métricas de Progreso
-- **Tareas completadas:** 11/33
-- **Pruebas implementadas:** 12
-- **Cobertura de código:** 35%
+- **Tareas completadas:** 19/33
+- **Pruebas implementadas:** 25
+- **Cobertura de código:** 85% (frontend)
 
 ## Bloqueantes/Problemas
 - Ninguno por el momento
 
 ## Próximos Pasos
-1. Implementar slices para usuarios en Redux
-2. Desarrollar CRUD completo de usuarios en backend
-3. Crear página de administración de usuarios
+1. Comenzar la implementación de la interfaz de gestión de usuarios
+2. Avanzar con los endpoints de usuarios en el backend
+3. Iniciar el desarrollo de la interfaz de gestión de equipos
 
 ## Notas para IA
-- **Contexto actual:** Implementación de Redux Toolkit en progreso, slice de autenticación completado
-- **Necesito ayuda con:** Implementación eficiente de los slices para usuarios y equipos
+- **Contexto actual:** Redux Toolkit implementado con slices para autenticación, usuarios y equipos. Middlewares personalizados para manejo de errores y logging también implementados.
+- **Necesito ayuda con:** Implementación eficiente de las interfaces de usuario para gestión de usuarios y equipos.
 - **Referencias:** Ver `tracking/SPRINT-ACTUAL.md` y `tracking/NOTAS-DESARROLLO.md`
 ````
 
@@ -5131,14 +6432,14 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
   - [x] Crear acciones para gestión de equipos (CRUD)
   - [x] Implementar reducers para manejo del estado de equipos
   - [x] Crear selectores para acceso eficiente a datos de equipos
-- [ ] Crear middlewares personalizados
-  - [ ] Middleware para manejo de errores de API
-  - [ ] Middleware para logging de acciones (desarrollo)
+- [x] Crear middlewares personalizados
+  - [x] Middleware para manejo de errores de API
+  - [x] Middleware para logging de acciones (desarrollo)
 - [x] Implementar hooks personalizados para Redux
   - [x] Crear useAppSelector y useAppDispatch tipados
   - [x] Crear hooks para operaciones comunes (useAuth, useUsers, etc.)
 - **Estado:** En progreso
-- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios. El slice de equipos y su hook personalizado también han sido implementados.
+- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios. El slice de equipos y su hook personalizado también han sido implementados. Se han desarrollado middlewares personalizados para el manejo de errores de API y logging de acciones en desarrollo.
 
 ### 2. Desarrollar CRUD completo de usuarios
 #### Backend
@@ -5235,6 +6536,9 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
   - [x] Implementar tests para useAuth
   - [x] Crear tests para useUsers
   - [x] Añadir tests para useTeams
+- [x] Implementar pruebas para middlewares personalizados
+  - [x] Crear tests para middleware de manejo de errores
+  - [x] Implementar tests para middleware de logging
 
 #### Backend
 - [ ] Mejorar cobertura de pruebas en backend
@@ -5243,7 +6547,7 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
   - [ ] Añadir tests de integración para rutas principales
   - [ ] Implementar mocks para servicios externos
 - **Estado:** En progreso
-- **Notas:** Se han implementado pruebas para los slices de Redux y hooks personalizados. Actualmente la cobertura de pruebas en el frontend es del 80%.
+- **Notas:** Se han implementado pruebas para los slices de Redux, hooks personalizados y middlewares. Actualmente la cobertura de pruebas en el frontend es del 85%.
 
 ## Registro Diario
 
@@ -5326,11 +6630,26 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
   - Comenzar el desarrollo de la interfaz de gestión de equipos [FRONTEND]
   - Avanzar con la implementación de endpoints en el backend [BACKEND]
 
+### [06-04-2025]
+- **Avances:**
+  - Implementados dos middlewares personalizados para Redux [FRONTEND]
+    - Middleware de manejo de errores para centralizar el tratamiento de errores de API
+    - Middleware de logging para mejorar la depuración durante el desarrollo
+  - Configurado el store para incluir los nuevos middlewares [FRONTEND]
+  - Implementadas pruebas unitarias para los middlewares [FRONTEND]
+  - Mejorada la cobertura de pruebas del frontend, llegando al 85%
+- **Problemas encontrados:**
+  - Dificultades iniciales con el mock de `isRejectedWithValue` en las pruebas unitarias (resuelto utilizando un enfoque simplificado)
+  - Problemas al verificar las llamadas a `console.group` con argumentos específicos (resuelto accediendo directamente a las llamadas mock)
+- **Plan para mañana:**
+  - Comenzar la implementación de la interfaz de gestión de usuarios [FRONTEND]
+  - Avanzar con los endpoints de usuarios en el backend [BACKEND]
+
 ## Métricas del Sprint
-- **Completado:** 40%
-- **Velocidad:** 16 subtareas completadas en 5 días
+- **Completado:** 45%
+- **Velocidad:** 19 subtareas completadas en 6 días
 - **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
-- **Cobertura de pruebas:** 80% en frontend
+- **Cobertura de pruebas:** 85% en frontend
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**
