@@ -31,7 +31,7 @@ import {
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useUsers } from '../hooks/useUsers';
 import UserForm from '../components/users/UserForm';
-import { PaginationParams } from '../types';
+import { PaginationParams, UserListItem } from '../types';
 
 const UsersPage: React.FC = () => {
   const {
@@ -142,25 +142,25 @@ const UsersPage: React.FC = () => {
     { field: 'nombre', headerName: 'Nombre', width: 150 },
     { field: 'apellido', headerName: 'Apellido', width: 150 },
     { field: 'email', headerName: 'Email', width: 200 },
-    { 
-      field: 'rol', 
-      headerName: 'Rol', 
-      width: 120,
-      valueFormatter: (params) => {
+    {
+      field: 'rol',
+      headerName: 'Rol',
+      width: 150,
+      valueFormatter: (params: { value: string | undefined }) => {
         const rolMap: Record<string, string> = {
           'admin': 'Administrador',
           'manager': 'Manager',
           'arbitro': 'Árbitro',
           'usuario': 'Usuario'
         };
-        return rolMap[params.value] || params.value;
+        return rolMap[params.value as string] || params.value;
       }
     },
     { 
       field: 'activo', 
       headerName: 'Estado', 
       width: 120,
-      renderCell: (params: GridRenderCellParams) => (
+      renderCell: (params: GridRenderCellParams<UserListItem>) => (
         <Typography color={params.value ? 'primary' : 'error'}>
           {params.value ? 'Activo' : 'Inactivo'}
         </Typography>
@@ -171,7 +171,7 @@ const UsersPage: React.FC = () => {
       headerName: 'Acciones',
       width: 120,
       sortable: false,
-      renderCell: (params: GridRenderCellParams) => (
+      renderCell: (params: GridRenderCellParams<UserListItem>) => (
         <Box>
           <IconButton 
             color="primary" 
@@ -282,7 +282,7 @@ const UsersPage: React.FC = () => {
             <DataGrid
               rows={users}
               columns={columns}
-              rowCount={pagination.totalItems || 0}
+              rowCount={pagination.total || 0}
               loading={loading}
               pageSizeOptions={[5, 10, 25]}
               paginationModel={{ page, pageSize }}

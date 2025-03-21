@@ -5,6 +5,7 @@ import { configDefaults } from 'vitest/config'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  cacheDir: 'node_modules/.cache/vite',
   server: {
     port: 3000,
     open: true
