@@ -150,11 +150,11 @@ const UsersPage: React.FC = () => {
       field: 'rol',
       headerName: 'Rol',
       width: 150,
-      valueFormatter: (params: { value: string | undefined }) => {
+      renderCell: (params) => {
         const rolMap: Record<string, string> = {
           'admin': 'Administrador',
-          'manager': 'Manager',
-          'arbitro': 'Árbitro',
+          'veedor': 'Veedor',
+          'entrenador': 'Entrenador',
           'usuario': 'Usuario'
         };
         return rolMap[params.value as string] || params.value;
@@ -233,8 +233,8 @@ const UsersPage: React.FC = () => {
               >
                 <MenuItem value="">Todos</MenuItem>
                 <MenuItem value="admin">Administrador</MenuItem>
-                <MenuItem value="manager">Manager</MenuItem>
-                <MenuItem value="arbitro">Árbitro</MenuItem>
+                <MenuItem value="veedor">Veedor</MenuItem>
+                <MenuItem value="entrenador">Entrenador</MenuItem>
                 <MenuItem value="usuario">Usuario</MenuItem>
               </Select>
             </FormControl>

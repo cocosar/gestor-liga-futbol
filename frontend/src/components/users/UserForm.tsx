@@ -52,7 +52,7 @@ const validationSchema = Yup.object({
     }),
   rol: Yup.string()
     .required('El rol es obligatorio')
-    .oneOf(['admin', 'manager', 'arbitro', 'usuario'], 'Rol inválido'),
+    .oneOf(['admin', 'veedor', 'entrenador', 'usuario'], 'Rol inválido'),
   activo: Yup.boolean()
 });
 
@@ -207,8 +207,8 @@ const UserForm: React.FC<UserFormProps> = ({ userId, onCancel }) => {
                     disabled={isSubmitting}
                   >
                     <MenuItem value="admin">Administrador</MenuItem>
-                    <MenuItem value="manager">Manager</MenuItem>
-                    <MenuItem value="arbitro">Árbitro</MenuItem>
+                    <MenuItem value="veedor">Veedor</MenuItem>
+                    <MenuItem value="entrenador">Entrenador</MenuItem>
                     <MenuItem value="usuario">Usuario</MenuItem>
                   </Select>
                   {touched.rol && errors.rol && (

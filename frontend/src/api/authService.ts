@@ -2,7 +2,7 @@ import axios from 'axios';
 import { RegisterData, LoginData, AuthResponse } from '../types';
 
 // Configuración base para axios
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Transformar datos de registro para adaptarlos al backend
 const transformRegisterData = (data: RegisterData) => {
@@ -19,8 +19,9 @@ const transformRegisterData = (data: RegisterData) => {
 const transformRole = (role: string): string => {
   const roleMap: { [key: string]: string } = {
     'player': 'usuario',
-    'coach': 'manager',
-    'admin': 'admin'
+    'coach': 'entrenador',
+    'admin': 'admin',
+    'scout': 'veedor'
   };
   return roleMap[role] || 'usuario';
 };

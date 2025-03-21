@@ -5,7 +5,6 @@ export interface TeamListItem {
   categoria: string;
   tipo: string;
   entrenador?: string;
-  manager?: string;
   logoUrl?: string;
   activo: boolean;
 }
@@ -25,8 +24,16 @@ export interface TeamResponse {
   message?: string;
 }
 
-// Interfaz para parámetros de paginación en solicitudes
-// Reutilizamos PaginationParams de users.ts
+// Interfaz para parámetros de paginación en solicitudes de equipos
+export interface TeamPaginationParams {
+  page: number;
+  limit: number;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  search?: string;
+  categoria?: string;
+  tipo?: string;
+}
 
 // Interfaz para datos para crear/actualizar equipo
 export interface TeamFormData {
@@ -34,7 +41,6 @@ export interface TeamFormData {
   categoria: string;
   tipo: string;
   entrenador?: string;
-  manager?: string;
   logoUrl?: string;
   activo?: boolean;
 } 

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { teamService } from '../../../api';
-import { TeamFormData, PaginationParams } from '../../../types';
+import { TeamFormData, TeamPaginationParams } from '../../../types';
 import { 
   teamsLoading, 
   teamsLoadSuccess, 
@@ -9,105 +9,134 @@ import {
   teamUpdateSuccess, 
   teamDeleteSuccess, 
   teamsFail 
-} from './teamsSlice';
+} from '../../../store/slices/teams';
 import { AppDispatch } from '../../index';
 
-// Obtener listado de equipos
-export const fetchTeams = createAsyncThunk<
-  void,
-  PaginationParams,
-  { dispatch: AppDispatch }
->('teams/fetchTeams', async (params, { dispatch }) => {
-  dispatch(teamsLoading());
-  try {
-    const response = await teamService.getTeams(params);
-    if (response.success && response.equipos) {
-      dispatch(teamsLoadSuccess({ 
-        teams: response.equipos,
+/**
+ * Thunk para obtener listado de equipos
+ */
+export const fetchTeams = createAsyncThunk<void, TeamPaginationParams, { dispatch: AppDispatch }>(
+  'teams/fetchTeams',
+  async (params, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(teamsLoading());
+      const response = await teamService.getTeams(params);
+      
+      if (!response.success) {
+        dispatch(teamsFail(response.message || 'Error al obtener los equipos'));
+        return rejectWithValue(response.message || 'Error al obtener los equipos');
+      }
+      
+      dispatch(teamsLoadSuccess({
+        teams: response.equipos || [],
         total: response.totalEquipos || 0,
         page: params.page,
         limit: params.limit
       }));
-      return;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al conectarse con el servidor';
+      dispatch(teamsFail(errorMessage));
+      return rejectWithValue(errorMessage);
     }
-    dispatch(teamsFail(response.message || 'Error al cargar equipos'));
-  } catch {
-    dispatch(teamsFail('Error al conectarse con el servidor'));
   }
-});
+);
 
-// Obtener un equipo por ID
-export const fetchTeamById = createAsyncThunk<
-  void,
-  string,
-  { dispatch: AppDispatch }
->('teams/fetchTeamById', async (teamId, { dispatch }) => {
-  dispatch(teamsLoading());
-  try {
-    const response = await teamService.getTeamById(teamId);
-    if (response.success && response.equipo) {
+/**
+ * Thunk para obtener equipo por ID
+ */
+export const fetchTeamById = createAsyncThunk<void, string, { dispatch: AppDispatch }>(
+  'teams/fetchTeamById',
+  async (id, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(teamsLoading());
+      const response = await teamService.getTeamById(id);
+      
+      if (!response.success) {
+        dispatch(teamsFail(response.message || 'Error al obtener el equipo'));
+        return rejectWithValue(response.message || 'Error al obtener el equipo');
+      }
+      
       dispatch(teamLoadSuccess(response.equipo));
-      return;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al obtener el equipo';
+      dispatch(teamsFail(errorMessage));
+      return rejectWithValue(errorMessage);
     }
-    dispatch(teamsFail(response.message || 'Error al cargar equipo'));
-  } catch {
-    dispatch(teamsFail('Error al conectarse con el servidor'));
   }
-});
+);
 
-// Crear un nuevo equipo
-export const createTeam = createAsyncThunk<
-  void,
-  TeamFormData,
-  { dispatch: AppDispatch }
->('teams/createTeam', async (teamData, { dispatch }) => {
-  dispatch(teamsLoading());
-  try {
-    const response = await teamService.createTeam(teamData);
-    if (response.success && response.equipo) {
+/**
+ * Thunk para crear un nuevo equipo
+ */
+export const createTeam = createAsyncThunk<void, TeamFormData, { dispatch: AppDispatch }>(
+  'teams/createTeam',
+  async (teamData, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(teamsLoading());
+      const response = await teamService.createTeam(teamData);
+      
+      if (!response.success) {
+        dispatch(teamsFail(response.message || 'Error al crear el equipo'));
+        return rejectWithValue(response.message || 'Error al crear el equipo');
+      }
+      
       dispatch(teamCreateSuccess(response.equipo));
-      return;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al crear el equipo';
+      dispatch(teamsFail(errorMessage));
+      return rejectWithValue(errorMessage);
     }
-    dispatch(teamsFail(response.message || 'Error al crear equipo'));
-  } catch {
-    dispatch(teamsFail('Error al conectarse con el servidor'));
   }
-});
+);
 
-// Actualizar un equipo
+/**
+ * Thunk para actualizar un equipo existente
+ */
 export const updateTeam = createAsyncThunk<
-  void,
-  { id: string; teamData: TeamFormData },
+  void, 
+  { id: string; teamData: TeamFormData }, 
   { dispatch: AppDispatch }
->('teams/updateTeam', async ({ id, teamData }, { dispatch }) => {
-  dispatch(teamsLoading());
-  try {
-    const response = await teamService.updateTeam(id, teamData);
-    if (response.success && response.equipo) {
+>(
+  'teams/updateTeam',
+  async ({ id, teamData }, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(teamsLoading());
+      const response = await teamService.updateTeam(id, teamData);
+      
+      if (!response.success) {
+        dispatch(teamsFail(response.message || 'Error al actualizar el equipo'));
+        return rejectWithValue(response.message || 'Error al actualizar el equipo');
+      }
+      
       dispatch(teamUpdateSuccess(response.equipo));
-      return;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al actualizar el equipo';
+      dispatch(teamsFail(errorMessage));
+      return rejectWithValue(errorMessage);
     }
-    dispatch(teamsFail(response.message || 'Error al actualizar equipo'));
-  } catch {
-    dispatch(teamsFail('Error al conectarse con el servidor'));
   }
-});
+);
 
-// Eliminar un equipo
-export const deleteTeam = createAsyncThunk<
-  void,
-  string,
-  { dispatch: AppDispatch }
->('teams/deleteTeam', async (teamId, { dispatch }) => {
-  dispatch(teamsLoading());
-  try {
-    const response = await teamService.deleteTeam(teamId);
-    if (response.success) {
-      dispatch(teamDeleteSuccess(teamId));
-      return;
+/**
+ * Thunk para eliminar un equipo
+ */
+export const deleteTeam = createAsyncThunk<void, string, { dispatch: AppDispatch }>(
+  'teams/deleteTeam',
+  async (id, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(teamsLoading());
+      const response = await teamService.deleteTeam(id);
+      
+      if (!response.success) {
+        dispatch(teamsFail(response.message || 'Error al eliminar el equipo'));
+        return rejectWithValue(response.message || 'Error al eliminar el equipo');
+      }
+      
+      dispatch(teamDeleteSuccess(id));
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al eliminar el equipo';
+      dispatch(teamsFail(errorMessage));
+      return rejectWithValue(errorMessage);
     }
-    dispatch(teamsFail(response.message || 'Error al eliminar equipo'));
-  } catch {
-    dispatch(teamsFail('Error al conectarse con el servidor'));
   }
-}); 
+); 

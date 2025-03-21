@@ -7,7 +7,6 @@ export interface ITeam extends Document {
   tipo: 'futbol' | 'futsal' | 'futbol7';
   fechaCreacion: Date;
   entrenador?: mongoose.Types.ObjectId;
-  manager?: mongoose.Types.ObjectId;
   jugadores?: mongoose.Types.ObjectId[];
   logo?: string;
   activo: boolean;
@@ -44,10 +43,6 @@ const TeamSchema = new Schema<ITeam>(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    manager: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
     jugadores: [{
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -70,6 +65,5 @@ TeamSchema.index({ nombre: 1 });
 TeamSchema.index({ categoria: 1 });
 TeamSchema.index({ tipo: 1 });
 TeamSchema.index({ entrenador: 1 });
-TeamSchema.index({ manager: 1 });
 
 export default mongoose.model<ITeam>('Team', TeamSchema); 

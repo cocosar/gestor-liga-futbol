@@ -32,7 +32,7 @@ export const register = async (req: Request, res: Response) => {
     }
 
     // Si se especifica un rol, verificar que sea válido
-    if (rol && !['admin', 'manager', 'arbitro', 'usuario'].includes(rol)) {
+    if (rol && !['admin', 'veedor', 'entrenador', 'usuario'].includes(rol)) {
       return res.status(400).json({
         success: false,
         message: 'Rol inválido.',

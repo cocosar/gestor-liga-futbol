@@ -53,7 +53,7 @@ router.post(
     .withMessage('La contraseña debe tener al menos 6 caracteres'),
   body('rol')
     .optional()
-    .isIn(['admin', 'manager', 'arbitro', 'usuario'])
+    .isIn(['admin', 'veedor', 'entrenador', 'usuario'])
     .withMessage('Rol inválido'),
   body('activo')
     .optional()
@@ -90,7 +90,7 @@ router.put(
     .normalizeEmail(),
   body('rol')
     .optional()
-    .isIn(['admin', 'manager', 'arbitro', 'usuario'])
+    .isIn(['admin', 'veedor', 'entrenador', 'usuario'])
     .withMessage('Rol inválido'),
   body('activo')
     .optional()

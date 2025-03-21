@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { TeamListItem } from '../../../types';
 
 // Definir interfaces para el estado
@@ -23,76 +23,19 @@ const initialState: TeamsState = {
   limit: 10
 };
 
+// Interfaces para los payloads
+interface FetchTeamsPayload {
+  teams: TeamListItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 // Crear slice
 const teamsSlice = createSlice({
   name: 'teams',
   initialState,
   reducers: {
-    // Iniciar carga de datos
-    teamsLoading: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    
-    // Carga de lista de equipos exitosa
-    teamsLoadSuccess: (state, action: PayloadAction<{
-      teams: TeamListItem[];
-      total: number;
-      page: number;
-      limit: number;
-    }>) => {
-      state.teams = action.payload.teams;
-      state.total = action.payload.total;
-      state.page = action.payload.page;
-      state.limit = action.payload.limit;
-      state.loading = false;
-      state.error = null;
-    },
-    
-    // Carga de equipo individual exitosa
-    teamLoadSuccess: (state, action: PayloadAction<TeamListItem>) => {
-      state.selectedTeam = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    
-    // Creación de equipo exitosa
-    teamCreateSuccess: (state, action: PayloadAction<TeamListItem>) => {
-      state.teams = [action.payload, ...state.teams];
-      state.total += 1;
-      state.loading = false;
-      state.error = null;
-    },
-    
-    // Actualización de equipo exitosa
-    teamUpdateSuccess: (state, action: PayloadAction<TeamListItem>) => {
-      state.teams = state.teams.map(team => 
-        team._id === action.payload._id ? action.payload : team
-      );
-      if (state.selectedTeam && state.selectedTeam._id === action.payload._id) {
-        state.selectedTeam = action.payload;
-      }
-      state.loading = false;
-      state.error = null;
-    },
-    
-    // Eliminación de equipo exitosa
-    teamDeleteSuccess: (state, action: PayloadAction<string>) => {
-      state.teams = state.teams.filter(team => team._id !== action.payload);
-      if (state.selectedTeam && state.selectedTeam._id === action.payload) {
-        state.selectedTeam = null;
-      }
-      state.total -= 1;
-      state.loading = false;
-      state.error = null;
-    },
-    
-    // Fallo en operaciones de equipos
-    teamsFail: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
-    
     // Limpiar equipo seleccionado
     clearSelectedTeam: (state) => {
       state.selectedTeam = null;
@@ -102,20 +45,85 @@ const teamsSlice = createSlice({
     clearErrors: (state) => {
       state.error = null;
     },
+
+    // Acciones para manejar estados de carga y resultados
+    teamsLoading: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    
+    teamsLoadSuccess: (state, action) => {
+      const payload = action.payload as FetchTeamsPayload;
+      state.teams = payload.teams;
+      state.total = payload.total;
+      state.page = payload.page;
+      state.limit = payload.limit;
+      state.loading = false;
+      state.error = null;
+    },
+    
+    teamLoadSuccess: (state, action) => {
+      if (action.payload) {
+        state.selectedTeam = action.payload as TeamListItem;
+      }
+      state.loading = false;
+      state.error = null;
+    },
+    
+    teamCreateSuccess: (state, action) => {
+      if (action.payload) {
+        state.teams = [action.payload as TeamListItem, ...state.teams];
+        state.total += 1;
+      }
+      state.loading = false;
+      state.error = null;
+    },
+    
+    teamUpdateSuccess: (state, action) => {
+      if (action.payload) {
+        const updatedTeam = action.payload as TeamListItem;
+        state.teams = state.teams.map(team => 
+          team._id === updatedTeam._id ? updatedTeam : team
+        );
+        if (state.selectedTeam && state.selectedTeam._id === updatedTeam._id) {
+          state.selectedTeam = updatedTeam;
+        }
+      }
+      state.loading = false;
+      state.error = null;
+    },
+    
+    teamDeleteSuccess: (state, action) => {
+      if (action.payload) {
+        const teamId = action.payload as string;
+        state.teams = state.teams.filter(team => team._id !== teamId);
+        if (state.selectedTeam && state.selectedTeam._id === teamId) {
+          state.selectedTeam = null;
+        }
+        state.total -= 1;
+      }
+      state.loading = false;
+      state.error = null;
+    },
+    
+    teamsFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string || 'Error desconocido';
+    },
   },
 });
 
 // Exportar acciones y reducer
 export const { 
-  teamsLoading, 
-  teamsLoadSuccess, 
-  teamLoadSuccess, 
-  teamCreateSuccess, 
-  teamUpdateSuccess, 
-  teamDeleteSuccess, 
-  teamsFail, 
   clearSelectedTeam, 
-  clearErrors 
+  clearErrors,
+  teamsLoading,
+  teamsLoadSuccess,
+  teamLoadSuccess,
+  teamCreateSuccess,
+  teamUpdateSuccess,
+  teamDeleteSuccess,
+  teamsFail
 } = teamsSlice.actions;
 
 export default teamsSlice.reducer; 

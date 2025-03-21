@@ -38,7 +38,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
       // Mapear rol del backend al frontend si es necesario
       const roleMap: Record<string, string> = {
         'usuario': 'player',
-        'manager': 'coach',
+        'entrenador': 'coach',
         'admin': 'admin',
         'arbitro': 'referee'
       };

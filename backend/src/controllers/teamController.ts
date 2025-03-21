@@ -59,10 +59,7 @@ export const getTeams = async (req: AuthenticatedRequest, res: Response) => {
       .sort(sort)
       .skip(skip)
       .limit(limit)
-      .populate([
-        { path: 'entrenador', select: 'nombre apellido email' },
-        { path: 'manager', select: 'nombre apellido email' }
-      ]);
+      .populate({ path: 'entrenador', select: 'nombre apellido email' });
     
     // Contar el total de equipos que coinciden con los filtros
     const totalTeams = await Team.countDocuments(filter);
@@ -106,11 +103,10 @@ export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
     
-    // Obtener el equipo con los datos de entrenador, manager y jugadores
+    // Obtener el equipo con los datos de entrenador y jugadores
     const team = await Team.findById(teamId)
       .populate([
         { path: 'entrenador', select: 'nombre apellido email' },
-        { path: 'manager', select: 'nombre apellido email' },
         { path: 'jugadores', select: 'nombre apellido email' }
       ]);
     
@@ -139,7 +135,7 @@ export const getTeamById = async (req: AuthenticatedRequest, res: Response) => {
 /**
  * Crear un nuevo equipo
  * @route POST /api/equipos
- * @access Private (Admin/Manager)
+ * @access Private (Admin/Entrenador)
  */
 export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -152,15 +148,15 @@ export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
     
-    // Verificar permisos (solo admin o manager pueden crear equipos)
-    if (!req.user || !['admin', 'manager'].includes(req.user.rol)) {
+    // Verificar permisos (solo admin o entrenador pueden crear equipos)
+    if (!req.user || !['admin', 'entrenador'].includes(req.user.rol)) {
       return res.status(403).json({
         success: false,
         message: 'No tienes permiso para crear equipos'
       });
     }
     
-    const { nombre, descripcion, categoria, tipo, entrenador, manager, logo } = req.body;
+    const { nombre, descripcion, categoria, tipo, entrenador, logo } = req.body;
     
     // Verificar que el entrenador exista y tenga el rol adecuado
     if (entrenador) {
@@ -172,28 +168,10 @@ export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
         });
       }
       
-      if (!['admin', 'manager'].includes(entrenadorUser.rol)) {
+      if (!['admin', 'entrenador'].includes(entrenadorUser.rol)) {
         return res.status(400).json({
           success: false,
           message: 'El usuario seleccionado no puede ser entrenador debido a su rol'
-        });
-      }
-    }
-    
-    // Verificar que el manager exista y tenga el rol adecuado
-    if (manager) {
-      const managerUser = await User.findById(manager);
-      if (!managerUser) {
-        return res.status(404).json({
-          success: false,
-          message: 'Manager no encontrado'
-        });
-      }
-      
-      if (!['admin', 'manager'].includes(managerUser.rol)) {
-        return res.status(400).json({
-          success: false,
-          message: 'El usuario seleccionado no puede ser manager debido a su rol'
         });
       }
     }
@@ -204,18 +182,14 @@ export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
       descripcion,
       categoria,
       tipo,
-      entrenador: entrenador || null,
-      manager: manager || (req.user?.rol === 'manager' ? req.user._id : null),
+      entrenador: entrenador || (req.user?.rol === 'entrenador' ? req.user._id : null),
       logo,
       activo: true
     });
     
-    // Obtener el equipo con los datos de entrenador y manager
+    // Obtener el equipo con los datos de entrenador
     const newTeam = await Team.findById(team._id)
-      .populate([
-        { path: 'entrenador', select: 'nombre apellido email' },
-        { path: 'manager', select: 'nombre apellido email' }
-      ]);
+      .populate({ path: 'entrenador', select: 'nombre apellido email' });
     
     res.status(201).json({
       success: true,
@@ -236,7 +210,7 @@ export const createTeam = async (req: AuthenticatedRequest, res: Response) => {
 /**
  * Actualizar un equipo existente
  * @route PUT /api/equipos/:id
- * @access Private (Admin/Manager del equipo)
+ * @access Private (Admin/Entrenador del equipo)
  */
 export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -250,7 +224,7 @@ export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
     }
     
     const teamId = req.params.id;
-    const { nombre, descripcion, categoria, tipo, entrenador, manager, logo, activo } = req.body;
+    const { nombre, descripcion, categoria, tipo, entrenador, logo, activo } = req.body;
     
     // Verificar que el ID tenga un formato válido de MongoDB
     if (!mongoose.Types.ObjectId.isValid(teamId)) {
@@ -260,7 +234,7 @@ export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
     
-    // Buscar el equipo a actualizar
+    // Buscar el equipo
     const team = await Team.findById(teamId);
     
     if (!team) {
@@ -270,11 +244,11 @@ export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
     
-    // Verificar permisos: solo admin o el manager del equipo puede actualizar
+    // Verificar permisos: solo admin o el entrenador del equipo puede actualizar
     const isAdmin = req.user?.rol === 'admin';
-    const isTeamManager = team.manager && req.user?._id.toString() === team.manager.toString();
+    const isTeamEntrenador = team.entrenador && req.user?._id.toString() === team.entrenador.toString();
     
-    if (!isAdmin && !isTeamManager) {
+    if (!isAdmin && !isTeamEntrenador) {
       return res.status(403).json({
         success: false,
         message: 'No tienes permiso para actualizar este equipo'
@@ -291,28 +265,10 @@ export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
         });
       }
       
-      if (!['admin', 'manager'].includes(entrenadorUser.rol)) {
+      if (!['admin', 'entrenador'].includes(entrenadorUser.rol)) {
         return res.status(400).json({
           success: false,
           message: 'El usuario seleccionado no puede ser entrenador debido a su rol'
-        });
-      }
-    }
-    
-    // Verificar que el manager exista y tenga el rol adecuado
-    if (manager && manager !== team.manager?.toString()) {
-      const managerUser = await User.findById(manager);
-      if (!managerUser) {
-        return res.status(404).json({
-          success: false,
-          message: 'Manager no encontrado'
-        });
-      }
-      
-      if (!['admin', 'manager'].includes(managerUser.rol)) {
-        return res.status(400).json({
-          success: false,
-          message: 'El usuario seleccionado no puede ser manager debido a su rol'
         });
       }
     }
@@ -323,19 +279,15 @@ export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
     if (categoria) team.categoria = categoria;
     if (tipo) team.tipo = tipo;
     if (entrenador !== undefined) team.entrenador = entrenador ? new mongoose.Types.ObjectId(entrenador) : undefined;
-    if (manager !== undefined) team.manager = manager ? new mongoose.Types.ObjectId(manager) : undefined;
     if (logo !== undefined) team.logo = logo;
     if (activo !== undefined && isAdmin) team.activo = activo; // Solo admin puede cambiar el estado
     
     // Guardar los cambios
     await team.save();
     
-    // Obtener equipo actualizado con los datos de entrenador y manager
+    // Obtener el equipo actualizado con los datos de entrenador
     const updatedTeam = await Team.findById(teamId)
-      .populate([
-        { path: 'entrenador', select: 'nombre apellido email' },
-        { path: 'manager', select: 'nombre apellido email' }
-      ]);
+      .populate({ path: 'entrenador', select: 'nombre apellido email' });
     
     res.status(200).json({
       success: true,
@@ -356,7 +308,7 @@ export const updateTeam = async (req: AuthenticatedRequest, res: Response) => {
 /**
  * Añadir/eliminar jugadores de un equipo
  * @route PUT /api/equipos/:id/jugadores
- * @access Private (Admin/Manager del equipo)
+ * @access Private (Admin/Entrenador del equipo)
  */
 export const updateTeamPlayers = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -398,12 +350,11 @@ export const updateTeamPlayers = async (req: AuthenticatedRequest, res: Response
       });
     }
     
-    // Verificar permisos: solo admin o el manager del equipo puede actualizar jugadores
+    // Verificar permisos: solo admin o el entrenador del equipo puede actualizar jugadores
     const isAdmin = req.user?.rol === 'admin';
-    const isTeamManager = team.manager && req.user?._id.toString() === team.manager.toString();
     const isTeamEntrenador = team.entrenador && req.user?._id.toString() === team.entrenador.toString();
     
-    if (!isAdmin && !isTeamManager && !isTeamEntrenador) {
+    if (!isAdmin && !isTeamEntrenador) {
       return res.status(403).json({
         success: false,
         message: 'No tienes permiso para actualizar los jugadores de este equipo'
@@ -469,7 +420,6 @@ export const updateTeamPlayers = async (req: AuthenticatedRequest, res: Response
     const updatedTeam = await Team.findById(teamId)
       .populate([
         { path: 'entrenador', select: 'nombre apellido email' },
-        { path: 'manager', select: 'nombre apellido email' },
         { path: 'jugadores', select: 'nombre apellido email' }
       ]);
     
@@ -494,7 +444,7 @@ export const updateTeamPlayers = async (req: AuthenticatedRequest, res: Response
 /**
  * Eliminar un equipo
  * @route DELETE /api/equipos/:id
- * @access Private (Admin)
+ * @access Private (Admin/Entrenador del equipo)
  */
 export const deleteTeam = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -508,21 +458,24 @@ export const deleteTeam = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
     
-    // Verificar que solo los admin puedan eliminar equipos
-    if (req.user?.rol !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: 'Solo los administradores pueden eliminar equipos'
-      });
-    }
-    
-    // Buscar el equipo a eliminar
+    // Buscar el equipo
     const team = await Team.findById(teamId);
     
     if (!team) {
       return res.status(404).json({
         success: false,
         message: 'Equipo no encontrado'
+      });
+    }
+    
+    // Verificar permisos: solo admin o el entrenador del equipo puede eliminar
+    const isAdmin = req.user?.rol === 'admin';
+    const isTeamEntrenador = team.entrenador && req.user?._id.toString() === team.entrenador.toString();
+    
+    if (!isAdmin && !isTeamEntrenador) {
+      return res.status(403).json({
+        success: false,
+        message: 'No tienes permiso para eliminar este equipo'
       });
     }
     

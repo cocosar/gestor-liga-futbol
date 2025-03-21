@@ -119,7 +119,7 @@ describe('Teams Thunks', () => {
 
       // Verificar que se llama a las acciones correctas
       expect(mockDispatch).toHaveBeenCalledWith(teamsLoading());
-      expect(mockDispatch).toHaveBeenCalledWith(teamsFail('Error al conectarse con el servidor'));
+      expect(mockDispatch).toHaveBeenCalledWith(teamsFail('Error en la petición'));
     });
   });
 

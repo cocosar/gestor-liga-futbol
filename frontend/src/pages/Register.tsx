@@ -28,6 +28,7 @@ import { useAuth } from '../hooks/useAuth';
 const userRoles = [
   { value: 'player', label: 'Jugador' },
   { value: 'coach', label: 'Entrenador' },
+  { value: 'scout', label: 'Veedor' },
   { value: 'admin', label: 'Administrador' }
 ];
 

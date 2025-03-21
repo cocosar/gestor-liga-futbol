@@ -6,7 +6,7 @@ export interface IUser extends Document {
   apellido: string;
   email: string;
   password: string;
-  rol: 'admin' | 'manager' | 'arbitro' | 'usuario';
+  rol: 'admin' | 'veedor' | 'entrenador' | 'usuario';
   activo: boolean;
   fechaCreacion: Date;
   ultimoAcceso?: Date;
@@ -40,7 +40,7 @@ const UserSchema = new Schema<IUser>(
     },
     rol: {
       type: String,
-      enum: ['admin', 'manager', 'arbitro', 'usuario'],
+      enum: ['admin', 'veedor', 'entrenador', 'usuario'],
       default: 'usuario',
     },
     activo: {

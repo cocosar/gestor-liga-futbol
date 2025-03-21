@@ -29,12 +29,12 @@ router.get(
 /**
  * @route POST /api/equipos
  * @desc Crear un nuevo equipo
- * @access Private (Admin/Manager)
+ * @access Private (Admin/Entrenador)
  */
 router.post(
   '/',
   authenticate,
-  authorize(['admin', 'manager']),
+  authorize(['admin', 'entrenador']),
   body('nombre')
     .notEmpty()
     .withMessage('El nombre es obligatorio')
@@ -60,10 +60,6 @@ router.post(
     .optional()
     .isMongoId()
     .withMessage('ID de entrenador inválido'),
-  body('manager')
-    .optional()
-    .isMongoId()
-    .withMessage('ID de manager inválido'),
   body('logo')
     .optional()
     .isURL()
@@ -74,7 +70,7 @@ router.post(
 /**
  * @route PUT /api/equipos/:id
  * @desc Actualizar un equipo existente
- * @access Private (Admin/Manager del equipo)
+ * @access Private (Admin/Entrenador del equipo)
  */
 router.put(
   '/:id',
@@ -104,10 +100,6 @@ router.put(
     .optional()
     .isMongoId()
     .withMessage('ID de entrenador inválido'),
-  body('manager')
-    .optional()
-    .isMongoId()
-    .withMessage('ID de manager inválido'),
   body('logo')
     .optional()
     .isURL()
@@ -122,7 +114,7 @@ router.put(
 /**
  * @route PUT /api/equipos/:id/jugadores
  * @desc Añadir o eliminar jugadores de un equipo
- * @access Private (Admin/Manager/Entrenador del equipo)
+ * @access Private (Admin/Entrenador del equipo)
  */
 router.put(
   '/:id/jugadores',

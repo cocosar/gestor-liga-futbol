@@ -38,7 +38,7 @@ router.post(
       .withMessage('La contraseña debe tener al menos 6 caracteres'),
     body('rol')
       .optional()
-      .isIn(['admin', 'manager', 'arbitro', 'usuario'])
+      .isIn(['admin', 'entrenador', 'arbitro', 'usuario'])
       .withMessage('Rol inválido'),
   ],
   authController.register

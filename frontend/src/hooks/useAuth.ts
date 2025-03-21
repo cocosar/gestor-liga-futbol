@@ -55,9 +55,9 @@ export const useAuth = () => {
     // Mapear roles del backend al frontend si es necesario
     const roleMap: Record<string, string> = {
       'usuario': 'player',
-      'manager': 'coach',
+      'entrenador': 'coach',
       'admin': 'admin',
-      'arbitro': 'referee'
+      'veedor': 'scout'
     };
     
     const mappedRole = roleMap[userRole || ''] || userRole;

@@ -19,7 +19,7 @@ export default defineConfig({
         singleThread: true,
       },
     },
-    setupFiles: ['./src/test/setup/test-setup.ts'],
+    setupFiles: ['./src/test/setup/test-setup.ts', './src/setupTests.ts'],
     environmentOptions: {
       jsdom: {
         resources: 'usable'
@@ -41,5 +41,6 @@ export default defineConfig({
       enabled: false,
     },
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    css: true,
   }
 })

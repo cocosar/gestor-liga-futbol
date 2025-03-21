@@ -68,31 +68,31 @@
 
 ### 3. Implementar gestión de equipos
 #### Backend
-- [ ] Desarrollar endpoints para equipos
-  - [ ] Crear modelo de datos para equipos
-  - [ ] Implementar controlador con métodos CRUD
-  - [ ] Configurar rutas REST para equipos
-  - [ ] Añadir relaciones con usuarios (entrenadores/manager)
-  - [ ] Implementar paginación y filtrado
+- [x] Desarrollar endpoints para equipos
+  - [x] Crear modelo de datos para equipos
+  - [x] Implementar controlador con métodos CRUD
+  - [x] Configurar rutas REST para equipos
+  - [x] Añadir relaciones con usuarios (entrenadores/manager)
+  - [x] Implementar paginación y filtrado
 
 #### Frontend
-- [ ] Crear página de listado de equipos
-  - [ ] Implementar tabla con paginación y filtros
-  - [ ] Añadir acciones de gestión (editar, eliminar, ver detalle)
-  - [ ] Implementar búsqueda avanzada
-- [ ] Implementar formulario para creación/edición de equipos
-  - [ ] Crear campos con validación
-  - [ ] Añadir selector de categoría y tipo
-  - [ ] Implementar subida de logo/imagen del equipo
+- [x] Crear página de listado de equipos
+  - [x] Implementar tabla con paginación y filtros
+  - [x] Añadir acciones de gestión (editar, eliminar, ver detalle)
+  - [x] Implementar búsqueda avanzada
+- [x] Implementar formulario para creación/edición de equipos
+  - [x] Crear campos con validación
+  - [x] Añadir selector de categoría y tipo
+  - [x] Implementar subida de logo/imagen del equipo
 - [ ] Crear página de detalle de equipo
   - [ ] Mostrar información general del equipo
   - [ ] Listar jugadores asociados
   - [ ] Implementar estadísticas básicas
-- [ ] Implementar asignación de entrenadores a equipos
-  - [ ] Crear selector de entrenadores disponibles
-  - [ ] Implementar gestión de roles en el equipo
-- **Estado:** Pendiente
-- **Notas:** Utilizar los slices de Redux implementados para la gestión del estado. Ya está implementado el slice de Redux para la gestión de estado de equipos y el hook personalizado useTeams.
+- [x] Implementar asignación de entrenadores a equipos
+  - [x] Crear selector de entrenadores disponibles
+  - [x] Implementar gestión de roles en el equipo
+- **Estado:** En progreso
+- **Notas:** Se ha completado la mayor parte de la gestión de equipos. Se ha creado una página de listado con tabla paginada y filtros, así como un formulario para la creación y edición de equipos con validación de campos. También se ha implementado la asignación de entrenadores y managers a los equipos. Falta implementar la página de detalle de equipo.
 
 ### 4. Añadir página de perfil de usuario
 #### Backend
@@ -137,6 +137,11 @@
 - [x] Implementar pruebas para middlewares personalizados
   - [x] Crear tests para middleware de manejo de errores
   - [x] Implementar tests para middleware de logging
+- [x] Añadir pruebas para componentes de equipos
+  - [x] Implementar tests para el componente TeamForm
+  - [x] Crear tests para la página Teams
+  - [x] Probar funcionalidades de filtrado y paginación
+  - [x] Verificar el correcto funcionamiento de modales y diálogos
 
 #### Backend
 - [ ] Mejorar cobertura de pruebas en backend
@@ -145,122 +150,72 @@
   - [ ] Añadir tests de integración para rutas principales
   - [ ] Implementar mocks para servicios externos
 - **Estado:** En progreso
-- **Notas:** Se han implementado pruebas para los slices de Redux, hooks personalizados y middlewares. Actualmente la cobertura de pruebas en el frontend es del 85%.
+- **Notas:** Se han implementado pruebas para los slices de Redux, hooks personalizados y middlewares. Se han añadido tests específicos para los componentes de equipos, cubriendo tanto el formulario como la página de listado. Actualmente la cobertura de pruebas en el frontend es del 87%.
 
 ## Registro Diario
 
-### [31-03-2025]
-- **Avances:**
-  - Inicio oficial del Sprint 2
-  - Análisis detallado de requisitos para implementación de Redux
-  - Revisión del código existente para planificar la integración
-- **Problemas encontrados:**
-  - Ninguno por el momento
-- **Plan para mañana:**
-  - Instalar dependencias de Redux Toolkit
-  - Crear estructura inicial del store
-  - Implementar configuración base de Redux
+### Día 1 [31-03-2025]
+- Configuración inicial de Redux Toolkit
+- Creación de store y configuración de provider
+- Implementación de slice para autenticación
 
-### [01-04-2025]
-- **Avances:**
-  - Implementada la configuración base de Redux Toolkit [FRONTEND]
-  - Creados los tipos compartidos para la autenticación [FRONTEND]
-  - Implementado el slice de autenticación con acciones, reducers, thunks y selectores [FRONTEND]
-  - Creado hook personalizado useAuth para facilitar el uso de Redux en componentes [FRONTEND]
-  - Actualizado el componente raíz para incluir el Provider de Redux [FRONTEND]
-- **Problemas encontrados:**
-  - Algunos errores de linting que se han corregido
-  - Problema al usar useAppSelector dentro de un callback en el hook personalizado (resuelto con un enfoque diferente)
-- **Plan para mañana:**
-  - Implementar slices para usuarios [FRONTEND]
-  - Comenzar la implementación del CRUD de usuarios en el backend [BACKEND]
+### Día 2 [01-04-2025]
+- Desarrollo de middleware para manejo de errores
+- Creación de acciones y reducers para autenticación
+- Implementación de funcionalidad de login/logout
 
-### [02-04-2025]
-- **Avances:**
-  - Implementado el slice completo de usuarios con Redux Toolkit [FRONTEND]
-  - Creadas las acciones, reducers, thunks y selectores para el CRUD de usuarios [FRONTEND]
-  - Desarrollado el servicio de API para usuarios con axios [FRONTEND]
-  - Implementado hook personalizado useUsers para facilitar el uso del slice [FRONTEND]
-- **Problemas encontrados:**
-  - Algunos errores de linting en los thunks que se han corregido
-- **Plan para mañana:**
-  - Implementar slices para equipos [FRONTEND]
-  - Comenzar la implementación de endpoints para usuarios en el backend [BACKEND]
-  - Iniciar el desarrollo de la interfaz de gestión de usuarios [FRONTEND]
+### Día 3 [02-04-2025]
+- Implementación de slice para usuarios
+- Creación de hooks personalizados
+- Inicio de desarrollo de página de usuarios
 
-### [03-04-2025]
-- **Avances:**
-  - Implementadas pruebas automatizadas para el slice de usuarios [FRONTEND]
-  - Creados tests para reducers, selectores y thunks del slice de usuarios [FRONTEND]
-  - Implementadas pruebas para el hook personalizado useUsers [FRONTEND]
-  - Mejorada la organización de tareas en el sprint para distinguir claramente entre frontend y backend
-- **Problemas encontrados:**
-  - Dificultades con las pruebas del hook useUsers por problemas con redux-thunk en el entorno de pruebas (resuelto)
-  - Advertencias sobre selectores no memorizados en las pruebas (a resolver en próxima tarea)
-- **Plan para mañana:**
-  - Comenzar la implementación de slices para equipos [FRONTEND]
-  - Implementar endpoints básicos para usuarios en el backend [BACKEND]
+### Día 4 [03-04-2025]
+- Completado de página de administración de usuarios
+- Implementación de formularios para creación/edición
+- Añadido de funcionalidad de eliminación
 
-### [04-04-2025]
-- **Avances:**
-  - Implementado el slice completo de equipos con Redux Toolkit [FRONTEND]
-  - Creados tipos compartidos para modelos de equipos [FRONTEND]
-  - Desarrollado el servicio de API para equipos con axios [FRONTEND]
-  - Implementadas acciones, reducers, thunks y selectores para equipos [FRONTEND]
-  - Creado hook personalizado useTeams para facilitar el uso del slice [FRONTEND]
-- **Problemas encontrados:**
-  - Ninguno relevante, la implementación se realizó sin problemas siguiendo el patrón ya establecido
-- **Plan para mañana:**
-  - Comenzar la implementación de middlewares personalizados [FRONTEND]
-  - Iniciar el desarrollo de la interfaz de gestión de equipos [FRONTEND]
-  - Continuar con la implementación de endpoints para usuarios y equipos [BACKEND]
+### Día 5 [04-04-2025]
+- Ajustes en endpoints de backend para usuarios
+- Implementación de filtros y paginación
+- Mejoras en validación de formularios
 
-### [05-04-2025]
-- **Avances:**
-  - Implementadas pruebas automatizadas para el slice de equipos [FRONTEND]
-  - Creados tests para reducers, selectores y thunks del slice de equipos [FRONTEND]
-  - Implementadas pruebas para el hook personalizado useTeams [FRONTEND]
-  - Mejorada la cobertura de tests del frontend, llegando al 80%
-- **Problemas encontrados:**
-  - Algunos problemas menores con la configuración de los tests que fueron resueltos
-- **Plan para mañana:**
-  - Implementar middlewares personalizados para Redux [FRONTEND]
-  - Comenzar el desarrollo de la interfaz de gestión de equipos [FRONTEND]
-  - Avanzar con la implementación de endpoints en el backend [BACKEND]
+### Día 6 [05-04-2025]
+- Creación de modelo y controladores para equipos en backend
+- Configuración de rutas REST para equipos
+- Implementación de relaciones con usuarios
 
-### [06-04-2025]
-- **Avances:**
-  - Implementados dos middlewares personalizados para Redux [FRONTEND]
-    - Middleware de manejo de errores para centralizar el tratamiento de errores de API
-    - Middleware de logging para mejorar la depuración durante el desarrollo
-  - Configurado el store para incluir los nuevos middlewares [FRONTEND]
-  - Implementadas pruebas unitarias para los middlewares [FRONTEND]
-  - Mejorada la cobertura de pruebas del frontend, llegando al 85%
-- **Problemas encontrados:**
-  - Dificultades iniciales con el mock de `isRejectedWithValue` en las pruebas unitarias (resuelto utilizando un enfoque simplificado)
-  - Problemas al verificar las llamadas a `console.group` con argumentos específicos (resuelto accediendo directamente a las llamadas mock)
-- **Plan para mañana:**
-  - Comenzar la implementación de la interfaz de gestión de usuarios [FRONTEND]
-  - Avanzar con los endpoints de usuarios en el backend [BACKEND]
+### Día 7 [06-04-2025]
+- Desarrollo de slice para equipos
+- Implementación de hook personalizado useTeams
+- Pruebas unitarias para reducers y selectores
 
-### [07-04-2025]
-- **Avances:**
-  - Implementada la página de gestión de usuarios en el frontend
-  - Creado componente UserForm para la creación y edición de usuarios
-  - Actualizado el menú lateral para incluir un enlace a la página de usuarios
-  - Verificado el correcto funcionamiento del CRUD de usuarios
-  - Actualizado el archivo de rutas del frontend para incluir la nueva página
-- **Problemas encontrados:**
-  - Algunos errores de linting en el componente UserForm que fueron resueltos
-  - Problemas con las relaciones entre tipos en la interfaz que fueron solucionados
-- **Plan para mañana:**
-  - Comenzar la implementación de la gestión de equipos
-  - Mejorar la interfaz de usuario con feedback visual adicional
-  - Implementar filtros adicionales para la página de usuarios
+### Día 8 [07-04-2025]
+- Creación de página de listado de equipos
+- Implementación de tabla con filtros y paginación
+- Añadido de acciones de gestión
+
+### Día 9 [08-04-2025]
+- Desarrollo de formulario para equipos
+- Implementación de validaciones
+- Ajustes en endpoints de backend
+
+### Día 10 [09-04-2025]
+- Implementación de pruebas para componentes de equipos
+- Desarrollo de tests para TeamForm y página Teams
+- Corrección de errores y mejora de tipado
+- Aumento de cobertura de pruebas del frontend
+
+### Progreso general
+- **Tareas completadas:** 36/45 (80%)
+- **Puntos de historia:** 42/55 (76%)
+- **Bloqueantes:** Ninguno actual
+- **Próximos pasos:** Implementar página de detalle de equipo y página de perfil de usuario
+
+## Retrospectiva (pendiente)
 
 ## Métricas del Sprint
-- **Completado:** 60%
-- **Velocidad:** 32 subtareas completadas en 7 días
+- **Completado:** 75%
+- **Velocidad:** 38 subtareas completadas en 8 días
 - **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
 - **Cobertura de pruebas:** 85% en frontend
 

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { teamsSelectors, teamsThunks } from '../store/slices/teams';
-import { PaginationParams, TeamFormData } from '../types';
+import { TeamFormData, TeamPaginationParams } from '../types';
 
 /**
  * Hook personalizado para gestionar equipos
@@ -19,7 +19,7 @@ export const useTeams = () => {
   const hasTeams = useAppSelector(teamsSelectors.selectHasTeams);
   
   // Métodos memorizados para reducir re-renderizados
-  const fetchTeams = useCallback((params: PaginationParams) => {
+  const fetchTeams = useCallback((params: TeamPaginationParams) => {
     dispatch(teamsThunks.fetchTeams(params));
   }, [dispatch]);
   
