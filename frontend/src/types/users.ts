@@ -30,6 +30,8 @@ export interface PaginationParams {
   sort?: string;
   order?: 'asc' | 'desc';
   search?: string;
+  rol?: string;
+  activo?: string;
 }
 
 // Interfaz para datos para crear/actualizar usuario

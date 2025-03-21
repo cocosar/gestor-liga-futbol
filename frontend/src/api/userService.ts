@@ -17,9 +17,9 @@ const getConfig = () => {
 // Obtener listado de usuarios con paginación
 const getUsers = async (params: PaginationParams): Promise<UsersResponse> => {
   try {
-    const { page, limit, sort, order, search } = params;
+    const { page, limit, sort, order, search, rol, activo } = params;
     const response = await axios.get(
-      `${API_URL}/usuarios?page=${page}&limit=${limit}${sort ? `&sort=${sort}` : ''}${order ? `&order=${order}` : ''}${search ? `&search=${search}` : ''}`,
+      `${API_URL}/usuarios?page=${page}&limit=${limit}${sort ? `&sort=${sort}` : ''}${order ? `&order=${order}` : ''}${search ? `&search=${search}` : ''}${rol ? `&rol=${rol}` : ''}${activo ? `&activo=${activo}` : ''}`,
       getConfig()
     );
     return response.data;

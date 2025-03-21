@@ -63,7 +63,9 @@ const UsersPage: React.FC = () => {
       limit: pageSize,
       search: searchTerm,
       sort: 'nombre',
-      order: 'asc'
+      order: 'asc',
+      rol: roleFilter,
+      activo: statusFilter
     };
     
     fetchUsers(paginationParams);
@@ -131,7 +133,9 @@ const UsersPage: React.FC = () => {
       limit: pageSize,
       search: searchTerm,
       sort: 'nombre',
-      order: 'asc'
+      order: 'asc',
+      rol: roleFilter,
+      activo: statusFilter
     };
     
     fetchUsers(paginationParams);
@@ -161,9 +165,11 @@ const UsersPage: React.FC = () => {
       headerName: 'Estado', 
       width: 120,
       renderCell: (params: GridRenderCellParams<UserListItem>) => (
-        <Typography color={params.value ? 'primary' : 'error'}>
-          {params.value ? 'Activo' : 'Inactivo'}
-        </Typography>
+        <Box display="flex" alignItems="center" height="100%">
+          <Typography color={params.value ? 'primary' : 'error'}>
+            {params.value ? 'Activo' : 'Inactivo'}
+          </Typography>
+        </Box>
       )
     },
     {
@@ -294,6 +300,11 @@ const UsersPage: React.FC = () => {
               disableRowSelectionOnClick
               getRowId={(row) => row._id}
               sx={{ border: 'none' }}
+              localeText={{
+                MuiTablePagination: {
+                  labelRowsPerPage: 'Filas por página:',
+                },
+              }}
             />
           )}
         </Box>
