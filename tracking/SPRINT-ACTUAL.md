@@ -84,10 +84,10 @@
   - [x] Crear campos con validación
   - [x] Añadir selector de categoría y tipo
   - [x] Implementar subida de logo/imagen del equipo
-- [ ] Crear página de detalle de equipo
-  - [ ] Mostrar información general del equipo
-  - [ ] Listar jugadores asociados
-  - [ ] Implementar estadísticas básicas
+- [x] Crear página de detalle de equipo
+  - [x] Mostrar información general del equipo
+  - [x] Listar jugadores asociados
+  - [x] Implementar estadísticas básicas
 - [x] Implementar asignación de entrenadores a equipos
   - [x] Crear selector de entrenadores disponibles
   - [x] Implementar gestión de roles en el equipo
