@@ -188,371 +188,9 @@ tsconfig.json
 
 # Files
 
-## File: backend/src/types/index.d.ts
-````typescript
-// Declaraciones de tipos para la aplicación de backend
-⋮----
-export interface Request {
-    usuario?: {
-      id: string;
-      [key: string]: any;
-    };
-  }
-````
-
-## File: backend/tsconfig.eslint.json
-````json
-{
-  "extends": "./tsconfig.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx",
-    "src/**/*.json",
-    "src/tests/**/*.ts"
-  ]
-}
-````
-
-## File: frontend/src/components/teams/__tests__/TeamForm.test.tsx
-````typescript
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import TeamForm from '../TeamForm';
-⋮----
-// Mock de useTeams
-⋮----
-// Mock de useUsers
-⋮----
-// Limpiar campo obligatorio
-const nombreInput = screen.getByLabelText('Nombre del Equipo');
-userEvent.clear(nombreInput);
-⋮----
-// Intentar enviar el formulario
-const submitButton = screen.getByText(/Crear Equipo/i);
-userEvent.click(submitButton);
-⋮----
-// Verificar que aparece mensaje de error
-await waitFor(() =>
-⋮----
-const cancelButton = screen.getByText('Cancelar');
-fireEvent.click(cancelButton);
-⋮----
-expect(onCloseMock).toHaveBeenCalledTimes(1);
-⋮----
-// Este test verifica la presencia del selector de entrenadores
-// Comprobar que podemos encontrar la opción Entrenador en algún lugar usando getAllByText
-// ya que puede haber múltiples elementos con este texto
-const entrenadorElements = screen.getAllByText('Entrenador');
-expect(entrenadorElements.length).toBeGreaterThan(0);
-⋮----
-// Verificar que existe un elemento dialog para el formulario
-````
-
-## File: frontend/src/components/teams/index.ts
-````typescript
-
-````
-
-## File: frontend/src/components/teams/RandomTeamsGenerator.tsx
-````typescript
-import React, { useState } from 'react';
-import { 
-  Button, 
-  Box, 
-  Typography, 
-  CircularProgress, 
-  Alert, 
-  Paper, 
-  Snackbar,
-  Divider,
-  List,
-  ListItem,
-  ListItemText
-} from '@mui/material';
-import randomTeamService from '../../utils/randomTeamGenerator';
-import { TeamResponse } from '../../types';
-⋮----
-/**
- * Componente para generar equipos aleatorios para pruebas
- */
-⋮----
-/**
-   * Maneja la generación de equipos aleatorios
-   */
-const handleGenerateTeams = async () =>
-⋮----
-const cantidad = 5; // Generamos 5 equipos como solicitó el usuario
-⋮----
-// Contamos cuántos equipos se crearon con éxito
-⋮----
-{/* Notificaciones */}
-````
-
-## File: frontend/src/components/teams/TeamForm.tsx
-````typescript
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Switch,
-  TextField,
-} from '@mui/material';
-import { useTeams, useUsers } from '../../hooks';
-import { TeamFormData } from '../../types';
-⋮----
-interface TeamFormProps {
-  open: boolean;
-  onClose: () => void;
-  teamId?: string;
-}
-⋮----
-// Cargar equipo si se está editando
-⋮----
-// Cargar usuarios para selector de entrenador
-⋮----
-// Actualizar formulario cuando se carga el equipo seleccionado
-⋮----
-const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
-) =>
-⋮----
-// Limpiar error del campo
-⋮----
-const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-⋮----
-const validateForm = (): boolean =>
-⋮----
-const handleSubmit = () =>
-````
-
-## File: frontend/src/pages/__tests__/Teams.test.tsx
-````typescript
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import { vi } from 'vitest';
-import Teams from '../Teams';
-import { BrowserRouter } from 'react-router-dom';
-⋮----
-// Mock de useTeams
-⋮----
-// Mock del hook useTeams
-⋮----
-// Mock de componentes
-⋮----
-const renderWithStoreAndRouter = (ui: React.ReactElement, state = initialState) =>
-⋮----
-// Verificar que los elementos principales están presentes
-````
-
-## File: frontend/src/pages/Teams.tsx
-````typescript
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CircularProgress,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  SelectChangeEvent,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { 
-  DataGrid, 
-  GridColDef, 
-  GridRenderCellParams,
-} from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
-import { useTeams } from '../hooks';
-import TeamForm from '../components/teams/TeamForm';
-import RandomTeamsGenerator from '../components/teams/RandomTeamsGenerator';
-import { TeamPaginationParams } from '../types';
-import { esESGrid } from '../utils/dataGridLocale';
-⋮----
-// Cargar equipos al montar el componente
-⋮----
-// Manejar cambios de paginación
-const handlePageChange = (page: number) =>
-⋮----
-// Manejar cambios en el tamaño de página
-const handlePageSizeChange = (pageSize: number) =>
-⋮----
-// Manejar búsqueda
-const handleSearch = () =>
-⋮----
-// Manejar cambios en filtros
-const handleCategoriaChange = (event: SelectChangeEvent) =>
-⋮----
-const handleTipoChange = (event: SelectChangeEvent) =>
-⋮----
-// Manejar creación de equipo
-const handleCreateTeam = () =>
-⋮----
-// Manejar edición de equipo
-const handleEditTeam = (id: string) =>
-⋮----
-// Manejar cierre de formulario
-const handleCloseForm = () =>
-⋮----
-// Recargar datos después de crear/editar
-⋮----
-// Manejar confirmación de eliminación
-const handleConfirmDelete = (id: string) =>
-⋮----
-// Manejar eliminación de equipo
-const handleDeleteTeam = () =>
-⋮----
-// Función para capitalizar primera letra
-const capitalizeFirstLetter = (str: string): string =>
-⋮----
-// Definir columnas para la tabla
-⋮----
-// Implementar vista detalle en el futuro
-⋮----
-{/* Filtros de búsqueda */}
-⋮----
-{/* Tabla de equipos */}
-⋮----
-handlePageChange(model.page);
-handlePageSizeChange(model.pageSize);
-⋮----
-{/* Formulario de creación/edición */}
-⋮----
-{/* Diálogo de confirmación de eliminación */}
-````
-
-## File: frontend/src/setupTests.ts
-````typescript
-
-````
-
-## File: frontend/src/utils/dataGridLocale.ts
-````typescript
-import { GridLocaleText } from '@mui/x-data-grid';
-⋮----
-// Texto personalizado en español para MUI DataGrid
-⋮----
-// Texto del footer/paginación
-⋮----
-// Columnas y filas
-⋮----
-// Filtros
-⋮----
-// Barra de herramientas
-````
-
-## File: frontend/src/utils/randomTeamGenerator.ts
-````typescript
-import { TeamFormData } from '../types';
-import teamService from '../api/teamService';
-⋮----
-// Arrays de nombres para generar equipos aleatorios
-⋮----
-// Sufijos para combinaciones
-⋮----
-// Categorías disponibles
-⋮----
-// Tipos de equipo disponibles
-⋮----
-// URLs de logos válidas
-⋮----
-/**
- * Genera un nombre de equipo aleatorio
- * @returns Nombre de equipo aleatorio
- */
-const generarNombreEquipo = (): string =>
-⋮----
-// 30% de probabilidad de añadir un sufijo
-⋮----
-/**
- * Genera datos aleatorios para un equipo
- * @returns Objeto con datos de equipo aleatorios
- */
-export const generarEquipoAleatorio = (): TeamFormData =>
-⋮----
-// Dejamos entrenador vacío (opcional para creación)
-⋮----
-activo: Math.random() > 0.2 // 80% de probabilidad de estar activo
-⋮----
-/**
- * Crea un equipo con datos aleatorios
- * @returns Promise con la respuesta del servidor
- */
-export const crearEquipoAleatorio = async () =>
-⋮----
-/**
- * Crea múltiples equipos con datos aleatorios
- * @param cantidad Número de equipos a crear
- * @returns Promise con array de respuestas
- */
-export const crearEquiposAleatorios = async (cantidad: number) =>
-⋮----
-// Pequeña pausa entre creaciones para evitar sobrecarga
-````
-
-## File: tsconfig.json
-````json
-{
-  "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true
-  },
-  "files": [],
-  "references": [
-    { "path": "./backend" },
-    { "path": "./frontend" }
-  ]
-}
-````
-
 ## File: .husky/pre-commit
 ````
 npx lint-staged
-````
-
-## File: backend/.eslintrc.js
-````javascript
-
 ````
 
 ## File: backend/jest.config.js
@@ -1209,142 +847,6 @@ El servidor estará disponible en [http://localhost:5000](http://localhost:5000)
 La documentación detallada de la API estará disponible en `/api/docs` una vez que el servidor esté en funcionamiento.
 ````
 
-## File: backend/src/controllers/userController.ts
-````typescript
-import { Response } from 'express';
-import { validationResult } from 'express-validator';
-import User from '../models/User';
-import { AuthenticatedRequest } from '../middleware/auth';
-import mongoose from 'mongoose';
-⋮----
-/**
- * Obtener todos los usuarios (con paginación y filtros)
- * @route GET /api/usuarios
- * @access Private (Admin)
- */
-export const getUsers = async (req: AuthenticatedRequest, res: Response) =>
-⋮----
-// Construir filtros
-⋮----
-// Filtro de búsqueda por nombre, apellido o email
-⋮----
-// Filtro por rol
-⋮----
-// Filtro por estado (activo/inactivo)
-⋮----
-// Calcular el índice de inicio para la paginación
-⋮----
-// Ordenamiento
-⋮----
-// Obtener usuarios paginados y filtrados
-⋮----
-.select('-password'); // Excluir el campo de contraseña
-⋮----
-// Contar el total de usuarios que coinciden con los filtros
-⋮----
-/**
- * Obtener un usuario por ID
- * @route GET /api/usuarios/:id
- * @access Private (Admin/Self)
- */
-export const getUserById = async (req: AuthenticatedRequest, res: Response) =>
-⋮----
-// Verificar que el ID tenga un formato válido de MongoDB
-⋮----
-// Obtener el usuario (sin incluir la contraseña)
-⋮----
-// Verificar permisos: solo el propio usuario o un admin puede ver los detalles
-⋮----
-/**
- * Crear un nuevo usuario
- * @route POST /api/usuarios
- * @access Private (Admin)
- */
-export const createUser = async (req: AuthenticatedRequest, res: Response) =>
-⋮----
-// Validar errores de la solicitud
-⋮----
-// Verificar si el usuario ya existe
-⋮----
-// Si se especifica un rol, verificar que sea válido
-⋮----
-// Verificar que solo admin pueda crear otros usuarios admin
-⋮----
-// Crear el usuario
-⋮----
-// Obtener usuario sin contraseña
-⋮----
-/**
- * Actualizar un usuario existente
- * @route PUT /api/usuarios/:id
- * @access Private (Admin/Self)
- */
-export const updateUser = async (req: AuthenticatedRequest, res: Response) =>
-⋮----
-// Validar errores de la solicitud
-⋮----
-// Verificar que el ID tenga un formato válido de MongoDB
-⋮----
-// Buscar el usuario a actualizar
-⋮----
-// Verificar permisos: solo el propio usuario o un admin puede actualizar
-⋮----
-// Verificar restricciones adicionales:
-// 1. Solo admin puede cambiar roles
-⋮----
-// 2. Solo admin puede cambiar el estado de activación
-⋮----
-// 3. Si un usuario se está autoactualizando, no puede desactivarse a sí mismo
-⋮----
-// 4. Un admin no puede quitarse a sí mismo los privilegios de admin
-⋮----
-// 5. Si se cambia el email, verificar que no exista ya
-⋮----
-// Actualizar los campos del usuario
-⋮----
-// Guardar los cambios
-⋮----
-// Obtener usuario actualizado sin contraseña
-⋮----
-/**
- * Cambiar la contraseña de un usuario
- * @route PUT /api/usuarios/:id/password
- * @access Private (Admin/Self)
- */
-export const updatePassword = async (req: AuthenticatedRequest, res: Response) =>
-⋮----
-// Validar errores de la solicitud
-⋮----
-// Verificar que el ID tenga un formato válido de MongoDB
-⋮----
-// Buscar el usuario
-⋮----
-// Verificar permisos: solo el propio usuario o un admin puede cambiar la contraseña
-⋮----
-// Si es el propio usuario actualizando su contraseña, verificar la contraseña actual
-⋮----
-// Actualizar la contraseña
-⋮----
-/**
- * Eliminar un usuario
- * @route DELETE /api/usuarios/:id
- * @access Private (Admin)
- */
-export const deleteUser = async (req: AuthenticatedRequest, res: Response) =>
-⋮----
-// Verificar que el ID tenga un formato válido de MongoDB
-⋮----
-// Verificar que solo los admin puedan eliminar usuarios
-⋮----
-// Verificar que un admin no pueda eliminarse a sí mismo
-⋮----
-// Buscar el usuario a eliminar
-⋮----
-// Eliminar el usuario
-⋮----
-// Exportar controlador como objeto
-````
-
 ## File: backend/src/models/index.ts
 ````typescript
 import User from './User';
@@ -1453,120 +955,6 @@ peso?: number; // en kg
 // Índices para mejorar la búsqueda
 ````
 
-## File: backend/src/routes/authRoutes.ts
-````typescript
-import express from 'express';
-import { body } from 'express-validator';
-import authController from '../controllers/authController';
-import { authenticate } from '../middleware/auth';
-⋮----
-/**
- * @route POST /api/auth/register
- * @desc Registrar un nuevo usuario
- * @access Public
- */
-⋮----
-/**
- * @route POST /api/auth/login
- * @desc Iniciar sesión de usuario
- * @access Public
- */
-⋮----
-/**
- * @route GET /api/auth/me
- * @desc Obtener el perfil del usuario actual
- * @access Private
- */
-````
-
-## File: backend/src/routes/teamRoutes.ts
-````typescript
-import express from 'express';
-import { body, param } from 'express-validator';
-import teamController from '../controllers/teamController';
-import { authenticate, authorize } from '../middleware/auth';
-⋮----
-/**
- * @route GET /api/equipos
- * @desc Obtener todos los equipos (con paginación y filtros)
- * @access Private
- */
-⋮----
-/**
- * @route GET /api/equipos/:id
- * @desc Obtener un equipo por ID
- * @access Private
- */
-⋮----
-/**
- * @route POST /api/equipos
- * @desc Crear un nuevo equipo
- * @access Private (Admin/Entrenador)
- */
-⋮----
-/**
- * @route PUT /api/equipos/:id
- * @desc Actualizar un equipo existente
- * @access Private (Admin/Entrenador del equipo)
- */
-⋮----
-/**
- * @route PUT /api/equipos/:id/jugadores
- * @desc Añadir o eliminar jugadores de un equipo
- * @access Private (Admin/Entrenador del equipo)
- */
-⋮----
-/**
- * @route DELETE /api/equipos/:id
- * @desc Eliminar un equipo
- * @access Private (Admin)
- */
-````
-
-## File: backend/src/routes/userRoutes.ts
-````typescript
-import express from 'express';
-import { body, param } from 'express-validator';
-import userController from '../controllers/userController';
-import { authenticate, authorize } from '../middleware/auth';
-⋮----
-/**
- * @route GET /api/usuarios
- * @desc Obtener todos los usuarios (con paginación y filtros)
- * @access Private (Admin)
- */
-⋮----
-/**
- * @route GET /api/usuarios/:id
- * @desc Obtener un usuario por ID
- * @access Private (Admin/Self)
- */
-⋮----
-/**
- * @route POST /api/usuarios
- * @desc Crear un nuevo usuario
- * @access Private (Admin)
- */
-⋮----
-/**
- * @route PUT /api/usuarios/:id
- * @desc Actualizar un usuario existente
- * @access Private (Admin/Self)
- */
-⋮----
-/**
- * @route PUT /api/usuarios/:id/password
- * @desc Cambiar la contraseña de un usuario
- * @access Private (Admin/Self)
- */
-⋮----
-/**
- * @route DELETE /api/usuarios/:id
- * @desc Eliminar un usuario
- * @access Private (Admin)
- */
-````
-
 ## File: backend/src/tests/controllers/userController.test.ts
 ````typescript
 
@@ -1575,6 +963,33 @@ import { authenticate, authorize } from '../middleware/auth';
 ## File: backend/src/tests/middleware/auth.test.ts
 ````typescript
 
+````
+
+## File: backend/src/types/index.d.ts
+````typescript
+// Declaraciones de tipos para la aplicación de backend
+⋮----
+export interface Request {
+    usuario?: {
+      id: string;
+      [key: string]: any;
+    };
+  }
+````
+
+## File: backend/tsconfig.eslint.json
+````json
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.json",
+    "src/tests/**/*.ts"
+  ]
+}
 ````
 
 ## File: backend/tsconfig.json
@@ -1621,42 +1036,6 @@ export default tseslint.config(
 </html>
 ````
 
-## File: frontend/src/components/auth/ProtectedRoute.tsx
-````typescript
-import React from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { authService } from '../../api';
-⋮----
-interface ProtectedRouteProps {
-  allowedRoles?: string[];
-}
-⋮----
-/**
- * Componente para proteger rutas que requieren autenticación
- * Si no hay un usuario autenticado, redirige a la página de login
- * Si se especifican roles permitidos, verifica que el usuario tenga uno de esos roles
- */
-const ProtectedRoute: React.FC<ProtectedRouteProps> = (
-⋮----
-// Si no hay un usuario autenticado, redirigir a login
-⋮----
-// Si hay roles permitidos especificados, verificar que el usuario tenga uno de ellos
-⋮----
-// Si no hay datos de usuario en localStorage pero hay un token,
-// es posible que la sesión esté corrupta
-authService.logout(); // Limpiar la sesión
-⋮----
-// Mapear rol del backend al frontend si es necesario
-⋮----
-// Verificar si el rol del usuario está entre los permitidos
-⋮----
-// El usuario no tiene un rol permitido, redirigir a una página de acceso denegado
-⋮----
-// Error al parsear los datos del usuario, limpiar la sesión
-⋮----
-// El usuario está autenticado y tiene los permisos necesarios
-````
-
 ## File: frontend/src/components/layout/Footer.tsx
 ````typescript
 import React from 'react';
@@ -1675,59 +1054,132 @@ import Footer from './Footer';
 const handleDrawerToggle = () =>
 ````
 
-## File: frontend/src/components/users/UserForm.tsx
+## File: frontend/src/components/teams/__tests__/TeamForm.test.tsx
 ````typescript
-import React, { useEffect } from 'react';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import TeamForm from '../TeamForm';
+⋮----
+// Mock de useTeams
+⋮----
+// Mock de useUsers
+⋮----
+// Limpiar campo obligatorio
+const nombreInput = screen.getByLabelText('Nombre del Equipo');
+userEvent.clear(nombreInput);
+⋮----
+// Intentar enviar el formulario
+const submitButton = screen.getByText(/Crear Equipo/i);
+userEvent.click(submitButton);
+⋮----
+// Verificar que aparece mensaje de error
+await waitFor(() =>
+⋮----
+const cancelButton = screen.getByText('Cancelar');
+fireEvent.click(cancelButton);
+⋮----
+expect(onCloseMock).toHaveBeenCalledTimes(1);
+⋮----
+// Este test verifica la presencia del selector de entrenadores
+// Comprobar que podemos encontrar la opción Entrenador en algún lugar usando getAllByText
+// ya que puede haber múltiples elementos con este texto
+const entrenadorElements = screen.getAllByText('Entrenador');
+expect(entrenadorElements.length).toBeGreaterThan(0);
+⋮----
+// Verificar que existe un elemento dialog para el formulario
+````
+
+## File: frontend/src/components/teams/index.ts
+````typescript
+
+````
+
+## File: frontend/src/components/teams/RandomTeamsGenerator.tsx
+````typescript
+import React, { useState } from 'react';
+import { 
+  Button, 
+  Box, 
+  Typography, 
+  CircularProgress, 
+  Alert, 
+  Paper, 
+  Snackbar,
+  Divider,
+  List,
+  ListItem,
+  ListItemText
+} from '@mui/material';
+import randomTeamService from '../../utils/randomTeamGenerator';
+import { TeamResponse } from '../../types';
+⋮----
+/**
+ * Componente para generar equipos aleatorios para pruebas
+ */
+⋮----
+/**
+   * Maneja la generación de equipos aleatorios
+   */
+const handleGenerateTeams = async () =>
+⋮----
+const cantidad = 5; // Generamos 5 equipos como solicitó el usuario
+⋮----
+// Contamos cuántos equipos se crearon con éxito
+⋮----
+{/* Notificaciones */}
+````
+
+## File: frontend/src/components/teams/TeamForm.tsx
+````typescript
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
-  TextField,
-  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
-  Typography,
-  CircularProgress,
-  Switch,
   FormControlLabel,
-  Divider,
-  Paper
+  FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Switch,
+  TextField,
 } from '@mui/material';
-import { Formik, Form, FormikHelpers } from 'formik';
+import { useTeams, useUsers } from '../../hooks';
+import { TeamFormData } from '../../types';
 ⋮----
-import { useUsers } from '../../hooks/useUsers';
-import { UserFormData } from '../../types';
-⋮----
-interface UserFormProps {
-  userId?: string;
-  onCancel: () => void;
+interface TeamFormProps {
+  open: boolean;
+  onClose: () => void;
+  teamId?: string;
 }
 ⋮----
-// Esquema de validación
+// Cargar equipo si se está editando
 ⋮----
-is: (val: string) => !val, // Solo requerido si no hay ID (es creación)
+// Cargar usuarios para selector de entrenador
 ⋮----
-.transform((value) => value || undefined) // Transformar cadena vacía a undefined
+// Actualizar formulario cuando se carga el equipo seleccionado
 ⋮----
-// Valores iniciales para el formulario
-⋮----
-password: '', // Vacío para edición
-⋮----
-// Manejar envío del formulario
-const handleSubmit = async (
-    values: UserFormData & { _id?: string },
-    { setSubmitting, resetForm }: FormikHelpers<UserFormData & { _id?: string }>
+const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
 ) =>
 ⋮----
-// Si password está vacío en modo edición, eliminarlo para no enviarlo
+// Limpiar error del campo
 ⋮----
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
 ⋮----
-onCancel(); // Cerrar formulario después de guardar exitosamente
+const validateForm = (): boolean =>
 ⋮----
-// Mostrar spinner mientras se carga el usuario para edición
+const handleSubmit = () =>
 ````
 
 ## File: frontend/src/hooks/__tests__/useAuth.test.tsx
@@ -1791,70 +1243,6 @@ const createWrapper = (initialState:
 // 'usuario' del backend debería mapearse a 'player' en el frontend
 ````
 
-## File: frontend/src/hooks/useAuth.ts
-````typescript
-import { useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '../store';
-import { 
-  selectUser, 
-  selectIsAuthenticated, 
-  selectLoading, 
-  selectError, 
-  selectUserRole
-} from '../store/slices/auth/selectors';
-import { 
-  login, 
-  register, 
-  logout, 
-  getCurrentUser 
-} from '../store/slices/auth/thunks';
-import { clearErrors } from '../store/slices/auth/authSlice';
-import { LoginData, RegisterData } from '../types';
-⋮----
-// Hook personalizado para la autenticación
-export const useAuth = () =>
-⋮----
-// Estado
-⋮----
-// Acciones
-⋮----
-// Función para verificar si el usuario tiene un rol específico
-⋮----
-// Mapear roles del backend al frontend si es necesario
-⋮----
-// Retornar todo lo necesario
-⋮----
-// Estado
-⋮----
-// Acciones
-````
-
-## File: frontend/src/hooks/useTeams.ts
-````typescript
-import { useCallback, useMemo } from 'react';
-import { useAppDispatch, useAppSelector } from '../store';
-import { teamsSelectors, teamsThunks } from '../store/slices/teams';
-import { TeamFormData, TeamPaginationParams } from '../types';
-⋮----
-/**
- * Hook personalizado para gestionar equipos
- * @returns Métodos y estado relacionados con equipos
- */
-export const useTeams = () =>
-⋮----
-// Seleccionar datos del estado
-⋮----
-// Métodos memorizados para reducir re-renderizados
-⋮----
-// Objeto con todos los valores y métodos
-⋮----
-// Datos
-⋮----
-// Métodos
-⋮----
-// Utilidades para obtener equipos específicos
-````
-
 ## File: frontend/src/hooks/useUsers.ts
 ````typescript
 import { useCallback } from 'react';
@@ -1884,6 +1272,27 @@ export const useUsers = () =>
 // Datos del estado
 ⋮----
 // Acciones
+````
+
+## File: frontend/src/pages/__tests__/Teams.test.tsx
+````typescript
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
+import Teams from '../Teams';
+import { BrowserRouter } from 'react-router-dom';
+⋮----
+// Mock de useTeams
+⋮----
+// Mock del hook useTeams
+⋮----
+// Mock de componentes
+⋮----
+const renderWithStoreAndRouter = (ui: React.ReactElement, state = initialState) =>
+⋮----
+// Verificar que los elementos principales están presentes
 ````
 
 ## File: frontend/src/pages/Dashboard.tsx
@@ -1942,6 +1351,104 @@ import { Link as RouterLink } from 'react-router-dom';
 {/* Hero Section */}
 ⋮----
 {/* Features Section */}
+````
+
+## File: frontend/src/pages/Teams.tsx
+````typescript
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { 
+  DataGrid, 
+  GridColDef, 
+  GridRenderCellParams,
+} from '@mui/x-data-grid';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
+import { useTeams } from '../hooks';
+import TeamForm from '../components/teams/TeamForm';
+import RandomTeamsGenerator from '../components/teams/RandomTeamsGenerator';
+import { TeamPaginationParams } from '../types';
+import { esESGrid } from '../utils/dataGridLocale';
+⋮----
+// Cargar equipos al montar el componente
+⋮----
+// Manejar cambios de paginación
+const handlePageChange = (page: number) =>
+⋮----
+// Manejar cambios en el tamaño de página
+const handlePageSizeChange = (pageSize: number) =>
+⋮----
+// Manejar búsqueda
+const handleSearch = () =>
+⋮----
+// Manejar cambios en filtros
+const handleCategoriaChange = (event: SelectChangeEvent) =>
+⋮----
+const handleTipoChange = (event: SelectChangeEvent) =>
+⋮----
+// Manejar creación de equipo
+const handleCreateTeam = () =>
+⋮----
+// Manejar edición de equipo
+const handleEditTeam = (id: string) =>
+⋮----
+// Manejar cierre de formulario
+const handleCloseForm = () =>
+⋮----
+// Recargar datos después de crear/editar
+⋮----
+// Manejar confirmación de eliminación
+const handleConfirmDelete = (id: string) =>
+⋮----
+// Manejar eliminación de equipo
+const handleDeleteTeam = () =>
+⋮----
+// Función para capitalizar primera letra
+const capitalizeFirstLetter = (str: string): string =>
+⋮----
+// Definir columnas para la tabla
+⋮----
+// Implementar vista detalle en el futuro
+⋮----
+{/* Filtros de búsqueda */}
+⋮----
+{/* Tabla de equipos */}
+⋮----
+handlePageChange(model.page);
+handlePageSizeChange(model.pageSize);
+⋮----
+{/* Formulario de creación/edición */}
+⋮----
+{/* Diálogo de confirmación de eliminación */}
+````
+
+## File: frontend/src/setupTests.ts
+````typescript
+
 ````
 
 ## File: frontend/src/store/__tests__/middleware/errorMiddleware.test.ts
@@ -2266,34 +1773,6 @@ interface AuthState {
 // Exportar acciones y reducer
 ````
 
-## File: frontend/src/store/slices/auth/selectors.ts
-````typescript
-import { RootState } from '../../index';
-⋮----
-// Selector para obtener el usuario autenticado
-export const selectUser = (state: RootState)
-⋮----
-// Selector para obtener el token
-export const selectToken = (state: RootState)
-⋮----
-// Selector para verificar si el usuario está autenticado
-export const selectIsAuthenticated = (state: RootState)
-⋮----
-// Selector para obtener el estado de carga
-export const selectLoading = (state: RootState)
-⋮----
-// Selector para obtener errores
-export const selectError = (state: RootState)
-⋮----
-// Selector para obtener el rol del usuario
-export const selectUserRole = (state: RootState)
-⋮----
-// Selector para verificar si el usuario tiene un rol específico
-export const selectHasRole = (state: RootState, role: string) =>
-⋮----
-// Mapear roles del backend al frontend si es necesario
-````
-
 ## File: frontend/src/store/slices/auth/thunks.ts
 ````typescript
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -2361,80 +1840,6 @@ export const selectHasTeams = (state: RootState)
 ⋮----
 // Selector para obtener equipo por ID
 export const selectTeamById = (state: RootState, teamId: string)
-````
-
-## File: frontend/src/store/slices/teams/teamsSlice.ts
-````typescript
-import { createSlice } from '@reduxjs/toolkit';
-import { TeamListItem } from '../../../types';
-⋮----
-// Definir interfaces para el estado
-interface TeamsState {
-  teams: TeamListItem[];
-  selectedTeam: TeamListItem | null;
-  loading: boolean;
-  error: string | null;
-  total: number;
-  page: number;
-  limit: number;
-}
-⋮----
-// Estado inicial
-⋮----
-// Interfaces para los payloads
-interface FetchTeamsPayload {
-  teams: TeamListItem[];
-  total: number;
-  page: number;
-  limit: number;
-}
-⋮----
-// Crear slice
-⋮----
-// Limpiar equipo seleccionado
-⋮----
-// Limpiar errores
-⋮----
-// Acciones para manejar estados de carga y resultados
-⋮----
-// Exportar acciones y reducer
-````
-
-## File: frontend/src/store/slices/teams/thunks.ts
-````typescript
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { teamService } from '../../../api';
-import { TeamFormData, TeamPaginationParams } from '../../../types';
-import { 
-  teamsLoading, 
-  teamsLoadSuccess, 
-  teamLoadSuccess, 
-  teamCreateSuccess, 
-  teamUpdateSuccess, 
-  teamDeleteSuccess, 
-  teamsFail 
-} from '../../../store/slices/teams';
-import { AppDispatch } from '../../index';
-⋮----
-/**
- * Thunk para obtener listado de equipos
- */
-⋮----
-/**
- * Thunk para obtener equipo por ID
- */
-⋮----
-/**
- * Thunk para crear un nuevo equipo
- */
-⋮----
-/**
- * Thunk para actualizar un equipo existente
- */
-⋮----
-/**
- * Thunk para eliminar un equipo
- */
 ````
 
 ## File: frontend/src/store/slices/users/index.ts
@@ -2795,54 +2200,68 @@ export interface AuthResponse {
 
 ````
 
-## File: frontend/src/types/teams.ts
+## File: frontend/src/utils/dataGridLocale.ts
 ````typescript
-// Interfaz para objetos de equipo en listados
-export interface TeamListItem {
-  _id: string;
-  nombre: string;
-  categoria: string;
-  tipo: string;
-  entrenador?: string;
-  logoUrl?: string;
-  activo: boolean;
-}
+import { GridLocaleText } from '@mui/x-data-grid';
 ⋮----
-// Interfaz para la respuesta de listado de equipos
-export interface TeamsResponse {
-  success: boolean;
-  equipos?: TeamListItem[];
-  totalEquipos?: number;
-  message?: string;
-}
+// Texto personalizado en español para MUI DataGrid
 ⋮----
-// Interfaz para la respuesta de un solo equipo
-export interface TeamResponse {
-  success: boolean;
-  equipo?: TeamListItem;
-  message?: string;
-}
+// Texto del footer/paginación
 ⋮----
-// Interfaz para parámetros de paginación en solicitudes de equipos
-export interface TeamPaginationParams {
-  page: number;
-  limit: number;
-  sort?: string;
-  order?: 'asc' | 'desc';
-  search?: string;
-  categoria?: string;
-  tipo?: string;
-}
+// Columnas y filas
 ⋮----
-// Interfaz para datos para crear/actualizar equipo
-export interface TeamFormData {
-  nombre: string;
-  categoria: string;
-  tipo: string;
-  entrenador?: string;
-  logoUrl?: string;
-  activo?: boolean;
-}
+// Filtros
+⋮----
+// Barra de herramientas
+````
+
+## File: frontend/src/utils/randomTeamGenerator.ts
+````typescript
+import { TeamFormData } from '../types';
+import teamService from '../api/teamService';
+⋮----
+// Arrays de nombres para generar equipos aleatorios
+⋮----
+// Sufijos para combinaciones
+⋮----
+// Categorías disponibles
+⋮----
+// Tipos de equipo disponibles
+⋮----
+// URLs de logos válidas
+⋮----
+/**
+ * Genera un nombre de equipo aleatorio
+ * @returns Nombre de equipo aleatorio
+ */
+const generarNombreEquipo = (): string =>
+⋮----
+// 30% de probabilidad de añadir un sufijo
+⋮----
+/**
+ * Genera datos aleatorios para un equipo
+ * @returns Objeto con datos de equipo aleatorios
+ */
+export const generarEquipoAleatorio = (): TeamFormData =>
+⋮----
+// Dejamos entrenador vacío (opcional para creación)
+⋮----
+activo: Math.random() > 0.2 // 80% de probabilidad de estar activo
+⋮----
+/**
+ * Crea un equipo con datos aleatorios
+ * @returns Promise con la respuesta del servidor
+ */
+export const crearEquipoAleatorio = async () =>
+⋮----
+/**
+ * Crea múltiples equipos con datos aleatorios
+ * @param cantidad Número de equipos a crear
+ * @returns Promise con array de respuestas
+ */
+export const crearEquiposAleatorios = async (cantidad: number) =>
+⋮----
+// Pequeña pausa entre creaciones para evitar sobrecarga
 ````
 
 ## File: frontend/src/vite-env.d.ts
@@ -3652,6 +3071,25 @@ El éxito del producto dependerá en gran medida de su usabilidad, fiabilidad y 
   - [Acciones concretas]
 ````
 
+## File: tsconfig.json
+````json
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "files": [],
+  "references": [
+    { "path": "./backend" },
+    { "path": "./frontend" }
+  ]
+}
+````
+
 ## File: .cursor/rules/coding-preferences.mdc
 ````
 ---
@@ -3675,29 +3113,31 @@ alwaysApply: false
 - Never overwrite my .env file without first asking and confirming
 ````
 
-## File: backend/src/controllers/teamController.ts
+## File: backend/.eslintrc.js
+````javascript
+
+````
+
+## File: backend/src/controllers/userController.ts
 ````typescript
 import { Response } from 'express';
 import { validationResult } from 'express-validator';
-import Team from '../models/Team';
 import User from '../models/User';
 import { AuthenticatedRequest } from '../middleware/auth';
 import mongoose from 'mongoose';
 ⋮----
 /**
- * Obtener todos los equipos (con paginación y filtros)
- * @route GET /api/equipos
- * @access Private
+ * Obtener todos los usuarios (con paginación y filtros)
+ * @route GET /api/usuarios
+ * @access Private (Admin)
  */
-export const getTeams = async (req: AuthenticatedRequest, res: Response) =>
+export const getUsers = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
 // Construir filtros
 ⋮----
-// Filtro de búsqueda por nombre o descripción
+// Filtro de búsqueda por nombre, apellido o email
 ⋮----
-// Filtro por categoría
-⋮----
-// Filtro por tipo
+// Filtro por rol
 ⋮----
 // Filtro por estado (activo/inactivo)
 ⋮----
@@ -3705,159 +3145,139 @@ export const getTeams = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
 // Ordenamiento
 ⋮----
-// Obtener equipos paginados y filtrados
+// Obtener usuarios paginados y filtrados
 ⋮----
-// Contar el total de equipos que coinciden con los filtros
+.select('-password'); // Excluir el campo de contraseña
 ⋮----
-// Calcular el total de páginas
+// Contar el total de usuarios que coinciden con los filtros
 ⋮----
 /**
- * Obtener un equipo por ID
- * @route GET /api/equipos/:id
- * @access Private
+ * Obtener un usuario por ID
+ * @route GET /api/usuarios/:id
+ * @access Private (Admin/Self)
  */
-export const getTeamById = async (req: AuthenticatedRequest, res: Response) =>
+export const getUserById = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
 // Verificar que el ID tenga un formato válido de MongoDB
 ⋮----
-// Obtener el equipo con los datos de entrenador y jugadores
+// Obtener el usuario (sin incluir la contraseña)
+⋮----
+// Verificar permisos: solo el propio usuario o un admin puede ver los detalles
 ⋮----
 /**
- * Crear un nuevo equipo
- * @route POST /api/equipos
- * @access Private (Admin/Entrenador)
+ * Crear un nuevo usuario
+ * @route POST /api/usuarios
+ * @access Private (Admin)
  */
-export const createTeam = async (req: AuthenticatedRequest, res: Response) =>
+export const createUser = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
 // Validar errores de la solicitud
 ⋮----
-// Verificar permisos (solo admin o entrenador pueden crear equipos)
+// Verificar si el usuario ya existe
 ⋮----
-// Verificar que el entrenador exista y tenga el rol adecuado
+// Si se especifica un rol, verificar que sea válido
 ⋮----
-// Crear el equipo
+// Verificar que solo admin pueda crear otros usuarios admin
 ⋮----
-// Obtener el equipo con los datos de entrenador
+// Crear el usuario
+⋮----
+// Obtener usuario sin contraseña
 ⋮----
 /**
- * Actualizar un equipo existente
- * @route PUT /api/equipos/:id
- * @access Private (Admin/Entrenador del equipo)
+ * Actualizar un usuario existente
+ * @route PUT /api/usuarios/:id
+ * @access Private (Admin/Self)
  */
-export const updateTeam = async (req: AuthenticatedRequest, res: Response) =>
+export const updateUser = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
 // Validar errores de la solicitud
 ⋮----
 // Verificar que el ID tenga un formato válido de MongoDB
 ⋮----
-// Buscar el equipo
+// Buscar el usuario a actualizar
 ⋮----
-// Verificar permisos: solo admin o el entrenador del equipo puede actualizar
+// Verificar permisos: solo el propio usuario o un admin puede actualizar
 ⋮----
-// Verificar que el entrenador exista y tenga el rol adecuado
+// Verificar restricciones adicionales:
+// 1. Solo admin puede cambiar roles
 ⋮----
-// Actualizar los campos del equipo
+// 2. Solo admin puede cambiar el estado de activación
 ⋮----
-if (activo !== undefined && isAdmin) team.activo = activo; // Solo admin puede cambiar el estado
+// 3. Si un usuario se está autoactualizando, no puede desactivarse a sí mismo
+⋮----
+// 4. Un admin no puede quitarse a sí mismo los privilegios de admin
+⋮----
+// 5. Si se cambia el email, verificar que no exista ya
+⋮----
+// Actualizar los campos del usuario
 ⋮----
 // Guardar los cambios
 ⋮----
-// Obtener el equipo actualizado con los datos de entrenador
+// Obtener usuario actualizado sin contraseña
 ⋮----
 /**
- * Añadir/eliminar jugadores de un equipo
- * @route PUT /api/equipos/:id/jugadores
- * @access Private (Admin/Entrenador del equipo)
+ * Cambiar la contraseña de un usuario
+ * @route PUT /api/usuarios/:id/password
+ * @access Private (Admin/Self)
  */
-export const updateTeamPlayers = async (req: AuthenticatedRequest, res: Response) =>
+export const updatePassword = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
 // Validar errores de la solicitud
 ⋮----
-const { jugadores, accion } = req.body; // accion: 'agregar' o 'eliminar'
-⋮----
 // Verificar que el ID tenga un formato válido de MongoDB
 ⋮----
-// Verificar que se proporcionó una lista de jugadores
+// Buscar el usuario
 ⋮----
-// Buscar el equipo
+// Verificar permisos: solo el propio usuario o un admin puede cambiar la contraseña
 ⋮----
-// Verificar permisos: solo admin o el entrenador del equipo puede actualizar jugadores
+// Si es el propio usuario actualizando su contraseña, verificar la contraseña actual
 ⋮----
-// Verificar que todos los IDs de jugadores sean válidos
-⋮----
-// Inicializar el array de jugadores si no existe
-⋮----
-// Convertir los IDs de jugadores a ObjectId
-⋮----
-// Añadir o eliminar jugadores según la acción
-⋮----
-// Verificar que los jugadores existan
-⋮----
-// Añadir jugadores que no estén ya en el equipo
-⋮----
-// Eliminar jugadores del equipo
-⋮----
-// Guardar los cambios
-⋮----
-// Obtener equipo actualizado con los datos de jugadores
+// Actualizar la contraseña
 ⋮----
 /**
- * Eliminar un equipo
- * @route DELETE /api/equipos/:id
- * @access Private (Admin/Entrenador del equipo)
+ * Eliminar un usuario
+ * @route DELETE /api/usuarios/:id
+ * @access Private (Admin)
  */
-export const deleteTeam = async (req: AuthenticatedRequest, res: Response) =>
+export const deleteUser = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
 // Verificar que el ID tenga un formato válido de MongoDB
 ⋮----
-// Buscar el equipo
+// Verificar que solo los admin puedan eliminar usuarios
 ⋮----
-// Verificar permisos: solo admin o el entrenador del equipo puede eliminar
+// Verificar que un admin no pueda eliminarse a sí mismo
 ⋮----
-// Eliminar el equipo
+// Buscar el usuario a eliminar
+⋮----
+// Eliminar el usuario
 ⋮----
 // Exportar controlador como objeto
 ````
 
-## File: backend/src/models/Team.ts
+## File: backend/src/routes/authRoutes.ts
 ````typescript
-import mongoose, { Document, Schema } from 'mongoose';
+import express from 'express';
+import { body } from 'express-validator';
+import authController from '../controllers/authController';
+import { authenticate } from '../middleware/auth';
 ⋮----
-export interface ITeam extends Document {
-  nombre: string;
-  descripcion?: string;
-  categoria: 'juvenil' | 'adulto' | 'senior' | 'femenino' | 'masculino';
-  tipo: 'futbol' | 'futsal' | 'futbol7';
-  fechaCreacion: Date;
-  entrenador?: mongoose.Types.ObjectId;
-  jugadores?: mongoose.Types.ObjectId[];
-  logo?: string;
-  activo: boolean;
-}
+/**
+ * @route POST /api/auth/register
+ * @desc Registrar un nuevo usuario
+ * @access Public
+ */
 ⋮----
-// Índices para mejorar el rendimiento de búsquedas comunes
-````
-
-## File: backend/src/models/User.ts
-````typescript
-import mongoose, { Document, Schema } from 'mongoose';
-import bcrypt from 'bcrypt';
+/**
+ * @route POST /api/auth/login
+ * @desc Iniciar sesión de usuario
+ * @access Public
+ */
 ⋮----
-export interface IUser extends Document {
-  nombre: string;
-  apellido: string;
-  email: string;
-  password: string;
-  rol: 'admin' | 'veedor' | 'entrenador' | 'usuario';
-  activo: boolean;
-  fechaCreacion: Date;
-  ultimoAcceso?: Date;
-  comparePassword: (candidatePassword: string) => Promise<boolean>;
-}
-⋮----
-// Hash de la contraseña antes de guardar
-⋮----
-// Método para comparar contraseñas
+/**
+ * @route GET /api/auth/me
+ * @desc Obtener el perfil del usuario actual
+ * @access Private
+ */
 ````
 
 ## File: backend/src/routes/index.ts
@@ -3872,6 +3292,94 @@ import teamRoutes from './teamRoutes';
 // Rutas de usuarios
 ⋮----
 // Rutas de equipos
+````
+
+## File: backend/src/routes/teamRoutes.ts
+````typescript
+import express from 'express';
+import { body, param } from 'express-validator';
+import teamController from '../controllers/teamController';
+import { authenticate, authorize } from '../middleware/auth';
+⋮----
+/**
+ * @route GET /api/equipos
+ * @desc Obtener todos los equipos (con paginación y filtros)
+ * @access Private
+ */
+⋮----
+/**
+ * @route GET /api/equipos/:id
+ * @desc Obtener un equipo por ID
+ * @access Private
+ */
+⋮----
+/**
+ * @route POST /api/equipos
+ * @desc Crear un nuevo equipo
+ * @access Private (Admin/Entrenador)
+ */
+⋮----
+/**
+ * @route PUT /api/equipos/:id
+ * @desc Actualizar un equipo existente
+ * @access Private (Admin/Entrenador del equipo)
+ */
+⋮----
+/**
+ * @route PUT /api/equipos/:id/jugadores
+ * @desc Añadir o eliminar jugadores de un equipo
+ * @access Private (Admin/Entrenador del equipo)
+ */
+⋮----
+/**
+ * @route DELETE /api/equipos/:id
+ * @desc Eliminar un equipo
+ * @access Private (Admin)
+ */
+````
+
+## File: backend/src/routes/userRoutes.ts
+````typescript
+import express from 'express';
+import { body, param } from 'express-validator';
+import userController from '../controllers/userController';
+import { authenticate, authorize } from '../middleware/auth';
+⋮----
+/**
+ * @route GET /api/usuarios
+ * @desc Obtener todos los usuarios (con paginación y filtros)
+ * @access Private (Admin)
+ */
+⋮----
+/**
+ * @route GET /api/usuarios/:id
+ * @desc Obtener un usuario por ID
+ * @access Private (Admin/Self)
+ */
+⋮----
+/**
+ * @route POST /api/usuarios
+ * @desc Crear un nuevo usuario
+ * @access Private (Admin)
+ */
+⋮----
+/**
+ * @route PUT /api/usuarios/:id
+ * @desc Actualizar un usuario existente
+ * @access Private (Admin/Self)
+ */
+⋮----
+/**
+ * @route PUT /api/usuarios/:id/password
+ * @desc Cambiar la contraseña de un usuario
+ * @access Private (Admin/Self)
+ */
+⋮----
+/**
+ * @route DELETE /api/usuarios/:id
+ * @desc Eliminar un usuario
+ * @access Private (Admin)
+ */
 ````
 
 ## File: backend/src/tests/auth.test.ts
@@ -4375,84 +3883,40 @@ src/
 - Formik & Yup
 ````
 
-## File: frontend/src/api/authService.ts
+## File: frontend/src/components/auth/ProtectedRoute.tsx
 ````typescript
-import axios from 'axios';
-import { RegisterData, LoginData, AuthResponse } from '../types';
+import React from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { authService } from '../../api';
 ⋮----
-// Configuración base para axios
-⋮----
-// Transformar datos de registro para adaptarlos al backend
-const transformRegisterData = (data: RegisterData) =>
-⋮----
-// Mapeo de roles del frontend al backend
-const transformRole = (role: string): string =>
-⋮----
-// Servicio de autenticación
-⋮----
-// Registrar usuario
-⋮----
-// Iniciar sesión
-⋮----
-// Cerrar sesión
-⋮----
-// Obtener perfil del usuario
-⋮----
-// Verificar si el usuario está autenticado
-````
-
-## File: frontend/src/api/teamService.ts
-````typescript
-import axios from 'axios';
-import { TeamFormData, TeamResponse, TeamsResponse, TeamPaginationParams } from '../types';
+interface ProtectedRouteProps {
+  allowedRoles?: string[];
+}
 ⋮----
 /**
- * Servicio para gestionar equipos en el backend
+ * Componente para proteger rutas que requieren autenticación
+ * Si no hay un usuario autenticado, redirige a la página de login
+ * Si se especifican roles permitidos, verifica que el usuario tenga uno de esos roles
  */
+const ProtectedRoute: React.FC<ProtectedRouteProps> = (
 ⋮----
-/**
-   * Obtiene un listado paginado de equipos
-   * @param params Parámetros de paginación
-   * @returns Respuesta con listado de equipos
-   */
-async getTeams(params: TeamPaginationParams): Promise<TeamsResponse>
+// Si no hay un usuario autenticado, redirigir a login
 ⋮----
-/**
-   * Obtiene un equipo por su ID
-   * @param teamId ID del equipo
-   * @returns Respuesta con datos del equipo
-   */
-async getTeamById(teamId: string): Promise<TeamResponse>
+// Si hay roles permitidos especificados, verificar que el usuario tenga uno de ellos
 ⋮----
-/**
-   * Crea un nuevo equipo
-   * @param teamData Datos del equipo a crear
-   * @returns Respuesta con el equipo creado
-   */
-async createTeam(teamData: TeamFormData): Promise<TeamResponse>
+// Si no hay datos de usuario en localStorage pero hay un token,
+// es posible que la sesión esté corrupta
+authService.logout(); // Limpiar la sesión
 ⋮----
-/**
-   * Actualiza un equipo existente
-   * @param teamId ID del equipo a actualizar
-   * @param teamData Datos actualizados del equipo
-   * @returns Respuesta con el equipo actualizado
-   */
-async updateTeam(teamId: string, teamData: TeamFormData): Promise<TeamResponse>
+// Mapear rol del backend al frontend si es necesario
 ⋮----
-// Crear un nuevo objeto con la estructura correcta para el backend
+// Verificar si el rol del usuario está entre los permitidos
 ⋮----
-// Solo añadir entrenador si existe
+// El usuario no tiene un rol permitido, redirigir a una página de acceso denegado
 ⋮----
-// Solo añadir logo si es una URL válida
+// Error al parsear los datos del usuario, limpiar la sesión
 ⋮----
-// No añadir el campo logo si no es una URL válida
-⋮----
-/**
-   * Elimina un equipo
-   * @param teamId ID del equipo a eliminar
-   * @returns Respuesta con resultado de la operación
-   */
-async deleteTeam(teamId: string): Promise<TeamResponse>
+// El usuario está autenticado y tiene los permisos necesarios
 ````
 
 ## File: frontend/src/components/layout/__tests__/Footer.test.tsx
@@ -4595,6 +4059,61 @@ keepMounted: true, // Better open performance on mobile
 {/* Desktop drawer */}
 ````
 
+## File: frontend/src/components/users/UserForm.tsx
+````typescript
+import React, { useEffect } from 'react';
+import {
+  Box,
+  Button,
+  TextField,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  Typography,
+  CircularProgress,
+  Switch,
+  FormControlLabel,
+  Divider,
+  Paper
+} from '@mui/material';
+import { Formik, Form, FormikHelpers } from 'formik';
+⋮----
+import { useUsers } from '../../hooks/useUsers';
+import { UserFormData } from '../../types';
+⋮----
+interface UserFormProps {
+  userId?: string;
+  onCancel: () => void;
+}
+⋮----
+// Esquema de validación
+⋮----
+is: (val: string) => !val, // Solo requerido si no hay ID (es creación)
+⋮----
+.transform((value) => value || undefined) // Transformar cadena vacía a undefined
+⋮----
+// Valores iniciales para el formulario
+⋮----
+password: '', // Vacío para edición
+⋮----
+// Manejar envío del formulario
+const handleSubmit = async (
+    values: UserFormData & { _id?: string },
+    { setSubmitting, resetForm }: FormikHelpers<UserFormData & { _id?: string }>
+) =>
+⋮----
+// Si password está vacío en modo edición, eliminarlo para no enviarlo
+⋮----
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+⋮----
+onCancel(); // Cerrar formulario después de guardar exitosamente
+⋮----
+// Mostrar spinner mientras se carga el usuario para edición
+````
+
 ## File: frontend/src/hooks/__tests__/useTeams.test.tsx
 ````typescript
 import { describe, test, expect, vi } from 'vitest';
@@ -4714,6 +4233,70 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 // Verificar que se llama al thunk con los parámetros correctos
 ````
 
+## File: frontend/src/hooks/useAuth.ts
+````typescript
+import { useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '../store';
+import { 
+  selectUser, 
+  selectIsAuthenticated, 
+  selectLoading, 
+  selectError, 
+  selectUserRole
+} from '../store/slices/auth/selectors';
+import { 
+  login, 
+  register, 
+  logout, 
+  getCurrentUser 
+} from '../store/slices/auth/thunks';
+import { clearErrors } from '../store/slices/auth/authSlice';
+import { LoginData, RegisterData } from '../types';
+⋮----
+// Hook personalizado para la autenticación
+export const useAuth = () =>
+⋮----
+// Estado
+⋮----
+// Acciones
+⋮----
+// Función para verificar si el usuario tiene un rol específico
+⋮----
+// Mapear roles del backend al frontend si es necesario
+⋮----
+// Retornar todo lo necesario
+⋮----
+// Estado
+⋮----
+// Acciones
+````
+
+## File: frontend/src/hooks/useTeams.ts
+````typescript
+import { useCallback, useMemo } from 'react';
+import { useAppDispatch, useAppSelector } from '../store';
+import { teamsSelectors, teamsThunks } from '../store/slices/teams';
+import { TeamFormData, TeamPaginationParams } from '../types';
+⋮----
+/**
+ * Hook personalizado para gestionar equipos
+ * @returns Métodos y estado relacionados con equipos
+ */
+export const useTeams = () =>
+⋮----
+// Seleccionar datos del estado
+⋮----
+// Métodos memorizados para reducir re-renderizados
+⋮----
+// Objeto con todos los valores y métodos
+⋮----
+// Datos
+⋮----
+// Métodos
+⋮----
+// Utilidades para obtener equipos específicos
+````
+
 ## File: frontend/src/index.css
 ````css
 /* Estilos globales */
@@ -4824,116 +4407,6 @@ expect(console.log).toHaveBeenCalledTimes(3); // Previous State, Action, Next St
 // Act
 ⋮----
 // Assert
-````
-
-## File: frontend/src/store/__tests__/slices/teams/thunks.test.ts
-````typescript
-import { describe, test, expect, beforeEach } from 'vitest';
-import {
-  fetchTeams,
-  fetchTeamById,
-  createTeam,
-  updateTeam,
-  deleteTeam
-} from '../../../slices/teams/thunks';
-import {
-  teamsLoading,
-  teamsLoadSuccess,
-  teamLoadSuccess,
-  teamCreateSuccess,
-  teamUpdateSuccess,
-  teamDeleteSuccess,
-  teamsFail
-} from '../../../slices/teams/teamsSlice';
-import { teamService } from '../../../../api';
-import { TeamListItem, TeamFormData, PaginationParams } from '../../../../types';
-import { vi } from 'vitest';
-⋮----
-// Mock del servicio de equipos
-⋮----
-// Mock de equipo para pruebas
-⋮----
-// Mock de datos de formulario
-⋮----
-// Mock de dispatch
-⋮----
-// Limpiar mocks antes de cada prueba
-⋮----
-// Configurar mock para retornar datos de éxito
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Verificar llamada al servicio
-⋮----
-// Configurar mock para retornar datos de error
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Configurar mock para lanzar excepción
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Configurar mock para retornar datos de éxito
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Verificar llamada al servicio
-⋮----
-// Configurar mock para retornar datos de error
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Configurar mock para retornar datos de éxito
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Verificar llamada al servicio
-⋮----
-// Configurar mock para retornar datos de error
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Configurar mock para retornar datos de éxito
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Verificar llamada al servicio
-⋮----
-// Configurar mock para retornar datos de error
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Configurar mock para retornar datos de éxito
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
-⋮----
-// Verificar llamada al servicio
-⋮----
-// Configurar mock para retornar datos de error
-⋮----
-// Ejecutar el thunk
-⋮----
-// Verificar que se llama a las acciones correctas
 ````
 
 ## File: frontend/src/store/__tests__/slices/users/thunks.test.ts
@@ -5157,6 +4630,34 @@ npm test -- middleware
 ```
 ````
 
+## File: frontend/src/store/slices/auth/selectors.ts
+````typescript
+import { RootState } from '../../index';
+⋮----
+// Selector para obtener el usuario autenticado
+export const selectUser = (state: RootState)
+⋮----
+// Selector para obtener el token
+export const selectToken = (state: RootState)
+⋮----
+// Selector para verificar si el usuario está autenticado
+export const selectIsAuthenticated = (state: RootState)
+⋮----
+// Selector para obtener el estado de carga
+export const selectLoading = (state: RootState)
+⋮----
+// Selector para obtener errores
+export const selectError = (state: RootState)
+⋮----
+// Selector para obtener el rol del usuario
+export const selectUserRole = (state: RootState)
+⋮----
+// Selector para verificar si el usuario tiene un rol específico
+export const selectHasRole = (state: RootState, role: string) =>
+⋮----
+// Mapear roles del backend al frontend si es necesario
+````
+
 ## File: frontend/src/store/slices/index.ts
 ````typescript
 import authReducer from './auth/authSlice';
@@ -5165,6 +4666,80 @@ import usersReducer from './users';
 // import teamsReducer from './teams/teamsSlice';
 ⋮----
 // teamsReducer
+````
+
+## File: frontend/src/store/slices/teams/teamsSlice.ts
+````typescript
+import { createSlice } from '@reduxjs/toolkit';
+import { TeamListItem } from '../../../types';
+⋮----
+// Definir interfaces para el estado
+interface TeamsState {
+  teams: TeamListItem[];
+  selectedTeam: TeamListItem | null;
+  loading: boolean;
+  error: string | null;
+  total: number;
+  page: number;
+  limit: number;
+}
+⋮----
+// Estado inicial
+⋮----
+// Interfaces para los payloads
+interface FetchTeamsPayload {
+  teams: TeamListItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+⋮----
+// Crear slice
+⋮----
+// Limpiar equipo seleccionado
+⋮----
+// Limpiar errores
+⋮----
+// Acciones para manejar estados de carga y resultados
+⋮----
+// Exportar acciones y reducer
+````
+
+## File: frontend/src/store/slices/teams/thunks.ts
+````typescript
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { teamService } from '../../../api';
+import { TeamFormData, TeamPaginationParams } from '../../../types';
+import { 
+  teamsLoading, 
+  teamsLoadSuccess, 
+  teamLoadSuccess, 
+  teamCreateSuccess, 
+  teamUpdateSuccess, 
+  teamDeleteSuccess, 
+  teamsFail 
+} from '../../../store/slices/teams';
+import { AppDispatch } from '../../index';
+⋮----
+/**
+ * Thunk para obtener listado de equipos
+ */
+⋮----
+/**
+ * Thunk para obtener equipo por ID
+ */
+⋮----
+/**
+ * Thunk para crear un nuevo equipo
+ */
+⋮----
+/**
+ * Thunk para actualizar un equipo existente
+ */
+⋮----
+/**
+ * Thunk para eliminar un equipo
+ */
 ````
 
 ## File: frontend/src/store/slices/users/selectors.ts
@@ -5200,6 +4775,56 @@ export const selectHasUsers = (state: RootState)
 ⋮----
 // Selector para obtener usuario por ID
 export const selectUserById = (state: RootState, userId: string)
+````
+
+## File: frontend/src/types/teams.ts
+````typescript
+// Interfaz para objetos de equipo en listados
+export interface TeamListItem {
+  _id: string;
+  nombre: string;
+  categoria: string;
+  tipo: string;
+  entrenador?: string;
+  logoUrl?: string;
+  activo: boolean;
+}
+⋮----
+// Interfaz para la respuesta de listado de equipos
+export interface TeamsResponse {
+  success: boolean;
+  equipos?: TeamListItem[];
+  totalEquipos?: number;
+  message?: string;
+}
+⋮----
+// Interfaz para la respuesta de un solo equipo
+export interface TeamResponse {
+  success: boolean;
+  equipo?: TeamListItem;
+  message?: string;
+}
+⋮----
+// Interfaz para parámetros de paginación en solicitudes de equipos
+export interface TeamPaginationParams {
+  page: number;
+  limit: number;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  search?: string;
+  categoria?: string;
+  tipo?: string;
+}
+⋮----
+// Interfaz para datos para crear/actualizar equipo
+export interface TeamFormData {
+  nombre: string;
+  categoria: string;
+  tipo: string;
+  entrenador?: string;
+  logoUrl?: string;
+  activo?: boolean;
+}
 ````
 
 ## File: frontend/src/types/users.ts
@@ -5317,139 +4942,274 @@ jobs:
       run: npm run test:backend
 ````
 
-## File: .gitignore
-````
-# Dependencias
-node_modules/
-.pnp/
-.pnp.js
-
-# Producción
-/frontend/build
-/frontend/dist
-/backend/dist
-/frontend/public/
-
-# Archivos de desarrollo
-.DS_Store
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.*
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Archivos de cobertura
-/coverage
-
-# Archivos de configuración del IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Misc
-.DS_Store
-*.pem
-
-# Archivos de typescript
-*.tsbuildinfo
-
-# Archivos de dependencias
-package-lock.json
-yarn.lock
-
-# Archivos de debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Local history
-.history/ 
-
-# Repomix
-repomix.config.json
-.repomixignore
-
-# Carpetas de caché
-.vite/
-.vitest-cache/
-````
-
-## File: backend/src/controllers/authController.ts
+## File: backend/src/controllers/teamController.ts
 ````typescript
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { validationResult } from 'express-validator';
-import { generateToken } from '../utils/jwt';
+import Team from '../models/Team';
 import User from '../models/User';
 import { AuthenticatedRequest } from '../middleware/auth';
+import mongoose from 'mongoose';
 ⋮----
 /**
- * Registrar un nuevo usuario
- * @route POST /api/auth/register
- * @access Public
- */
-export const register = async (req: Request, res: Response) =>
-⋮----
-// Validar errores de la solicitud
-⋮----
-// Verificar si el usuario ya existe
-⋮----
-// Si se especifica un rol, verificar que sea válido
-⋮----
-// Crear el usuario
-⋮----
-password, // La contraseña será hasheada en el pre-save hook del modelo
-rol: rol || 'usuario', // Por defecto es 'usuario'
-⋮----
-// Generar token JWT
-⋮----
-// Responder con el token y los datos del usuario (sin la contraseña)
-⋮----
-/**
- * Iniciar sesión de usuario
- * @route POST /api/auth/login
- * @access Public
- */
-export const login = async (req: Request, res: Response) =>
-⋮----
-// Verificar si email o password están presentes
-⋮----
-// Validar errores de la solicitud
-⋮----
-// Buscar el usuario
-⋮----
-// Verificar si el usuario está activo
-// Solo verificamos si la propiedad activo existe y es explícitamente false
-⋮----
-// Verificar la contraseña
-⋮----
-// Actualizar último acceso
-⋮----
-// Generar token JWT
-⋮----
-// Responder con el token y los datos del usuario (sin la contraseña)
-⋮----
-/**
- * Obtener el perfil del usuario actual
- * @route GET /api/auth/me
+ * Obtener todos los equipos (con paginación y filtros)
+ * @route GET /api/equipos
  * @access Private
  */
-export const getMe = async (req: AuthenticatedRequest, res: Response) =>
+export const getTeams = async (req: AuthenticatedRequest, res: Response) =>
 ⋮----
-// El usuario ya está en req.user gracias al middleware de autenticación
+// Construir filtros
+⋮----
+// Filtro de búsqueda por nombre o descripción
+⋮----
+// Filtro por categoría
+⋮----
+// Filtro por tipo
+⋮----
+// Filtro por estado (activo/inactivo)
+⋮----
+// Calcular el índice de inicio para la paginación
+⋮----
+// Ordenamiento
+⋮----
+// Obtener equipos paginados y filtrados
+⋮----
+// Contar el total de equipos que coinciden con los filtros
+⋮----
+// Calcular el total de páginas
+⋮----
+/**
+ * Obtener un equipo por ID
+ * @route GET /api/equipos/:id
+ * @access Private
+ */
+export const getTeamById = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Obtener el equipo con los datos de entrenador y jugadores
+⋮----
+/**
+ * Crear un nuevo equipo
+ * @route POST /api/equipos
+ * @access Private (Admin/Entrenador)
+ */
+export const createTeam = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar permisos (solo admin o entrenador pueden crear equipos)
+⋮----
+// Verificar que el entrenador exista y tenga el rol adecuado
+⋮----
+// Crear el equipo
+⋮----
+// Obtener el equipo con los datos de entrenador
+⋮----
+/**
+ * Actualizar un equipo existente
+ * @route PUT /api/equipos/:id
+ * @access Private (Admin/Entrenador del equipo)
+ */
+export const updateTeam = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Buscar el equipo
+⋮----
+// Verificar permisos: solo admin o el entrenador del equipo puede actualizar
+⋮----
+// Verificar que el entrenador exista y tenga el rol adecuado
+⋮----
+// Actualizar los campos del equipo
+⋮----
+if (activo !== undefined && isAdmin) team.activo = activo; // Solo admin puede cambiar el estado
+⋮----
+// Guardar los cambios
+⋮----
+// Obtener el equipo actualizado con los datos de entrenador
+⋮----
+/**
+ * Añadir/eliminar jugadores de un equipo
+ * @route PUT /api/equipos/:id/jugadores
+ * @access Private (Admin/Entrenador del equipo)
+ */
+export const updateTeamPlayers = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+const { jugadores, accion } = req.body; // accion: 'agregar' o 'eliminar'
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Verificar que se proporcionó una lista de jugadores
+⋮----
+// Buscar el equipo
+⋮----
+// Verificar permisos: solo admin o el entrenador del equipo puede actualizar jugadores
+⋮----
+// Verificar que todos los IDs de jugadores sean válidos
+⋮----
+// Inicializar el array de jugadores si no existe
+⋮----
+// Convertir los IDs de jugadores a ObjectId
+⋮----
+// Añadir o eliminar jugadores según la acción
+⋮----
+// Verificar que los jugadores existan
+⋮----
+// Añadir jugadores que no estén ya en el equipo
+⋮----
+// Eliminar jugadores del equipo
+⋮----
+// Guardar los cambios
+⋮----
+// Obtener equipo actualizado con los datos de jugadores
+⋮----
+/**
+ * Eliminar un equipo
+ * @route DELETE /api/equipos/:id
+ * @access Private (Admin/Entrenador del equipo)
+ */
+export const deleteTeam = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Verificar que el ID tenga un formato válido de MongoDB
+⋮----
+// Buscar el equipo
+⋮----
+// Verificar permisos: solo admin o el entrenador del equipo puede eliminar
+⋮----
+// Eliminar el equipo
+⋮----
+// Exportar controlador como objeto
+````
+
+## File: backend/src/models/Team.ts
+````typescript
+import mongoose, { Document, Schema } from 'mongoose';
+⋮----
+export interface ITeam extends Document {
+  nombre: string;
+  descripcion?: string;
+  categoria: 'juvenil' | 'adulto' | 'senior' | 'femenino' | 'masculino';
+  tipo: 'futbol' | 'futsal' | 'futbol7';
+  fechaCreacion: Date;
+  entrenador?: mongoose.Types.ObjectId;
+  jugadores?: mongoose.Types.ObjectId[];
+  logo?: string;
+  activo: boolean;
+}
+⋮----
+// Índices para mejorar el rendimiento de búsquedas comunes
+````
+
+## File: backend/src/models/User.ts
+````typescript
+import mongoose, { Document, Schema } from 'mongoose';
+import bcrypt from 'bcrypt';
+⋮----
+export interface IUser extends Document {
+  nombre: string;
+  apellido: string;
+  email: string;
+  password: string;
+  rol: 'admin' | 'veedor' | 'entrenador' | 'usuario';
+  activo: boolean;
+  fechaCreacion: Date;
+  ultimoAcceso?: Date;
+  comparePassword: (candidatePassword: string) => Promise<boolean>;
+}
+⋮----
+// Hash de la contraseña antes de guardar
+⋮----
+// Método para comparar contraseñas
+````
+
+## File: frontend/src/api/authService.ts
+````typescript
+import axios from 'axios';
+import { RegisterData, LoginData, AuthResponse } from '../types';
+⋮----
+// Configuración base para axios
+⋮----
+// Transformar datos de registro para adaptarlos al backend
+const transformRegisterData = (data: RegisterData) =>
+⋮----
+// Mapeo de roles del frontend al backend
+const transformRole = (role: string): string =>
+⋮----
+// Servicio de autenticación
+⋮----
+// Registrar usuario
+⋮----
+// Iniciar sesión
+⋮----
+// Cerrar sesión
+⋮----
+// Obtener perfil del usuario
+⋮----
+// Verificar si el usuario está autenticado
 ````
 
 ## File: frontend/src/api/index.ts
 ````typescript
 
+````
+
+## File: frontend/src/api/teamService.ts
+````typescript
+import axios from 'axios';
+import { TeamFormData, TeamResponse, TeamsResponse, TeamPaginationParams } from '../types';
+⋮----
+/**
+ * Servicio para gestionar equipos en el backend
+ */
+⋮----
+/**
+   * Obtiene un listado paginado de equipos
+   * @param params Parámetros de paginación
+   * @returns Respuesta con listado de equipos
+   */
+async getTeams(params: TeamPaginationParams): Promise<TeamsResponse>
+⋮----
+/**
+   * Obtiene un equipo por su ID
+   * @param teamId ID del equipo
+   * @returns Respuesta con datos del equipo
+   */
+async getTeamById(teamId: string): Promise<TeamResponse>
+⋮----
+/**
+   * Crea un nuevo equipo
+   * @param teamData Datos del equipo a crear
+   * @returns Respuesta con el equipo creado
+   */
+async createTeam(teamData: TeamFormData): Promise<TeamResponse>
+⋮----
+/**
+   * Actualiza un equipo existente
+   * @param teamId ID del equipo a actualizar
+   * @param teamData Datos actualizados del equipo
+   * @returns Respuesta con el equipo actualizado
+   */
+async updateTeam(teamId: string, teamData: TeamFormData): Promise<TeamResponse>
+⋮----
+// Crear un nuevo objeto con la estructura correcta para el backend
+⋮----
+// Solo añadir entrenador si existe
+⋮----
+// Solo añadir logo si es una URL válida
+⋮----
+// No añadir el campo logo si no es una URL válida
+⋮----
+/**
+   * Elimina un equipo
+   * @param teamId ID del equipo a eliminar
+   * @returns Respuesta con resultado de la operación
+   */
+async deleteTeam(teamId: string): Promise<TeamResponse>
 ````
 
 ## File: frontend/src/api/userService.ts
@@ -5591,138 +5351,114 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>
 // Mostrar error (validación del formulario o error de autenticación)
 ````
 
-## File: frontend/src/pages/Register.tsx
+## File: frontend/src/store/__tests__/slices/teams/thunks.test.ts
 ````typescript
-import React, { useState, useEffect } from 'react';
+import { describe, test, expect, beforeEach } from 'vitest';
 import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  TextField,
-  Typography,
-  Alert,
-  Link,
-  Grid,
-  InputAdornment,
-  IconButton,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  SelectChangeEvent,
-  CircularProgress
-} from '@mui/material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useAuth } from '../hooks/useAuth';
-⋮----
-// Tipos disponibles de usuario
-⋮----
-// Redireccionar si ya está autenticado
-⋮----
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-⋮----
-const handleSelectChange = (e: SelectChangeEvent) =>
-⋮----
-const handleTogglePassword = () =>
-⋮----
-const handleToggleConfirmPassword = () =>
-⋮----
-const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>
-⋮----
-// Validación básica del formulario
-⋮----
-// Utilizar el hook de autenticación para registrarse
-⋮----
-// Mostrar error (validación del formulario o error de autenticación)
-````
-
-## File: frontend/src/pages/Users.tsx
-````typescript
-import React, { useEffect, useState } from 'react';
+  fetchTeams,
+  fetchTeamById,
+  createTeam,
+  updateTeam,
+  deleteTeam
+} from '../../../slices/teams/thunks';
 import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Button,
-  TextField,
-  MenuItem,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Stack,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  SelectChangeEvent,
-  CircularProgress
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  Search as SearchIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Refresh as RefreshIcon
-} from '@mui/icons-material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useUsers } from '../hooks/useUsers';
-import UserForm from '../components/users/UserForm';
-import { PaginationParams, UserListItem } from '../types';
+  teamsLoading,
+  teamsLoadSuccess,
+  teamLoadSuccess,
+  teamCreateSuccess,
+  teamUpdateSuccess,
+  teamDeleteSuccess,
+  teamsFail
+} from '../../../slices/teams/teamsSlice';
+import { teamService } from '../../../../api';
+import { TeamListItem, TeamFormData, PaginationParams } from '../../../../types';
+import { vi } from 'vitest';
 ⋮----
-// Estados locales para filtros y paginación
+// Mock del servicio de equipos
 ⋮----
-// Estados para modales
+// Mock de equipo para pruebas
 ⋮----
-// Cargar usuarios al montar el componente y cuando cambien los filtros
+// Mock de datos de formulario
 ⋮----
-page: page + 1, // DataGrid usa índice 0, backend usa índice 1
+// Mock de dispatch
 ⋮----
-// Manejadores para filtros
-const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+// Limpiar mocks antes de cada prueba
 ⋮----
-setPage(0); // Resetear página al cambiar filtros
+// Configurar mock para retornar datos de éxito
 ⋮----
-const handleRoleFilterChange = (event: SelectChangeEvent) =>
+// Ejecutar el thunk
 ⋮----
-const handleStatusFilterChange = (event: SelectChangeEvent) =>
+// Verificar que se llama a las acciones correctas
 ⋮----
-// Manejadores para modales
-const handleOpenCreateModal = () =>
+// Verificar llamada al servicio
 ⋮----
-const handleCloseCreateModal = () =>
+// Configurar mock para retornar datos de error
 ⋮----
-const handleOpenEditModal = (id: string) =>
+// Ejecutar el thunk
 ⋮----
-const handleCloseEditModal = () =>
+// Verificar que se llama a las acciones correctas
 ⋮----
-const handleOpenDeleteModal = (id: string) =>
+// Configurar mock para lanzar excepción
 ⋮----
-const handleCloseDeleteModal = () =>
+// Ejecutar el thunk
 ⋮----
-// Confirmar eliminación de usuario
-const handleConfirmDelete = () =>
+// Verificar que se llama a las acciones correctas
 ⋮----
-// Refrescar lista de usuarios
-const refreshUsers = () =>
+// Configurar mock para retornar datos de éxito
 ⋮----
-// Definición de columnas para la tabla
+// Ejecutar el thunk
 ⋮----
-setPage(model.page);
-setPageSize(model.pageSize);
+// Verificar que se llama a las acciones correctas
 ⋮----
-{/* Modal para crear usuario */}
+// Verificar llamada al servicio
 ⋮----
-{/* Modal para editar usuario */}
+// Configurar mock para retornar datos de error
 ⋮----
-{/* Modal de confirmación para eliminar usuario */}
+// Ejecutar el thunk
+⋮----
+// Verificar que se llama a las acciones correctas
+⋮----
+// Configurar mock para retornar datos de éxito
+⋮----
+// Ejecutar el thunk
+⋮----
+// Verificar que se llama a las acciones correctas
+⋮----
+// Verificar llamada al servicio
+⋮----
+// Configurar mock para retornar datos de error
+⋮----
+// Ejecutar el thunk
+⋮----
+// Verificar que se llama a las acciones correctas
+⋮----
+// Configurar mock para retornar datos de éxito
+⋮----
+// Ejecutar el thunk
+⋮----
+// Verificar que se llama a las acciones correctas
+⋮----
+// Verificar llamada al servicio
+⋮----
+// Configurar mock para retornar datos de error
+⋮----
+// Ejecutar el thunk
+⋮----
+// Verificar que se llama a las acciones correctas
+⋮----
+// Configurar mock para retornar datos de éxito
+⋮----
+// Ejecutar el thunk
+⋮----
+// Verificar que se llama a las acciones correctas
+⋮----
+// Verificar llamada al servicio
+⋮----
+// Configurar mock para retornar datos de error
+⋮----
+// Ejecutar el thunk
+⋮----
+// Verificar que se llama a las acciones correctas
 ````
 
 ## File: frontend/src/types/index.ts
@@ -6029,6 +5765,72 @@ Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la e
   - Por determinar
 ````
 
+## File: .gitignore
+````
+# Dependencias
+node_modules/
+.pnp/
+.pnp.js
+
+# Producción
+/frontend/build
+/frontend/dist
+/backend/dist
+/frontend/public/
+
+# Archivos de desarrollo
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de cobertura
+/coverage
+
+# Archivos de configuración del IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Misc
+.DS_Store
+*.pem
+
+# Archivos de typescript
+*.tsbuildinfo
+
+# Archivos de dependencias
+package-lock.json
+yarn.lock
+
+# Archivos de debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local history
+.history/ 
+
+# Repomix
+repomix.config.json
+.repomixignore
+
+# Carpetas de caché
+.vite/
+.vitest-cache/
+````
+
 ## File: backend/package.json
 ````json
 {
@@ -6078,6 +5880,70 @@ Este proyecto se encuentra en fase inicial de desarrollo. Se ha configurado la e
     "typescript": "^5.3.3"
   }
 }
+````
+
+## File: backend/src/controllers/authController.ts
+````typescript
+import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
+import { generateToken } from '../utils/jwt';
+import User from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth';
+⋮----
+/**
+ * Registrar un nuevo usuario
+ * @route POST /api/auth/register
+ * @access Public
+ */
+export const register = async (req: Request, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar si el usuario ya existe
+⋮----
+// Si se especifica un rol, verificar que sea válido
+⋮----
+// Crear el usuario
+⋮----
+password, // La contraseña será hasheada en el pre-save hook del modelo
+rol: rol || 'usuario', // Por defecto es 'usuario'
+⋮----
+// Generar token JWT
+⋮----
+// Responder con el token y los datos del usuario (sin la contraseña)
+⋮----
+/**
+ * Iniciar sesión de usuario
+ * @route POST /api/auth/login
+ * @access Public
+ */
+export const login = async (req: Request, res: Response) =>
+⋮----
+// Verificar si email o password están presentes
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Buscar el usuario
+⋮----
+// Verificar si el usuario está activo
+// Solo verificamos si la propiedad activo existe y es explícitamente false
+⋮----
+// Verificar la contraseña
+⋮----
+// Actualizar último acceso
+⋮----
+// Generar token JWT
+⋮----
+// Responder con el token y los datos del usuario (sin la contraseña)
+⋮----
+/**
+ * Obtener el perfil del usuario actual
+ * @route GET /api/auth/me
+ * @access Private
+ */
+export const getMe = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// El usuario ya está en req.user gracias al middleware de autenticación
 ````
 
 ## File: backend/src/index.ts
@@ -6622,13 +6488,138 @@ const renderAppHeader = (isAuthenticated = false, user: MockUser | null = null) 
 // Verificar que se llama a la función logout
 ````
 
-## File: frontend/vite.config.ts
+## File: frontend/src/pages/Register.tsx
 ````typescript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { configDefaults } from 'vitest/config'
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  TextField,
+  Typography,
+  Alert,
+  Link,
+  Grid,
+  InputAdornment,
+  IconButton,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+  CircularProgress
+} from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useAuth } from '../hooks/useAuth';
 ⋮----
-// https://vitejs.dev/config/
+// Tipos disponibles de usuario
+⋮----
+// Redireccionar si ya está autenticado
+⋮----
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+const handleSelectChange = (e: SelectChangeEvent) =>
+⋮----
+const handleTogglePassword = () =>
+⋮----
+const handleToggleConfirmPassword = () =>
+⋮----
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>
+⋮----
+// Validación básica del formulario
+⋮----
+// Utilizar el hook de autenticación para registrarse
+⋮----
+// Mostrar error (validación del formulario o error de autenticación)
+````
+
+## File: frontend/src/pages/Users.tsx
+````typescript
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Container,
+  Typography,
+  Paper,
+  Button,
+  TextField,
+  MenuItem,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Stack,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+  CircularProgress
+} from '@mui/material';
+import {
+  Add as AddIcon,
+  Search as SearchIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Refresh as RefreshIcon
+} from '@mui/icons-material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useUsers } from '../hooks/useUsers';
+import UserForm from '../components/users/UserForm';
+import { PaginationParams, UserListItem } from '../types';
+⋮----
+// Estados locales para filtros y paginación
+⋮----
+// Estados para modales
+⋮----
+// Cargar usuarios al montar el componente y cuando cambien los filtros
+⋮----
+page: page + 1, // DataGrid usa índice 0, backend usa índice 1
+⋮----
+// Manejadores para filtros
+const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+setPage(0); // Resetear página al cambiar filtros
+⋮----
+const handleRoleFilterChange = (event: SelectChangeEvent) =>
+⋮----
+const handleStatusFilterChange = (event: SelectChangeEvent) =>
+⋮----
+// Manejadores para modales
+const handleOpenCreateModal = () =>
+⋮----
+const handleCloseCreateModal = () =>
+⋮----
+const handleOpenEditModal = (id: string) =>
+⋮----
+const handleCloseEditModal = () =>
+⋮----
+const handleOpenDeleteModal = (id: string) =>
+⋮----
+const handleCloseDeleteModal = () =>
+⋮----
+// Confirmar eliminación de usuario
+const handleConfirmDelete = () =>
+⋮----
+// Refrescar lista de usuarios
+const refreshUsers = () =>
+⋮----
+// Definición de columnas para la tabla
+⋮----
+setPage(model.page);
+setPageSize(model.pageSize);
+⋮----
+{/* Modal para crear usuario */}
+⋮----
+{/* Modal para editar usuario */}
+⋮----
+{/* Modal de confirmación para eliminar usuario */}
 ````
 
 ## File: tracking/NOTAS-DESARROLLO.md
@@ -6987,47 +6978,6 @@ export const generateToken = (user: IUser): string =>
 export const verifyToken = (token: string): JwtPayload | null =>
 ````
 
-## File: frontend/src/App.tsx
-````typescript
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useAuth } from './hooks/useAuth';
-⋮----
-// Importar layout principal
-import MainLayout from './components/layout/MainLayout';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-⋮----
-// Importar páginas
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import UsersPage from './pages/Users';
-import TeamsPage from './pages/Teams';
-⋮----
-// Tema personalizado
-⋮----
-// Componente principal
-⋮----
-// Verificar el estado de autenticación al iniciar la aplicación
-⋮----
-{/* Rutas públicas */}
-⋮----
-{/* Rutas protegidas con layout principal */}
-⋮----
-{/* Rutas con roles específicos */}
-⋮----
-<Route path="/players" element=
-⋮----
-<Route path="/matches" element=
-<Route path="/standings" element=
-⋮----
-{/* Ruta para acceso no autorizado */}
-⋮----
-{/* Ruta por defecto (404) */}
-````
-
 ## File: frontend/src/store/index.ts
 ````typescript
 import { configureStore } from '@reduxjs/toolkit';
@@ -7056,6 +7006,15 @@ export type AppDispatch = typeof store.dispatch;
 ⋮----
 // Hooks tipados
 export const useAppDispatch = ()
+````
+
+## File: frontend/vite.config.ts
+````typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { configDefaults } from 'vitest/config'
+⋮----
+// https://vitejs.dev/config/
 ````
 
 ## File: frontend/package.json
@@ -7112,6 +7071,47 @@ export const useAppDispatch = ()
     "web-vitals": "^4.2.4"
   }
 }
+````
+
+## File: frontend/src/App.tsx
+````typescript
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from './hooks/useAuth';
+⋮----
+// Importar layout principal
+import MainLayout from './components/layout/MainLayout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+⋮----
+// Importar páginas
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import UsersPage from './pages/Users';
+import TeamsPage from './pages/Teams';
+⋮----
+// Tema personalizado
+⋮----
+// Componente principal
+⋮----
+// Verificar el estado de autenticación al iniciar la aplicación
+⋮----
+{/* Rutas públicas */}
+⋮----
+{/* Rutas protegidas con layout principal */}
+⋮----
+{/* Rutas con roles específicos */}
+⋮----
+<Route path="/players" element=
+⋮----
+<Route path="/matches" element=
+<Route path="/standings" element=
+⋮----
+{/* Ruta para acceso no autorizado */}
+⋮----
+{/* Ruta por defecto (404) */}
 ````
 
 ## File: tracking/TRACKING.md

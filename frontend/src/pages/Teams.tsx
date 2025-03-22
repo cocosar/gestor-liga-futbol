@@ -1,40 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CircularProgress,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
+import { useEffect, useState } from 'react';
+import { 
+  Container, 
+  Grid, 
+  Paper, 
+  Typography, 
+  Box, 
+  Button, 
+  TextField, 
+  IconButton, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
   DialogTitle,
   FormControl,
-  Grid,
-  IconButton,
   InputLabel,
-  MenuItem,
-  Paper,
   Select,
+  MenuItem,
   SelectChangeEvent,
-  TextField,
-  Typography,
+  CircularProgress
 } from '@mui/material';
 import { 
-  DataGrid, 
-  GridColDef, 
-  GridRenderCellParams,
-} from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
-import { useTeams } from '../hooks';
+  Add as AddIcon, 
+  Delete as DeleteIcon, 
+  Edit as EditIcon, 
+  Info as InfoIcon
+} from '@mui/icons-material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useTeams } from '../hooks/useTeams';
 import TeamForm from '../components/teams/TeamForm';
-import RandomTeamsGenerator from '../components/teams/RandomTeamsGenerator';
 import { TeamPaginationParams } from '../types';
+import { RandomTeamsGenerator } from '../components/teams';
+import { useNavigate } from 'react-router-dom';
 import { esESGrid } from '../utils/dataGridLocale';
 
 const Teams: React.FC = () => {
@@ -52,6 +49,8 @@ const Teams: React.FC = () => {
     fetchTeams, 
     deleteTeam 
   } = useTeams();
+
+  const navigate = useNavigate();
 
   // Cargar equipos al montar el componente
   useEffect(() => {
@@ -156,6 +155,11 @@ const Teams: React.FC = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
+  // Función para ver detalle del equipo
+  const handleViewTeamDetail = (id: string) => {
+    navigate(`/teams/${id}`);
+  };
+
   // Definir columnas para la tabla
   const columns: GridColDef[] = [
     { field: 'nombre', headerName: 'Nombre', flex: 1 },
@@ -220,8 +224,7 @@ const Teams: React.FC = () => {
           </IconButton>
           <IconButton 
             color="info" 
-            // Implementar vista detalle en el futuro
-            onClick={() => console.log('Ver detalle', params.row._id)}
+            onClick={() => handleViewTeamDetail(params.row._id)}
           >
             <InfoIcon />
           </IconButton>
@@ -253,62 +256,60 @@ const Teams: React.FC = () => {
             </Box>
 
             {/* Filtros de búsqueda */}
-            <Card sx={{ mb: 3 }}>
-              <CardContent>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      label="Buscar por nombre"
-                      variant="outlined"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={3}>
-                    <FormControl fullWidth>
-                      <InputLabel>Categoría</InputLabel>
-                      <Select
-                        value={categoria}
-                        label="Categoría"
-                        onChange={handleCategoriaChange}
-                      >
-                        <MenuItem value="">Todas</MenuItem>
-                        <MenuItem value="juvenil">Juvenil</MenuItem>
-                        <MenuItem value="adulto">Adulto</MenuItem>
-                        <MenuItem value="senior">Senior</MenuItem>
-                        <MenuItem value="femenino">Femenino</MenuItem>
-                        <MenuItem value="masculino">Masculino</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} md={3}>
-                    <FormControl fullWidth>
-                      <InputLabel>Tipo</InputLabel>
-                      <Select
-                        value={tipo}
-                        label="Tipo"
-                        onChange={handleTipoChange}
-                      >
-                        <MenuItem value="">Todos</MenuItem>
-                        <MenuItem value="futbol">Fútbol</MenuItem>
-                        <MenuItem value="futsal">Futsal</MenuItem>
-                        <MenuItem value="futbol7">Fútbol 7</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} md={2}>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      onClick={handleSearch}
-                    >
-                      Buscar
-                    </Button>
-                  </Grid>
+            <FormControl sx={{ mb: 3 }}>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Buscar por nombre"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </Grid>
-              </CardContent>
-            </Card>
+                <Grid item xs={12} md={3}>
+                  <FormControl fullWidth>
+                    <InputLabel>Categoría</InputLabel>
+                    <Select
+                      value={categoria}
+                      label="Categoría"
+                      onChange={handleCategoriaChange}
+                    >
+                      <MenuItem value="">Todas</MenuItem>
+                      <MenuItem value="juvenil">Juvenil</MenuItem>
+                      <MenuItem value="adulto">Adulto</MenuItem>
+                      <MenuItem value="senior">Senior</MenuItem>
+                      <MenuItem value="femenino">Femenino</MenuItem>
+                      <MenuItem value="masculino">Masculino</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <FormControl fullWidth>
+                    <InputLabel>Tipo</InputLabel>
+                    <Select
+                      value={tipo}
+                      label="Tipo"
+                      onChange={handleTipoChange}
+                    >
+                      <MenuItem value="">Todos</MenuItem>
+                      <MenuItem value="futbol">Fútbol</MenuItem>
+                      <MenuItem value="futsal">Futsal</MenuItem>
+                      <MenuItem value="futbol7">Fútbol 7</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={2}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={handleSearch}
+                  >
+                    Buscar
+                  </Button>
+                </Grid>
+              </Grid>
+            </FormControl>
 
             {/* Tabla de equipos */}
             <Box sx={{ height: 400, width: '100%' }}>

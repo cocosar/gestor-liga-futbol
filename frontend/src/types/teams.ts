@@ -4,8 +4,9 @@ export interface TeamListItem {
   nombre: string;
   categoria: string;
   tipo: string;
-  entrenador?: string;
+  entrenador?: string | { _id: string; nombre: string; apellido: string; email: string };
   logoUrl?: string;
+  logo?: string;
   activo: boolean;
 }
 

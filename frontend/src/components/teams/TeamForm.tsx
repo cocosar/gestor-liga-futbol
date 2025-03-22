@@ -16,7 +16,11 @@ import {
   SelectChangeEvent,
   Switch,
   TextField,
+  Typography,
+  Paper
 } from '@mui/material';
+import BrokenImageIcon from '@mui/icons-material/BrokenImage';
+import ImageIcon from '@mui/icons-material/Image';
 import { useTeams, useUsers } from '../../hooks';
 import { TeamFormData } from '../../types';
 
@@ -52,6 +56,9 @@ const tipos = [
 const TeamForm: React.FC<TeamFormProps> = ({ open, onClose, teamId }) => {
   const [formData, setFormData] = useState<TeamFormData>(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [isValidImage, setIsValidImage] = useState<boolean>(false);
+  const [useProxy, setUseProxy] = useState<boolean>(false);
   
   const { fetchTeamById, selectedTeam, createTeam, updateTeam, loading } = useTeams();
   const { users, fetchUsers } = useUsers();
@@ -75,17 +82,62 @@ const TeamForm: React.FC<TeamFormProps> = ({ open, onClose, teamId }) => {
   // Actualizar formulario cuando se carga el equipo seleccionado
   useEffect(() => {
     if (selectedTeam && teamId) {
+      const logoUrl = selectedTeam.logoUrl || selectedTeam.logo || '';
       setFormData({
         nombre: selectedTeam.nombre,
         categoria: selectedTeam.categoria,
         tipo: selectedTeam.tipo,
         entrenador: selectedTeam.entrenador && typeof selectedTeam.entrenador === 'object' ? 
           (selectedTeam.entrenador as { _id: string })._id : selectedTeam.entrenador || '',
-        logoUrl: selectedTeam.logoUrl || '',
+        logoUrl: logoUrl,
         activo: selectedTeam.activo,
       });
+      setPreviewUrl(logoUrl);
     }
   }, [selectedTeam, teamId]);
+  
+  // Función para obtener la URL con proxy si es necesario
+  const getProxiedUrl = (url: string): string => {
+    if (useProxy) {
+      // Usar un servicio proxy de imágenes que permite CORS
+      return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
+    }
+    return url;
+  };
+  
+  // Efecto para actualizar la previsualización cuando cambia la URL del logo
+  useEffect(() => {
+    if (formData.logoUrl && formData.logoUrl.trim() !== '') {
+      let logoUrl = formData.logoUrl.trim();
+      if (!logoUrl.startsWith('http://') && !logoUrl.startsWith('https://')) {
+        logoUrl = `https://${logoUrl}`;
+      }
+      setPreviewUrl(logoUrl);
+      // Resetear el estado de validez de la imagen cuando cambia la URL
+      setIsValidImage(false);
+      console.log('URL de previsualización actualizada:', logoUrl);
+      
+      // Pre-cargar la imagen para probar si es válida
+      const img = new Image();
+      img.onload = () => {
+        console.log('Pre-carga exitosa:', logoUrl);
+        setIsValidImage(true);
+      };
+      img.onerror = () => {
+        console.log('Error en pre-carga:', logoUrl);
+        setIsValidImage(false);
+      };
+      img.src = getProxiedUrl(logoUrl);
+    } else {
+      setPreviewUrl('');
+      setIsValidImage(false);
+    }
+  }, [formData.logoUrl, useProxy]);
+  
+  // Alternar el uso del proxy
+  const toggleProxy = () => {
+    setUseProxy(!useProxy);
+  };
   
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
@@ -113,6 +165,18 @@ const TeamForm: React.FC<TeamFormProps> = ({ open, onClose, teamId }) => {
       ...formData,
       [name]: checked,
     });
+  };
+  
+  // Manejador para validar la imagen cuando carga
+  const handleImageLoad = () => {
+    console.log('Imagen cargada correctamente');
+    setIsValidImage(true);
+  };
+  
+  // Manejador para cuando la imagen falla al cargar
+  const handleImageError = () => {
+    console.log('Error al cargar la imagen:', previewUrl);
+    setIsValidImage(false);
   };
   
   const validateForm = (): boolean => {
@@ -242,7 +306,121 @@ const TeamForm: React.FC<TeamFormProps> = ({ open, onClose, teamId }) => {
                 value={formData.logoUrl || ''}
                 onChange={handleChange}
                 disabled={loading}
+                helperText="Puedes ingresar una URL como example.com (se añadirá https:// automáticamente)"
               />
+              
+              {/* Previsualización del logo */}
+              {previewUrl && (
+                <Box 
+                  mt={2} 
+                  display="flex" 
+                  flexDirection="column" 
+                  alignItems="center"
+                >
+                  <Typography variant="subtitle2" gutterBottom>
+                    Previsualización:
+                  </Typography>
+                  <Paper 
+                    elevation={2} 
+                    sx={{ 
+                      p: 1, 
+                      width: '100%', 
+                      display: 'flex', 
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      minHeight: 130
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={getProxiedUrl(previewUrl)}
+                      alt="Logo Preview"
+                      onLoad={handleImageLoad}
+                      onError={handleImageError}
+                      sx={{
+                        maxHeight: 120,
+                        maxWidth: '100%',
+                        objectFit: 'contain',
+                        display: isValidImage ? 'block' : 'none'
+                      }}
+                    />
+                    {!isValidImage && (
+                      <Box 
+                        display="flex" 
+                        flexDirection="column" 
+                        alignItems="center"
+                        justifyContent="center"
+                        p={2}
+                        sx={{ 
+                          width: '100%',
+                          height: '100%'
+                        }}
+                      >
+                        <BrokenImageIcon color="error" fontSize="large" />
+                        <Typography variant="caption" color="text.secondary" align="center">
+                          No se puede cargar la imagen.<br/>
+                          Asegúrate de que la URL sea correcta y públicamente accesible.
+                        </Typography>
+                        <Box mt={1} display="flex" flexDirection="column" alignItems="center">
+                          <Button 
+                            size="small" 
+                            color="primary" 
+                            onClick={toggleProxy}
+                            variant="outlined"
+                            sx={{ mb: 1, fontSize: '0.75rem' }}
+                          >
+                            {useProxy ? "Desactivar proxy de imágenes" : "Intentar con proxy de imágenes"}
+                          </Button>
+                          <a 
+                            href={previewUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ fontSize: '0.75rem', color: 'blue', textDecoration: 'underline' }}
+                          >
+                            Abrir enlace en nueva pestaña
+                          </a>
+                        </Box>
+                      </Box>
+                    )}
+                  </Paper>
+                  <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+                    {useProxy ? 
+                      "Usando servicio proxy para mostrar la imagen. El enlace original se guardará." : 
+                      "Nota: Aunque la imagen no se muestre en la previsualización debido a restricciones del navegador, el logo podría guardarse correctamente y mostrarse en otras partes de la aplicación."}
+                  </Typography>
+                </Box>
+              )}
+              
+              {!previewUrl && (
+                <Box 
+                  mt={2} 
+                  display="flex" 
+                  flexDirection="column" 
+                  alignItems="center"
+                >
+                  <Paper 
+                    elevation={1} 
+                    sx={{ 
+                      p: 2, 
+                      width: '100%', 
+                      display: 'flex', 
+                      justifyContent: 'center',
+                      backgroundColor: 'action.hover'
+                    }}
+                  >
+                    <Box 
+                      display="flex" 
+                      flexDirection="column" 
+                      alignItems="center"
+                    >
+                      <ImageIcon color="disabled" fontSize="large" />
+                      <Typography variant="caption" color="text.secondary">
+                        Ingresa una URL para ver la previsualización
+                      </Typography>
+                    </Box>
+                  </Paper>
+                </Box>
+              )}
             </Grid>
             
             {teamId && (

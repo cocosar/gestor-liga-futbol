@@ -31,6 +31,15 @@ interface FetchTeamsPayload {
   limit: number;
 }
 
+// Función para adaptar el objeto del servidor al formato del frontend
+const adaptTeamResponse = (team: unknown): TeamListItem => {
+  const teamData = team as Record<string, unknown>;
+  return {
+    ...teamData as unknown as TeamListItem,
+    logoUrl: (teamData.logo as string) || (teamData.logoUrl as string) || '',
+  };
+};
+
 // Crear slice
 const teamsSlice = createSlice({
   name: 'teams',
@@ -54,7 +63,7 @@ const teamsSlice = createSlice({
     
     teamsLoadSuccess: (state, action) => {
       const payload = action.payload as FetchTeamsPayload;
-      state.teams = payload.teams;
+      state.teams = payload.teams.map(team => adaptTeamResponse(team));
       state.total = payload.total;
       state.page = payload.page;
       state.limit = payload.limit;
@@ -64,7 +73,7 @@ const teamsSlice = createSlice({
     
     teamLoadSuccess: (state, action) => {
       if (action.payload) {
-        state.selectedTeam = action.payload as TeamListItem;
+        state.selectedTeam = adaptTeamResponse(action.payload);
       }
       state.loading = false;
       state.error = null;
@@ -72,7 +81,7 @@ const teamsSlice = createSlice({
     
     teamCreateSuccess: (state, action) => {
       if (action.payload) {
-        state.teams = [action.payload as TeamListItem, ...state.teams];
+        state.teams = [adaptTeamResponse(action.payload), ...state.teams];
         state.total += 1;
       }
       state.loading = false;
@@ -81,7 +90,7 @@ const teamsSlice = createSlice({
     
     teamUpdateSuccess: (state, action) => {
       if (action.payload) {
-        const updatedTeam = action.payload as TeamListItem;
+        const updatedTeam = adaptTeamResponse(action.payload);
         state.teams = state.teams.map(team => 
           team._id === updatedTeam._id ? updatedTeam : team
         );

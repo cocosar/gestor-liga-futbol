@@ -64,7 +64,38 @@ const teamService = {
    */
   async createTeam(teamData: TeamFormData): Promise<TeamResponse> {
     try {
-      const response = await axios.post(`${API_URL}/equipos`, teamData, {
+      // Crear un nuevo objeto con la estructura correcta para el backend
+      const backendData: Record<string, unknown> = {
+        nombre: teamData.nombre,
+        categoria: teamData.categoria,
+        tipo: teamData.tipo,
+        activo: teamData.activo === undefined ? true : teamData.activo
+      };
+
+      // Solo añadir entrenador si existe
+      if (teamData.entrenador && teamData.entrenador.trim() !== '') {
+        backendData.entrenador = teamData.entrenador;
+      }
+
+      // Solo añadir logo si existe
+      if (teamData.logoUrl && teamData.logoUrl.trim() !== '') {
+        // Asegurarse de que la URL tenga un protocolo
+        let logoUrl = teamData.logoUrl.trim();
+        if (!logoUrl.startsWith('http://') && !logoUrl.startsWith('https://')) {
+          logoUrl = `https://${logoUrl}`;
+        }
+        
+        try {
+          new URL(logoUrl);
+          backendData.logo = logoUrl;
+          console.log('URL del logo validada y añadida:', logoUrl);
+        } catch {
+          // No añadir el campo logo si no es una URL válida incluso con el protocolo
+          console.warn('La URL del logo no es válida, se omitirá este campo:', logoUrl);
+        }
+      }
+
+      const response = await axios.post(`${API_URL}/equipos`, backendData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -102,14 +133,21 @@ const teamService = {
         backendData.entrenador = teamData.entrenador;
       }
 
-      // Solo añadir logo si es una URL válida
+      // Solo añadir logo si existe
       if (teamData.logoUrl && teamData.logoUrl.trim() !== '') {
+        // Asegurarse de que la URL tenga un protocolo
+        let logoUrl = teamData.logoUrl.trim();
+        if (!logoUrl.startsWith('http://') && !logoUrl.startsWith('https://')) {
+          logoUrl = `https://${logoUrl}`;
+        }
+        
         try {
-          new URL(teamData.logoUrl);
-          backendData.logo = teamData.logoUrl;
+          new URL(logoUrl);
+          backendData.logo = logoUrl;
+          console.log('URL del logo validada y añadida:', logoUrl);
         } catch {
-          // No añadir el campo logo si no es una URL válida
-          console.warn('La URL del logo no es válida, se omitirá este campo');
+          // No añadir el campo logo si no es una URL válida incluso con el protocolo
+          console.warn('La URL del logo no es válida, se omitirá este campo:', logoUrl);
         }
       }
 
