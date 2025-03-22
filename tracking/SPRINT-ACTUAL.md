@@ -1,223 +1,196 @@
-# Sprint 2: Gestión de Usuarios y Equipos
-**Período:** [31-03-2025] - [11-04-2025]
+# Sprint 3: Gestión de Jugadores
+**Período:** [14-04-2025] - [25-04-2025]
 
 ## Objetivos del Sprint
-1. Implementar Redux para gestión de estado global
-2. Desarrollar CRUD completo de usuarios
-3. Implementar gestión de equipos
-4. Añadir página de perfil de usuario
-5. Mejorar cobertura de pruebas
+1. Implementar CRUD completo de jugadores
+2. Desarrollar sistema de asignación de jugadores a equipos
+3. Crear perfil de jugador con estadísticas básicas
+4. Implementar gestión de fichajes
+5. Mejorar la documentación de API
 
 ## Tareas Específicas
 
-### 1. Implementar Redux para gestión de estado global [FRONTEND]
-- [x] Configurar Redux Toolkit
-  - [x] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
-  - [x] Crear archivo de configuración de store
-  - [x] Implementar provider en componente raíz
-- [x] Implementar slices para autenticación
-  - [x] Crear acciones para login, logout y registro
-  - [x] Implementar reducers para manejo de estado de autenticación
-  - [x] Configurar persistencia del token JWT en localStorage
-- [x] Implementar funcionalidad UI de autenticación
-  - [x] Actualizar AppHeader para mostrar botones de autenticación dinámicamente (login/register o logout)
-  - [x] Implementar funcionalidad de cierre de sesión en la interfaz de usuario
-- [x] Implementar slices para usuarios
-  - [x] Crear acciones para gestión de usuarios (CRUD)
-  - [x] Implementar reducers para manejo del estado de usuarios
-  - [x] Crear selectores para acceso eficiente a datos de usuarios
-- [x] Implementar slices para equipos
-  - [x] Crear acciones para gestión de equipos (CRUD)
-  - [x] Implementar reducers para manejo del estado de equipos
-  - [x] Crear selectores para acceso eficiente a datos de equipos
-- [x] Crear middlewares personalizados
-  - [x] Middleware para manejo de errores de API
-  - [x] Middleware para logging de acciones (desarrollo)
-- [x] Implementar hooks personalizados para Redux
-  - [x] Crear useAppSelector y useAppDispatch tipados
-  - [x] Crear hooks para operaciones comunes (useAuth, useUsers, etc.)
-- **Estado:** En progreso
-- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios. El slice de equipos y su hook personalizado también han sido implementados. Se han desarrollado middlewares personalizados para el manejo de errores de API y logging de acciones en desarrollo.
-
-### 2. Desarrollar CRUD completo de usuarios
+### 1. Implementar CRUD completo de jugadores
 #### Backend
-- [x] Implementar endpoints para gestión de usuarios
-  - [x] Crear controlador para usuarios con métodos CRUD
-  - [x] Implementar validación de datos con middleware
-  - [x] Configurar rutas REST para usuarios
-  - [x] Implementar paginación y filtrado en listados
-  - [x] Añadir manejo de roles y permisos
+- [ ] Desarrollar modelo de datos para jugadores
+  - [ ] Diseñar esquema con campos básicos (nombre, posición, edad, etc.)
+  - [ ] Añadir campos para estadísticas individuales
+  - [ ] Implementar relaciones con equipos y usuarios
+- [ ] Crear controlador con métodos CRUD
+  - [ ] Implementar método de creación (POST)
+  - [ ] Desarrollar método de consulta (GET) con filtros
+  - [ ] Añadir método de actualización (PUT)
+  - [ ] Implementar método de eliminación (DELETE)
+- [ ] Configurar rutas REST para jugadores
+  - [ ] Definir endpoints básicos CRUD
+  - [ ] Configurar middleware de autenticación
+  - [ ] Implementar validación de permisos por rol
+- [ ] Implementar validación avanzada
+  - [ ] Validar datos obligatorios y tipos
+  - [ ] Añadir validación personalizada para campos específicos
+  - [ ] Configurar mensajes de error descriptivos
 
 #### Frontend
-- [x] Crear página de administración de usuarios
-  - [x] Implementar tabla de listado con paginación y filtros
-  - [x] Añadir acciones de edición/eliminación en la tabla
-  - [x] Implementar modal de confirmación para eliminación
-- [x] Implementar formularios para creación/edición de usuarios
-  - [x] Crear formulario con validación de campos
-  - [x] Implementar manejo de errores de API
-  - [x] Añadir feedback visual durante operaciones (loading, success, error)
-- [x] Añadir funcionalidad para cambio de contraseña
-  - [x] Crear formulario específico para cambio de contraseña
-  - [x] Implementar validación de contraseña segura
-- [x] Implementar gestión de roles de usuario
-  - [x] Crear selector de roles en formularios
-  - [x] Añadir comprobación de permisos en UI
-- **Estado:** Completado
-- **Notas:** Se ha implementado el CRUD completo de usuarios tanto en el backend como en el frontend. Se ha creado una página de administración de usuarios con una tabla de listado, filtros y acciones para crear, editar y eliminar usuarios. También se ha implementado un formulario para la creación y edición de usuarios con validación de campos y manejo de errores. La funcionalidad de cambio de contraseña se ha integrado en el formulario de edición de usuarios.
+- [ ] Crear slice de Redux para jugadores
+  - [ ] Implementar acciones para operaciones CRUD
+  - [ ] Desarrollar reducers para estado de jugadores
+  - [ ] Añadir selectores para filtrado eficiente
+  - [ ] Implementar thunks para operaciones asíncronas
+- [ ] Implementar hook personalizado useJugadores
+  - [ ] Crear métodos para acciones comunes
+  - [ ] Implementar manejo de estado de carga y errores
+  - [ ] Añadir funciones para filtrado y búsqueda
+- [ ] Desarrollar página de administración
+  - [ ] Crear tabla de listado con paginación
+  - [ ] Implementar filtros avanzados por posición, equipo, etc.
+  - [ ] Añadir acciones de gestión (editar, eliminar, ver detalle)
+  - [ ] Desarrollar modal de confirmación para eliminación
+- [ ] Implementar formulario de creación/edición
+  - [ ] Crear campos con validación (nombre, posición, número, etc.)
+  - [ ] Añadir selector de equipo
+  - [ ] Implementar subida de foto de perfil
+  - [ ] Manejar errores de API y feedback visual
 
-### 3. Implementar gestión de equipos
+### 2. Desarrollar sistema de asignación de jugadores a equipos
 #### Backend
-- [x] Desarrollar endpoints para equipos
-  - [x] Crear modelo de datos para equipos
-  - [x] Implementar controlador con métodos CRUD
-  - [x] Configurar rutas REST para equipos
-  - [x] Añadir relaciones con usuarios (entrenadores/manager)
-  - [x] Implementar paginación y filtrado
+- [ ] Implementar endpoints para gestión de plantillas
+  - [ ] Crear endpoint para añadir jugadores a equipos
+  - [ ] Desarrollar endpoint para eliminar jugadores de equipos
+  - [ ] Añadir validación de límites de jugadores por equipo
+- [ ] Implementar lógica de asignación
+  - [ ] Validar que un jugador solo pertenezca a un equipo
+  - [ ] Añadir verificación de categoría y edad
+  - [ ] Implementar control de fechas de asignación
 
 #### Frontend
-- [x] Crear página de listado de equipos
-  - [x] Implementar tabla con paginación y filtros
-  - [x] Añadir acciones de gestión (editar, eliminar, ver detalle)
-  - [x] Implementar búsqueda avanzada
-- [x] Implementar formulario para creación/edición de equipos
-  - [x] Crear campos con validación
-  - [x] Añadir selector de categoría y tipo
-  - [x] Implementar subida de logo/imagen del equipo
-- [x] Crear página de detalle de equipo
-  - [x] Mostrar información general del equipo
-  - [x] Listar jugadores asociados
-  - [x] Implementar estadísticas básicas
-- [x] Implementar asignación de entrenadores a equipos
-  - [x] Crear selector de entrenadores disponibles
-  - [x] Implementar gestión de roles en el equipo
-- **Estado:** En progreso
-- **Notas:** Se ha completado la mayor parte de la gestión de equipos. Se ha creado una página de listado con tabla paginada y filtros, así como un formulario para la creación y edición de equipos con validación de campos. También se ha implementado la asignación de entrenadores y managers a los equipos. Falta implementar la página de detalle de equipo.
+- [ ] Crear componente de gestión de plantilla
+  - [ ] Desarrollar listado de jugadores en equipo
+  - [ ] Implementar búsqueda de jugadores disponibles
+  - [ ] Añadir funcionalidad de arrastrar y soltar para asignación
+- [ ] Implementar interfaz de administración de plantillas
+  - [ ] Crear vista de plantilla por equipo
+  - [ ] Añadir acciones para añadir/eliminar jugadores
+  - [ ] Implementar visualización por posiciones
+  - [ ] Desarrollar filtros por características
 
-### 4. Añadir página de perfil de usuario
+### 3. Crear perfil de jugador con estadísticas básicas
 #### Backend
-- [x] Mejorar endpoints de perfil
-  - [x] Implementar endpoint para actualización parcial de datos
-  - [x] Crear endpoint específico para cambio de contraseña
-  - [x] Añadir validación de datos avanzada
+- [ ] Desarrollar endpoints para perfil de jugador
+  - [ ] Crear endpoint para consulta detallada de jugador
+  - [ ] Implementar endpoint para historial de equipos
+  - [ ] Añadir endpoint para estadísticas acumuladas
+- [ ] Implementar sistema de estadísticas básicas
+  - [ ] Diseñar modelo para almacenar estadísticas
+  - [ ] Crear endpoints para actualizar estadísticas
+  - [ ] Desarrollar métodos para cálculos automáticos
 
 #### Frontend
-- [x] Diseñar e implementar página de perfil
-  - [x] Crear layout responsivo con información del usuario
-  - [x] Implementar vista de datos personales
-  - [x] Añadir sección de preferencias
-- [x] Crear formulario para edición de datos de perfil
-  - [x] Implementar campos editables con validación
-  - [x] Añadir previsualización de cambios
-  - [x] Implementar feedback visual (loading, success, error)
-- [x] Implementar funcionalidad de cambio de contraseña
-  - [x] Crear formulario específico con validación
-  - [x] Implementar comprobación de contraseña actual
-  - [x] Añadir medidor de seguridad de contraseña
-- [x] Añadir historial de actividad del usuario
-  - [x] Implementar timeline de acciones recientes
-  - [x] Añadir filtros por tipo de actividad
-- **Estado:** Completado
-- **Notas:** Se ha implementado la página de perfil con dos secciones principales: información personal y cambio de contraseña. El formulario de información personal permite a los usuarios editar sus datos básicos, mientras que la sección de cambio de contraseña incluye validación de seguridad con un indicador visual de fortaleza. Se ha integrado un menú desplegable en la cabecera para acceder rápidamente al perfil de usuario.
+- [ ] Diseñar página de perfil de jugador
+  - [ ] Crear layout responsivo con secciones principales
+  - [ ] Implementar cabecera con datos personales y foto
+  - [ ] Añadir sección de estadísticas con gráficos
+  - [ ] Desarrollar visualización de historial de equipos
+- [ ] Implementar componentes visuales para estadísticas
+  - [ ] Crear gráficos para visualización de datos
+  - [ ] Implementar comparativas con promedios
+  - [ ] Añadir filtros por temporada/período
 
-### 5. Mejorar cobertura de pruebas
-#### Frontend
-- [x] Añadir pruebas para componentes de UI principales
-  - [x] Implementar tests para componentes de autenticación
-  - [x] Crear tests para formularios
-  - [x] Añadir tests para componentes de listado
-- [x] Implementar pruebas para slices de Redux
-  - [x] Crear tests para reducers
-  - [x] Implementar tests para selectores
-  - [x] Añadir tests para thunks
-- [x] Crear pruebas para hooks personalizados
-  - [x] Implementar tests para useAuth
-  - [x] Crear tests para useUsers
-  - [x] Añadir tests para useTeams
-- [x] Implementar pruebas para middlewares personalizados
-  - [x] Crear tests para middleware de manejo de errores
-  - [x] Implementar tests para middleware de logging
-- [x] Añadir pruebas para componentes de equipos
-  - [x] Implementar tests para el componente TeamForm
-  - [x] Crear tests para la página Teams
-  - [x] Probar funcionalidades de filtrado y paginación
-  - [x] Verificar el correcto funcionamiento de modales y diálogos
-
+### 4. Implementar gestión de fichajes
 #### Backend
-- [ ] Mejorar cobertura de pruebas en backend
-  - [ ] Implementar tests para controladores
-  - [ ] Crear tests para middleware
-  - [ ] Añadir tests de integración para rutas principales
-  - [ ] Implementar mocks para servicios externos
-- **Estado:** En progreso
-- **Notas:** Se han implementado pruebas para los slices de Redux, hooks personalizados y middlewares. Se han añadido tests específicos para los componentes de equipos, cubriendo tanto el formulario como la página de listado. Actualmente la cobertura de pruebas en el frontend es del 87%.
+- [ ] Desarrollar sistema de fichajes
+  - [ ] Crear modelo para registrar transferencias
+  - [ ] Implementar endpoints para proceso de fichaje
+  - [ ] Añadir validación de fechas y períodos
+- [ ] Implementar lógica de negocio
+  - [ ] Desarrollar proceso de solicitud y aprobación
+  - [ ] Crear sistema de notificaciones básicas
+  - [ ] Implementar registro histórico de movimientos
+
+#### Frontend
+- [ ] Crear interfaz para gestión de fichajes
+  - [ ] Desarrollar página de mercado de fichajes
+  - [ ] Implementar proceso de solicitud paso a paso
+  - [ ] Añadir panel de solicitudes pendientes
+  - [ ] Crear visualización de historial de transferencias
+- [ ] Implementar componentes de interacción
+  - [ ] Desarrollar modales de confirmación
+  - [ ] Crear indicadores de estado del proceso
+  - [ ] Implementar notificaciones visuales
+
+### 5. Mejorar documentación de API
+- [ ] Implementar Swagger/OpenAPI
+  - [ ] Configurar integración con Express
+  - [ ] Documentar endpoints principales
+  - [ ] Añadir ejemplos de uso y respuestas
+- [ ] Crear documentación para desarrolladores
+  - [ ] Desarrollar guía de uso de la API
+  - [ ] Documentar modelos de datos
+  - [ ] Añadir explicación de flujos principales
+
+### 6. Mejorar cobertura de pruebas
+#### Backend
+- [ ] Implementar pruebas para controladores
+  - [ ] Crear tests para controlador de jugadores
+  - [ ] Desarrollar tests para endpoints de asignación
+  - [ ] Añadir pruebas para validación de datos
+- [ ] Añadir pruebas de integración
+  - [ ] Desarrollar tests para flujo completo de jugadores
+  - [ ] Implementar pruebas para asignación a equipos
+  - [ ] Crear tests para proceso de fichajes
+
+#### Frontend
+- [ ] Implementar pruebas para componentes UI
+  - [ ] Crear tests para formulario de jugadores
+  - [ ] Desarrollar pruebas para tabla de listado
+  - [ ] Añadir tests para perfil de jugador
+- [ ] Añadir pruebas para slices de Redux
+  - [ ] Implementar tests para reducers de jugadores
+  - [ ] Crear pruebas para selectores
+  - [ ] Desarrollar tests para thunks
 
 ## Registro Diario
 
-### Día 1 [31-03-2025]
-- Configuración inicial de Redux Toolkit
-- Creación de store y configuración de provider
-- Implementación de slice para autenticación
+### Día 1 [14-04-2025]
+- Por completar
 
-### Día 2 [01-04-2025]
-- Desarrollo de middleware para manejo de errores
-- Creación de acciones y reducers para autenticación
-- Implementación de funcionalidad de login/logout
+### Día 2 [15-04-2025]
+- Por completar
 
-### Día 3 [02-04-2025]
-- Implementación de slice para usuarios
-- Creación de hooks personalizados
-- Inicio de desarrollo de página de usuarios
+### Día 3 [16-04-2025]
+- Por completar
 
-### Día 4 [03-04-2025]
-- Completado de página de administración de usuarios
-- Implementación de formularios para creación/edición
-- Añadido de funcionalidad de eliminación
+### Día 4 [17-04-2025]
+- Por completar
 
-### Día 5 [04-04-2025]
-- Ajustes en endpoints de backend para usuarios
-- Implementación de filtros y paginación
-- Mejoras en validación de formularios
+### Día 5 [18-04-2025]
+- Por completar
 
-### Día 6 [05-04-2025]
-- Creación de modelo y controladores para equipos en backend
-- Configuración de rutas REST para equipos
-- Implementación de relaciones con usuarios
+### Día 6 [21-04-2025]
+- Por completar
 
-### Día 7 [06-04-2025]
-- Desarrollo de slice para equipos
-- Implementación de hook personalizado useTeams
-- Pruebas unitarias para reducers y selectores
+### Día 7 [22-04-2025]
+- Por completar
 
-### Día 8 [07-04-2025]
-- Creación de página de listado de equipos
-- Implementación de tabla con filtros y paginación
-- Añadido de acciones de gestión
+### Día 8 [23-04-2025]
+- Por completar
 
-### Día 9 [08-04-2025]
-- Desarrollo de formulario para equipos
-- Implementación de validaciones
-- Ajustes en endpoints de backend
+### Día 9 [24-04-2025]
+- Por completar
 
-### Día 10 [09-04-2025]
-- Implementación de pruebas para componentes de equipos
-- Desarrollo de tests para TeamForm y página Teams
-- Corrección de errores y mejora de tipado
-- Aumento de cobertura de pruebas del frontend
+### Día 10 [25-04-2025]
+- Por completar
 
-### Progreso general
-- **Tareas completadas:** 36/45 (80%)
-- **Puntos de historia:** 42/55 (76%)
-- **Bloqueantes:** Ninguno actual
-- **Próximos pasos:** Implementar página de detalle de equipo y página de perfil de usuario
-
-## Retrospectiva (pendiente)
+## Progreso general
+- **Tareas completadas:** 0/50 (0%)
+- **Puntos de historia:** 0/60 (0%)
+- **Bloqueantes:** Ninguno por el momento
+- **Próximos pasos:** Comenzar con el modelo de datos de jugadores y su controlador CRUD
 
 ## Métricas del Sprint
-- **Completado:** 75%
-- **Velocidad:** 38 subtareas completadas en 8 días
-- **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
-- **Cobertura de pruebas:** 85% en frontend
+- **Completado:** 0%
+- **Velocidad:** Por determinar
+- **Calidad de código:** Por evaluar
+- **Cobertura de pruebas:** Por medir
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**
