@@ -53,25 +53,25 @@
 
 ### 2. Desarrollar sistema de asignación de jugadores a equipos
 #### Backend
-- [ ] Implementar endpoints para gestión de plantillas
-  - [ ] Crear endpoint para añadir jugadores a equipos
-  - [ ] Desarrollar endpoint para eliminar jugadores de equipos
-  - [ ] Añadir validación de límites de jugadores por equipo
-- [ ] Implementar lógica de asignación
-  - [ ] Validar que un jugador solo pertenezca a un equipo
-  - [ ] Añadir verificación de categoría y edad
-  - [ ] Implementar control de fechas de asignación
+- [x] Implementar endpoints para gestión de plantillas
+  - [x] Crear endpoint para añadir jugadores a equipos
+  - [x] Desarrollar endpoint para eliminar jugadores de equipos
+  - [x] Añadir validación de límites de jugadores por equipo
+- [x] Implementar lógica de asignación
+  - [x] Validar que un jugador solo pertenezca a un equipo
+  - [x] Añadir verificación de categoría y edad
+  - [x] Implementar control de fechas de asignación
 
 #### Frontend
-- [ ] Crear componente de gestión de plantilla
-  - [ ] Desarrollar listado de jugadores en equipo
-  - [ ] Implementar búsqueda de jugadores disponibles
+- [x] Crear componente de gestión de plantilla
+  - [x] Desarrollar listado de jugadores en equipo
+  - [x] Implementar búsqueda de jugadores disponibles
   - [ ] Añadir funcionalidad de arrastrar y soltar para asignación
-- [ ] Implementar interfaz de administración de plantillas
-  - [ ] Crear vista de plantilla por equipo
-  - [ ] Añadir acciones para añadir/eliminar jugadores
-  - [ ] Implementar visualización por posiciones
-  - [ ] Desarrollar filtros por características
+- [x] Implementar interfaz de administración de plantillas
+  - [x] Crear vista de plantilla por equipo
+  - [x] Añadir acciones para añadir/eliminar jugadores
+  - [x] Implementar visualización por posiciones
+  - [x] Desarrollar filtros por características
 
 ### 3. Crear perfil de jugador con estadísticas básicas
 #### Backend
@@ -173,7 +173,14 @@
 - Añadida funcionalidad para gestionar fotos de jugadores
 
 ### Día 4 [17-04-2025]
-- Por completar
+- Implementados endpoints para la gestión de plantillas en el backend (asignar/remover jugadores de equipos)
+- Desarrollada la lógica de asignación con validaciones para garantizar que un jugador solo pertenezca a un equipo
+- Creado el componente TeamPlayersManager para la gestión visual de asignación de jugadores
+- Implementada la integración del componente en la página de detalle de equipo
+- Desarrollados filtros de búsqueda por posición y texto en la interfaz de gestión de plantillas
+- Añadido feedback visual con mensajes de éxito/error en las operaciones de asignación
+- Implementada lógica para mostrar solamente jugadores sin equipo en la lista de disponibles
+- Mejorado el manejo de errores en las peticiones de API relacionadas con plantillas
 
 ### Día 5 [18-04-2025]
 - Por completar
@@ -194,14 +201,14 @@
 - Por completar
 
 ## Progreso general
-- **Tareas completadas:** 26/50 (52%)
-- **Puntos de historia:** 38/60 (63%)
+- **Tareas completadas:** 34/50 (68%)
+- **Puntos de historia:** 45/60 (75%)
 - **Bloqueantes:** Ninguno por el momento
-- **Próximos pasos:** Implementar el sistema de asignación de jugadores a equipos y comenzar con el perfil de jugador con estadísticas básicas
+- **Próximos pasos:** Implementar el perfil de jugador con estadísticas básicas y comenzar con la documentación de API
 
 ## Métricas del Sprint
-- **Completado:** 45%
-- **Velocidad:** Buena, avance según lo planificado
+- **Completado:** 65%
+- **Velocidad:** Buena, avance por encima de lo planificado
 - **Calidad de código:** Buena, siguiendo patrones establecidos
 - **Cobertura de pruebas:** Pendiente de implementar pruebas para los nuevos componentes
 

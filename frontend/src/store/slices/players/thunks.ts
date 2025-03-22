@@ -130,4 +130,38 @@ export const deletePlayer = createAsyncThunk<
       dispatch(playersFail('Error al eliminar el jugador'));
     }
   }
-}); 
+});
+
+// Asignar un jugador a un equipo
+export const assignPlayerToTeam = (playerId: string, equipoId: string) => async (dispatch: AppDispatch) => {
+  try {
+    dispatch(playersLoading());
+    
+    const player = await playerService.assignPlayerToTeam(playerId, equipoId);
+    
+    dispatch(playerUpdateSuccess(player));
+    
+    return { success: true, player };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    dispatch(playersFail(errorMessage));
+    return { success: false, error: errorMessage };
+  }
+};
+
+// Eliminar un jugador de un equipo
+export const removePlayerFromTeam = (playerId: string) => async (dispatch: AppDispatch) => {
+  try {
+    dispatch(playersLoading());
+    
+    const player = await playerService.removePlayerFromTeam(playerId);
+    
+    dispatch(playerUpdateSuccess(player));
+    
+    return { success: true, player };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    dispatch(playersFail(errorMessage));
+    return { success: false, error: errorMessage };
+  }
+}; 

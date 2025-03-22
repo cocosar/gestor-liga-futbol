@@ -5,7 +5,9 @@ import {
   createPlayer,
   updatePlayer,
   deletePlayer,
-  updatePlayerStats
+  updatePlayerStats,
+  assignPlayerToTeam,
+  removePlayerFromTeam
 } from '../controllers/playerController';
 import { authenticate as protect, authorize } from '../middleware/auth';
 
@@ -42,6 +44,21 @@ router.patch(
   protect,
   authorize(['admin', 'manager', 'coach']),
   updatePlayerStats
+);
+
+// Rutas para asignación de jugadores a equipos
+router.post(
+  '/:id/asignar',
+  protect,
+  authorize(['admin', 'manager', 'coach']),
+  assignPlayerToTeam
+);
+
+router.delete(
+  '/:id/asignar',
+  protect,
+  authorize(['admin', 'manager', 'coach']),
+  removePlayerFromTeam
 );
 
 export default router; 

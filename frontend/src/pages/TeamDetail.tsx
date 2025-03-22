@@ -11,27 +11,20 @@ import {
   Chip, 
   Button, 
   Paper, 
-  IconButton, 
   CircularProgress, 
   Alert, 
   Tab, 
-  Tabs,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
+  Tabs
 } from '@mui/material';
 import { 
   ArrowBack as ArrowBackIcon, 
   Edit as EditIcon, 
-  Person as PersonIcon,
   Group as GroupIcon,
   EmojiEvents as EmojiEventsIcon,
   DataUsage as DataUsageIcon
 } from '@mui/icons-material';
 import { useTeams } from '../hooks/useTeams';
+import TeamPlayersManager from '../components/teams/TeamPlayersManager';
 
 // Tipo de pestañas disponibles
 interface TabPanelProps {
@@ -71,15 +64,6 @@ const statsData = {
   golesContra: 10,
   puntos: 26
 };
-
-// Datos ficticios para jugadores (se reemplazarían con datos reales del API)
-const playersData = [
-  { id: 1, nombre: 'Carlos Rodríguez', posicion: 'Delantero', numero: 9, goles: 8, asistencias: 5 },
-  { id: 2, nombre: 'Miguel Fernández', posicion: 'Mediocampista', numero: 10, goles: 5, asistencias: 10 },
-  { id: 3, nombre: 'Alejandro López', posicion: 'Defensa', numero: 4, goles: 1, asistencias: 3 },
-  { id: 4, nombre: 'Juan Sánchez', posicion: 'Portero', numero: 1, goles: 0, asistencias: 0 },
-  { id: 5, nombre: 'David Martínez', posicion: 'Defensa', numero: 3, goles: 0, asistencias: 2 },
-];
 
 // Función para capitalizar primera letra
 const capitalizeFirstLetter = (str: string): string => {
@@ -125,6 +109,13 @@ const TeamDetail = () => {
   const handleEditClick = () => {
     if (id) {
       navigate(`/teams?edit=${id}`);
+    }
+  };
+
+  // Función para refrescar datos del equipo
+  const handleTeamUpdate = () => {
+    if (id) {
+      fetchTeamById(id);
     }
   };
 
@@ -268,56 +259,13 @@ const TeamDetail = () => {
 
         {/* Panel de Jugadores */}
         <TabPanel value={tabValue} index={0}>
-          <Paper elevation={2}>
-            <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h6">Listado de Jugadores</Typography>
-              <Button 
-                variant="contained" 
-                size="small"
-                startIcon={<PersonIcon />}
-              >
-                Añadir Jugador
-              </Button>
-            </Box>
-            <Divider />
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>#</TableCell>
-                    <TableCell>Nombre</TableCell>
-                    <TableCell>Posición</TableCell>
-                    <TableCell align="center">Goles</TableCell>
-                    <TableCell align="center">Asistencias</TableCell>
-                    <TableCell align="right">Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {playersData.map((player) => (
-                    <TableRow key={player.id}>
-                      <TableCell>{player.numero}</TableCell>
-                      <TableCell>{player.nombre}</TableCell>
-                      <TableCell>{player.posicion}</TableCell>
-                      <TableCell align="center">{player.goles}</TableCell>
-                      <TableCell align="center">{player.asistencias}</TableCell>
-                      <TableCell align="right">
-                        <IconButton size="small" color="primary">
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {playersData.length === 0 && (
-              <Box sx={{ p: 3, textAlign: 'center' }}>
-                <Typography variant="body1" color="text.secondary">
-                  Este equipo aún no tiene jugadores asignados
-                </Typography>
-              </Box>
-            )}
-          </Paper>
+          {selectedTeam && id && (
+            <TeamPlayersManager 
+              teamId={id} 
+              teamName={selectedTeam.nombre} 
+              onUpdate={handleTeamUpdate}
+            />
+          )}
         </TabPanel>
 
         {/* Panel de Estadísticas */}

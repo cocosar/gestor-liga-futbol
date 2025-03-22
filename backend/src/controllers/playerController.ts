@@ -298,4 +298,176 @@ export const updatePlayerStats = async (req: Request, res: Response) => {
     console.error('Error al actualizar estadísticas:', error);
     res.status(500).json({ message: 'Error al actualizar estadísticas' });
   }
+};
+
+/**
+ * @desc    Asignar un jugador a un equipo
+ * @route   POST /api/jugadores/:id/asignar
+ * @access  Privado (Admin, Manager, Coach)
+ */
+export const assignPlayerToTeam = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { equipoId } = req.body;
+
+    // Validar ID del jugador
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'ID de jugador inválido' 
+      });
+    }
+
+    // Validar ID del equipo
+    if (!mongoose.Types.ObjectId.isValid(equipoId)) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'ID de equipo inválido' 
+      });
+    }
+
+    // Verificar que el jugador existe
+    const player = await Player.findById(id);
+    if (!player) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Jugador no encontrado' 
+      });
+    }
+
+    // Verificar que el equipo existe
+    const team = await Team.findById(equipoId);
+    if (!team) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Equipo no encontrado' 
+      });
+    }
+
+    // Verificar si se ha alcanzado el límite de jugadores por equipo
+    const LIMITE_JUGADORES = team.tipo === 'futbol' ? 25 : team.tipo === 'futbol7' ? 14 : 12; // Límites según tipo de equipo
+    const jugadoresEnEquipo = await Player.countDocuments({ equipo: equipoId });
+    
+    if (jugadoresEnEquipo >= LIMITE_JUGADORES) {
+      return res.status(400).json({
+        success: false,
+        message: `No se puede añadir el jugador. El equipo ha alcanzado el límite de ${LIMITE_JUGADORES} jugadores permitidos para equipos de ${team.tipo}`
+      });
+    }
+
+    // Verificar si el jugador ya pertenece a un equipo
+    if (player.equipo) {
+      // Si ya está en este equipo, no hacer nada
+      if (player.equipo.toString() === equipoId) {
+        return res.status(400).json({
+          success: false,
+          message: 'El jugador ya pertenece a este equipo'
+        });
+      }
+
+      // Si está en otro equipo, moverlo y guardar el equipo anterior en el historial
+      // Primero asegurarse de que equiposAnteriores sea un array
+      if (!player.equiposAnteriores) {
+        player.equiposAnteriores = [];
+      }
+
+      // Solo añadir el equipo anterior si no está ya en el historial
+      const equipoAnteriorId = player.equipo.toString();
+      if (!player.equiposAnteriores.some(eq => eq.toString() === equipoAnteriorId)) {
+        player.equiposAnteriores.push(player.equipo);
+      }
+    }
+
+    // Asignar el nuevo equipo
+    player.equipo = new mongoose.Types.ObjectId(equipoId);
+
+    // Guardar los cambios
+    await player.save();
+
+    // Retornar el jugador actualizado con el equipo populado
+    const updatedPlayer = await Player.findById(id).populate('equipo').populate('equiposAnteriores');
+
+    res.status(200).json({
+      success: true,
+      message: 'Jugador asignado al equipo exitosamente',
+      player: updatedPlayer
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error al asignar jugador al equipo',
+      error: error instanceof Error ? error.message : 'Error desconocido'
+    });
+  }
+};
+
+/**
+ * @desc    Eliminar un jugador de un equipo
+ * @route   DELETE /api/jugadores/:id/asignar
+ * @access  Privado (Admin, Manager, Coach)
+ */
+export const removePlayerFromTeam = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // Validar ID del jugador
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'ID de jugador inválido' 
+      });
+    }
+
+    // Verificar que el jugador existe
+    const player = await Player.findById(id);
+    if (!player) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Jugador no encontrado' 
+      });
+    }
+
+    // Verificar si el jugador pertenece a un equipo
+    if (!player.equipo) {
+      return res.status(400).json({
+        success: false,
+        message: 'El jugador no pertenece a ningún equipo'
+      });
+    }
+
+    // Guardar el equipo anterior en el historial si no está ya allí
+    // Primero asegurarse de que equiposAnteriores sea un array
+    if (!player.equiposAnteriores) {
+      player.equiposAnteriores = [];
+    }
+
+    // Solo añadir el equipo anterior si no está ya en el historial
+    const equipoAnteriorId = player.equipo.toString();
+    if (!player.equiposAnteriores.some(eq => eq.toString() === equipoAnteriorId)) {
+      player.equiposAnteriores.push(player.equipo);
+    }
+
+    // Remover el equipo
+    player.equipo = undefined;
+
+    // Guardar los cambios
+    await player.save();
+
+    // Retornar el jugador actualizado
+    const updatedPlayer = await Player.findById(id).populate('equiposAnteriores');
+
+    res.status(200).json({
+      success: true,
+      message: 'Jugador removido del equipo exitosamente',
+      player: updatedPlayer
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error al remover jugador del equipo',
+      error: error instanceof Error ? error.message : 'Error desconocido'
+    });
+  }
 }; 

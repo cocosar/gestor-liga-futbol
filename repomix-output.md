@@ -38,6 +38,7 @@ The content is organized as follows:
 
 # Directory Structure
 ```
+.cursor/rules/API-testing-instructions.mdc
 .cursor/rules/coding-preferences.mdc
 .github/workflows/ci.yml
 .gitignore
@@ -45,10 +46,9 @@ The content is organized as follows:
 backend/.eslintrc.js
 backend/jest.config.js
 backend/package.json
-backend/pruebas-manuales-equipos.md
-backend/pruebas-manuales-usuarios.md
 backend/README.md
 backend/src/controllers/authController.ts
+backend/src/controllers/playerController.ts
 backend/src/controllers/teamController.ts
 backend/src/controllers/userController.ts
 backend/src/index.ts
@@ -61,6 +61,7 @@ backend/src/models/Team.ts
 backend/src/models/User.ts
 backend/src/routes/authRoutes.ts
 backend/src/routes/index.ts
+backend/src/routes/playerRoutes.ts
 backend/src/routes/teamRoutes.ts
 backend/src/routes/userRoutes.ts
 backend/src/tests/auth.test.ts
@@ -74,12 +75,16 @@ backend/tsconfig.eslint.json
 backend/tsconfig.json
 docs/plan-de-implementacion.md
 docs/plan-de-pruebas.md
+docs/pruebas-manuales-equipos.md
+docs/pruebas-manuales-jugadores.md
+docs/pruebas-manuales-usuarios.md
 frontend/eslint.config.js
 frontend/index.html
 frontend/package.json
 frontend/README.md
 frontend/src/api/authService.ts
 frontend/src/api/index.ts
+frontend/src/api/playerService.ts
 frontend/src/api/teamService.ts
 frontend/src/api/userService.ts
 frontend/src/App.tsx
@@ -92,6 +97,8 @@ frontend/src/components/layout/AppHeader.tsx
 frontend/src/components/layout/Footer.tsx
 frontend/src/components/layout/MainLayout.tsx
 frontend/src/components/layout/Sidebar.tsx
+frontend/src/components/players/index.ts
+frontend/src/components/players/PlayerForm.tsx
 frontend/src/components/teams/__tests__/TeamForm.test.tsx
 frontend/src/components/teams/index.ts
 frontend/src/components/teams/RandomTeamsGenerator.tsx
@@ -102,6 +109,7 @@ frontend/src/hooks/__tests__/useTeams.test.tsx
 frontend/src/hooks/__tests__/useUsers.test.tsx
 frontend/src/hooks/index.ts
 frontend/src/hooks/useAuth.ts
+frontend/src/hooks/usePlayers.ts
 frontend/src/hooks/useTeams.ts
 frontend/src/hooks/useUsers.ts
 frontend/src/index.css
@@ -113,6 +121,7 @@ frontend/src/pages/__tests__/Teams.test.tsx
 frontend/src/pages/Dashboard.tsx
 frontend/src/pages/Home.tsx
 frontend/src/pages/Login.tsx
+frontend/src/pages/Players.tsx
 frontend/src/pages/Register.tsx
 frontend/src/pages/TeamDetail.tsx
 frontend/src/pages/Teams.tsx
@@ -141,6 +150,10 @@ frontend/src/store/slices/auth/authSlice.ts
 frontend/src/store/slices/auth/selectors.ts
 frontend/src/store/slices/auth/thunks.ts
 frontend/src/store/slices/index.ts
+frontend/src/store/slices/players/index.ts
+frontend/src/store/slices/players/playersSlice.ts
+frontend/src/store/slices/players/selectors.ts
+frontend/src/store/slices/players/thunks.ts
 frontend/src/store/slices/teams/index.ts
 frontend/src/store/slices/teams/selectors.ts
 frontend/src/store/slices/teams/teamsSlice.ts
@@ -165,6 +178,7 @@ frontend/src/test/setup/vitest.setup.ts
 frontend/src/types/auth.ts
 frontend/src/types/css.d.ts
 frontend/src/types/index.ts
+frontend/src/types/players.ts
 frontend/src/types/teams.ts
 frontend/src/types/users.ts
 frontend/src/utils/dataGridLocale.ts
@@ -191,6 +205,54 @@ tsconfig.json
 
 # Files
 
+## File: .cursor/rules/API-testing-instructions.mdc
+````
+---
+description: Rest Api Testing
+globs: 
+alwaysApply: false
+---
+# REST API Testing Instructions
+
+The `test_request` tool enables testing, debugging, and interacting with REST API endpoints. The tool provides comprehensive request/response information and handles authentication automatically.
+
+## When to Use
+
+- Testing specific API endpoints
+- Debugging API responses
+- Verifying API functionality
+- Checking response times
+- Validating request/response formats
+- Testing local development servers
+- Testing API sequences
+- Verifying error handling
+
+## Key Features
+
+- Supports GET, POST, PUT, DELETE methods
+- Handles authentication (Basic, Bearer, API Key)
+- Normalizes endpoints automatically
+- Provides detailed response information
+- Configurable SSL verification and response limits
+
+## Resources
+
+The following resources provide detailed documentation:
+
+- examples: Usage examples and common patterns
+- response-format: Response structure and fields
+- config: Configuration options and setup guide
+
+Access these resources to understand usage, response formats, and configuration options.
+
+## Important Notes
+
+- Review API implementation for expected behavior
+- Handle sensitive data appropriately
+- Consider rate limits and API constraints
+- Restart server after configuration changes
+````
+
 ## File: .husky/pre-commit
 ````
 npx lint-staged
@@ -201,7 +263,353 @@ npx lint-staged
 
 ````
 
-## File: backend/pruebas-manuales-equipos.md
+## File: backend/README.md
+````markdown
+# Backend - Sistema de Gestión de Ligas de Fútbol 8v8
+
+Este proyecto contiene el backend del Sistema de Gestión de Ligas de Fútbol 8v8, desarrollado con Node.js, Express, TypeScript y MongoDB.
+
+## Requisitos
+
+- Node.js 14.x o superior
+- npm 6.x o superior
+- MongoDB 4.4 o superior
+
+## Instalación
+
+1. Clona el repositorio
+2. Navega a la carpeta del backend:
+   ```bash
+   cd backend
+   ```
+3. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+4. Copia el archivo de variables de entorno:
+   ```bash
+   cp .env.example .env
+   ```
+5. Edita el archivo `.env` con tus variables de entorno
+
+## Desarrollo
+
+Para iniciar el servidor de desarrollo:
+
+```bash
+npm run dev
+```
+
+El servidor estará disponible en [http://localhost:5000](http://localhost:5000).
+
+## Comandos disponibles
+
+- `npm run dev`: Inicia el servidor de desarrollo con hot-reload
+- `npm start`: Inicia el servidor en modo producción
+- `npm run build`: Compila el código TypeScript
+- `npm test`: Ejecuta los tests
+- `npm run lint`: Ejecuta el linter
+- `npm run format`: Formatea el código
+
+## Estructura del proyecto
+
+- `/src/controllers`: Controladores por entidad
+- `/src/models`: Modelos de MongoDB/Mongoose
+- `/src/routes`: Definición de rutas
+- `/src/middleware`: Middleware personalizado
+- `/src/utils`: Funciones utilitarias
+
+## API Endpoints
+
+La documentación detallada de la API estará disponible en `/api/docs` una vez que el servidor esté en funcionamiento.
+````
+
+## File: backend/src/controllers/playerController.ts
+````typescript
+import { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import Player from '../models/Player';
+import Team from '../models/Team';
+⋮----
+/**
+ * @desc    Obtener todos los jugadores
+ * @route   GET /api/jugadores
+ * @access  Privado
+ */
+export const getPlayers = async (req: Request, res: Response) =>
+⋮----
+// Filtros
+⋮----
+/**
+ * @desc    Obtener un jugador por ID
+ * @route   GET /api/jugadores/:id
+ * @access  Privado
+ */
+export const getPlayerById = async (req: Request, res: Response) =>
+⋮----
+/**
+ * @desc    Crear un nuevo jugador
+ * @route   POST /api/jugadores
+ * @access  Privado
+ */
+export const createPlayer = async (req: Request, res: Response) =>
+⋮----
+// Validaciones básicas
+⋮----
+// Verificar si ya existe un jugador con el mismo número de identificación
+⋮----
+// Si se especifica un equipo, verificar que exista
+⋮----
+// Crear el nuevo jugador
+⋮----
+/**
+ * @desc    Actualizar un jugador
+ * @route   PUT /api/jugadores/:id
+ * @access  Privado
+ */
+export const updatePlayer = async (req: Request, res: Response) =>
+⋮----
+// Si se cambió el número de identificación, verificar que no exista otro jugador con ese número
+⋮----
+// Comprobar si es un jugador diferente
+⋮----
+// Si se está cambiando de equipo, guardar el equipo anterior en el historial
+⋮----
+// Asegurarse de que equiposAnteriores sea un array
+⋮----
+// Solo añadir el equipo anterior si no está ya en el historial
+⋮----
+/**
+ * @desc    Eliminar un jugador
+ * @route   DELETE /api/jugadores/:id
+ * @access  Privado
+ */
+export const deletePlayer = async (req: Request, res: Response) =>
+⋮----
+// Opción 1: Eliminación física (definitiva)
+// await Player.findByIdAndDelete(id);
+⋮----
+// Opción 2: Eliminación lógica (recomendada)
+⋮----
+/**
+ * @desc    Actualizar estadísticas de un jugador
+ * @route   PATCH /api/jugadores/:id/estadisticas
+ * @access  Privado
+ */
+export const updatePlayerStats = async (req: Request, res: Response) =>
+````
+
+## File: backend/src/models/index.ts
+````typescript
+import User from './User';
+import Team from './Team';
+import Player from './Player';
+import Match from './Match';
+import League from './League';
+````
+
+## File: backend/src/models/League.ts
+````typescript
+import mongoose, { Document, Schema } from 'mongoose';
+⋮----
+export interface ILeague extends Document {
+  nombre: string;
+  temporada: string;
+  fechaInicio: Date;
+  fechaFin?: Date;
+  descripcion?: string;
+  logo?: string;
+  equipos: mongoose.Types.ObjectId[];
+  estado: 'preparacion' | 'en_curso' | 'finalizada' | 'cancelada';
+  tipoCompeticion: 'liga' | 'copa' | 'torneo';
+  configuracion: {
+    puntosPorVictoria: number;
+    puntosPorEmpate: number;
+    puntosPorDerrota: number;
+    criteriosDesempate: string[];
+  };
+  creador: mongoose.Types.ObjectId;
+  activo: boolean;
+}
+⋮----
+// Índices para búsquedas más rápidas
+````
+
+## File: backend/src/models/Match.ts
+````typescript
+import mongoose, { Document, Schema } from 'mongoose';
+⋮----
+export interface IMatch extends Document {
+  fecha: Date;
+  equipoLocal: mongoose.Types.ObjectId;
+  equipoVisitante: mongoose.Types.ObjectId;
+  estado: 'programado' | 'en_curso' | 'finalizado' | 'suspendido' | 'cancelado';
+  resultadoLocal?: number;
+  resultadoVisitante?: number;
+  ubicacion?: string;
+  liga: mongoose.Types.ObjectId;
+  temporada?: string;
+  jornada?: number;
+  arbitros?: mongoose.Types.ObjectId[];
+  eventos?: {
+    tipo: 'gol' | 'amarilla' | 'roja' | 'sustitucion' | 'otro';
+    minuto: number;
+    jugador: mongoose.Types.ObjectId;
+    equipoId: mongoose.Types.ObjectId;
+    descripcion?: string;
+    jugadorSustituto?: mongoose.Types.ObjectId; // Solo para sustituciones
+  }[];
+  alineacionLocal?: mongoose.Types.ObjectId[];
+  alineacionVisitante?: mongoose.Types.ObjectId[];
+  destacados?: {
+    jugador: mongoose.Types.ObjectId;
+    razon: string;
+  }[];
+  observaciones?: string;
+}
+⋮----
+jugadorSustituto?: mongoose.Types.ObjectId; // Solo para sustituciones
+⋮----
+// Índices para mejorar la búsqueda y consultas frecuentes
+````
+
+## File: backend/src/routes/playerRoutes.ts
+````typescript
+import express from 'express';
+import {
+  getPlayers,
+  getPlayerById,
+  createPlayer,
+  updatePlayer,
+  deletePlayer,
+  updatePlayerStats
+} from '../controllers/playerController';
+import { authenticate as protect, authorize } from '../middleware/auth';
+⋮----
+// Rutas públicas
+⋮----
+// Rutas protegidas para roles específicos
+````
+
+## File: backend/src/tests/controllers/userController.test.ts
+````typescript
+
+````
+
+## File: backend/src/tests/middleware/auth.test.ts
+````typescript
+
+````
+
+## File: backend/src/tests/mocks/services.mock.ts
+````typescript
+// Mock para servicios externos utilizados en la aplicación
+⋮----
+interface FileUpload {
+  originalname: string;
+  [key: string]: unknown;
+}
+⋮----
+/**
+ * Mock para servicios de almacenamiento de archivos
+ */
+⋮----
+// Mock para subida de archivos
+⋮----
+// Mock para eliminación de archivos
+⋮----
+// Mock para generación de URL firmadas
+⋮----
+/**
+ * Mock para servicios de envío de emails
+ */
+⋮----
+// Mock para envío de emails genéricos
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+// Mock para envío de emails de recuperación de contraseña
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+// Mock para envío de emails de bienvenida
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+/**
+ * Mock para servicios de notificaciones push
+ */
+⋮----
+// Mock para envío de notificaciones push
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+// Mock para envío de notificaciones a múltiples usuarios
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+/**
+ * Mock para servicios de pago
+ */
+⋮----
+// Mock para procesar pagos
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+// Mock para reembolsos
+⋮----
+/**
+ * Utilidad para resetear todos los mocks
+ */
+export const resetAllMocks = () =>
+⋮----
+// Resetear contadores y comportamiento de los mocks
+````
+
+## File: backend/src/types/index.d.ts
+````typescript
+// Declaraciones de tipos para la aplicación de backend
+⋮----
+export interface Request {
+    usuario?: {
+      id: string;
+      [key: string]: any;
+    };
+  }
+````
+
+## File: backend/tsconfig.eslint.json
+````json
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.json",
+    "src/tests/**/*.ts"
+  ]
+}
+````
+
+## File: backend/tsconfig.json
+````json
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+````
+
+## File: docs/pruebas-manuales-equipos.md
 ````markdown
 # Pruebas Manuales: CRUD de Equipos
 
@@ -501,7 +909,348 @@ Después de realizar las pruebas, verifica la integridad del sistema:
 5. Si hay problemas al añadir jugadores, verifica que los usuarios existan y estén activos.
 ````
 
-## File: backend/pruebas-manuales-usuarios.md
+## File: docs/pruebas-manuales-jugadores.md
+````markdown
+# Pruebas Manuales - API de Jugadores
+
+Este documento contiene ejemplos para probar manualmente los endpoints de la API de jugadores utilizando herramientas como Postman o Insomnia.
+
+## Configuración previa
+
+1. Asegúrate de tener el servidor backend en ejecución
+2. Obtén un token de autenticación válido haciendo una solicitud a `/api/auth/login`
+3. Usa ese token en el header `Authorization: Bearer <token>` para las peticiones que requieran autenticación
+
+## 1. Obtener todos los jugadores
+
+**Endpoint:** `GET /api/jugadores`
+
+**Parámetros de consulta opcionales:**
+```
+?nombre=Juan
+?apellido=Perez
+?posicion=delantero
+?equipo=64f7a3b2c32e5a8d97b1e2f0 (ID del equipo)
+?activo=true
+?page=1
+?limit=10
+```
+
+**Respuesta exitosa (200 OK):**
+```json
+{
+  "players": [
+    {
+      "_id": "64f7a3b2c32e5a8d97b1e2f1",
+      "nombre": "Juan",
+      "apellido": "Perez",
+      "numeroIdentificacion": "A123456",
+      "posicion": "delantero",
+      "activo": true,
+      "estadisticas": {
+        "goles": 5,
+        "asistencias": 3,
+        "tarjetasAmarillas": 2,
+        "tarjetasRojas": 0,
+        "partidosJugados": 10,
+        "minutos": 850
+      },
+      "equipo": {
+        "_id": "64f7a3b2c32e5a8d97b1e2f0",
+        "nombre": "Real Madrid",
+        "categoria": "senior"
+      },
+      "createdAt": "2023-05-10T15:30:45.123Z",
+      "updatedAt": "2023-05-15T18:20:30.456Z"
+    }
+    // ... más jugadores
+  ],
+  "pagination": {
+    "totalPlayers": 25,
+    "totalPages": 3,
+    "currentPage": 1,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  }
+}
+```
+
+## 2. Obtener un jugador por ID
+
+**Endpoint:** `GET /api/jugadores/:id`
+
+**Ejemplo:** `GET /api/jugadores/64f7a3b2c32e5a8d97b1e2f1`
+
+**Respuesta exitosa (200 OK):**
+```json
+{
+  "_id": "64f7a3b2c32e5a8d97b1e2f1",
+  "nombre": "Juan",
+  "apellido": "Perez",
+  "fechaNacimiento": "1995-05-15T00:00:00.000Z",
+  "fotoPerfil": "/profiles/juan-perez.jpg",
+  "numeroIdentificacion": "A123456",
+  "posicion": "delantero",
+  "numeroCamiseta": 9,
+  "equipo": {
+    "_id": "64f7a3b2c32e5a8d97b1e2f0",
+    "nombre": "Real Madrid",
+    "categoria": "senior"
+  },
+  "equiposAnteriores": [
+    {
+      "_id": "64f7a3b2c32e5a8d97b1e2f2",
+      "nombre": "Barcelona",
+      "categoria": "senior"
+    }
+  ],
+  "activo": true,
+  "altura": 182,
+  "peso": 78,
+  "piePreferido": "derecho",
+  "estadisticas": {
+    "goles": 5,
+    "asistencias": 3,
+    "tarjetasAmarillas": 2,
+    "tarjetasRojas": 0,
+    "partidosJugados": 10,
+    "minutos": 850
+  },
+  "createdAt": "2023-05-10T15:30:45.123Z",
+  "updatedAt": "2023-05-15T18:20:30.456Z"
+}
+```
+
+**Respuesta de error (404 Not Found):**
+```json
+{
+  "message": "Jugador no encontrado"
+}
+```
+
+## 3. Crear un nuevo jugador
+
+**Endpoint:** `POST /api/jugadores`  
+**Autenticación requerida:** Sí (admin, manager o coach)
+
+**Cuerpo de la solicitud:**
+```json
+{
+  "nombre": "Carlos",
+  "apellido": "González",
+  "fechaNacimiento": "1998-08-23",
+  "numeroIdentificacion": "B789012",
+  "posicion": "mediocampista",
+  "numeroCamiseta": 8,
+  "equipo": "64f7a3b2c32e5a8d97b1e2f0",
+  "altura": 175,
+  "peso": 70,
+  "piePreferido": "izquierdo"
+}
+```
+
+**Respuesta exitosa (201 Created):**
+```json
+{
+  "_id": "65a1b2c3d4e5f6g7h8i9j0k1",
+  "nombre": "Carlos",
+  "apellido": "González",
+  "fechaNacimiento": "1998-08-23T00:00:00.000Z",
+  "fotoPerfil": "/default-player.png",
+  "numeroIdentificacion": "B789012",
+  "posicion": "mediocampista",
+  "numeroCamiseta": 8,
+  "equipo": "64f7a3b2c32e5a8d97b1e2f0",
+  "activo": true,
+  "altura": 175,
+  "peso": 70,
+  "piePreferido": "izquierdo",
+  "estadisticas": {
+    "goles": 0,
+    "asistencias": 0,
+    "tarjetasAmarillas": 0,
+    "tarjetasRojas": 0,
+    "partidosJugados": 0,
+    "minutos": 0
+  },
+  "createdAt": "2023-06-20T10:15:30.123Z",
+  "updatedAt": "2023-06-20T10:15:30.123Z"
+}
+```
+
+**Respuestas de error:**
+- 400 Bad Request: Datos inválidos o faltantes
+- 401 Unauthorized: Token no proporcionado o inválido
+- 403 Forbidden: No tiene permisos para crear jugadores
+
+## 4. Actualizar un jugador
+
+**Endpoint:** `PUT /api/jugadores/:id`  
+**Autenticación requerida:** Sí (admin, manager o coach)
+
+**Ejemplo:** `PUT /api/jugadores/65a1b2c3d4e5f6g7h8i9j0k1`
+
+**Cuerpo de la solicitud:**
+```json
+{
+  "numeroCamiseta": 10,
+  "altura": 176,
+  "estadisticas": {
+    "goles": 1,
+    "asistencias": 2,
+    "partidosJugados": 2,
+    "minutos": 180
+  }
+}
+```
+
+**Respuesta exitosa (200 OK):**
+```json
+{
+  "_id": "65a1b2c3d4e5f6g7h8i9j0k1",
+  "nombre": "Carlos",
+  "apellido": "González",
+  "fechaNacimiento": "1998-08-23T00:00:00.000Z",
+  "fotoPerfil": "/default-player.png",
+  "numeroIdentificacion": "B789012",
+  "posicion": "mediocampista",
+  "numeroCamiseta": 10,
+  "equipo": {
+    "_id": "64f7a3b2c32e5a8d97b1e2f0",
+    "nombre": "Real Madrid",
+    "categoria": "senior"
+  },
+  "activo": true,
+  "altura": 176,
+  "peso": 70,
+  "piePreferido": "izquierdo",
+  "estadisticas": {
+    "goles": 1,
+    "asistencias": 2,
+    "tarjetasAmarillas": 0,
+    "tarjetasRojas": 0,
+    "partidosJugados": 2,
+    "minutos": 180
+  },
+  "createdAt": "2023-06-20T10:15:30.123Z",
+  "updatedAt": "2023-06-20T11:30:45.789Z"
+}
+```
+
+## 5. Actualizar estadísticas de un jugador
+
+**Endpoint:** `PATCH /api/jugadores/:id/estadisticas`  
+**Autenticación requerida:** Sí (admin, manager o coach)
+
+**Ejemplo:** `PATCH /api/jugadores/65a1b2c3d4e5f6g7h8i9j0k1/estadisticas`
+
+**Cuerpo de la solicitud:**
+```json
+{
+  "estadisticas": {
+    "goles": 2,
+    "asistencias": 3,
+    "tarjetasAmarillas": 1,
+    "partidosJugados": 3,
+    "minutos": 270
+  }
+}
+```
+
+**Respuesta exitosa (200 OK):**
+```json
+{
+  "_id": "65a1b2c3d4e5f6g7h8i9j0k1",
+  "nombre": "Carlos",
+  "apellido": "González",
+  "estadisticas": {
+    "goles": 2,
+    "asistencias": 3,
+    "tarjetasAmarillas": 1,
+    "tarjetasRojas": 0,
+    "partidosJugados": 3,
+    "minutos": 270
+  },
+  // ... resto de campos
+}
+```
+
+## 6. Eliminar un jugador
+
+**Endpoint:** `DELETE /api/jugadores/:id`  
+**Autenticación requerida:** Sí (admin o manager)
+
+**Ejemplo:** `DELETE /api/jugadores/65a1b2c3d4e5f6g7h8i9j0k1`
+
+**Respuesta exitosa (200 OK):**
+```json
+{
+  "message": "Jugador eliminado correctamente"
+}
+```
+
+**Respuestas de error:**
+- 400 Bad Request: ID de jugador inválido
+- 401 Unauthorized: Token no proporcionado o inválido
+- 403 Forbidden: No tiene permisos para eliminar jugadores
+- 404 Not Found: Jugador no encontrado
+
+## Notas adicionales
+
+- La eliminación de jugadores es lógica (se establece `activo: false`), no física
+- Los jugadores inactivos no aparecen en las consultas a menos que se especifique `?activo=false`
+- Al cambiar un jugador de equipo, el equipo anterior se guarda en el historial automáticamente
+- Las estadísticas se pueden actualizar tanto con el endpoint `PUT /api/jugadores/:id` como con el endpoint específico `PATCH /api/jugadores/:id/estadisticas` 
+
+# Plan de Pruebas Manual para la Gestión de Jugadores
+
+## Objetivos
+
+- Validar la funcionalidad completa del módulo de gestión de jugadores
+- Verificar la correcta integración con el backend 
+- Comprobar que la interfaz de usuario funciona correctamente
+
+## Casos de Prueba
+
+### Caso 1: Acceso a la página de jugadores
+
+1. Navegar a la página principal
+2. Iniciar sesión como administrador
+3. Acceder a la sección de jugadores
+4. Verificar que se carga correctamente la tabla de jugadores
+
+### Caso 2: Filtrado de jugadores
+
+1. Probar filtro por nombre
+2. Probar filtro por posición
+3. Probar filtro por equipo
+4. Probar filtro por estado (activo/todos)
+5. Verificar que la paginación funciona correctamente
+
+### Caso 3: Creación de jugador
+
+1. Hacer clic en "Nuevo Jugador"
+2. Rellenar el formulario con datos válidos
+3. Guardar el formulario
+4. Verificar que el jugador aparece en la tabla
+
+### Caso 4: Edición de jugador
+
+1. Seleccionar un jugador existente
+2. Hacer clic en el botón de editar
+3. Modificar algunos datos
+4. Guardar los cambios
+5. Verificar que los cambios se reflejan en la tabla
+
+### Caso 5: Eliminación de jugador
+
+1. Seleccionar un jugador existente
+2. Hacer clic en el botón de eliminar
+3. Confirmar la eliminación
+4. Verificar que el jugador ya no aparece en la tabla
+````
+
+## File: docs/pruebas-manuales-usuarios.md
 ````markdown
 # Pruebas Manuales: CRUD de Usuarios
 
@@ -789,293 +1538,6 @@ Después de realizar las pruebas, verifica la integridad del sistema:
 4. Para problemas con ID de MongoDB, asegúrate de que son strings hexadecimales de 24 caracteres.
 ````
 
-## File: backend/README.md
-````markdown
-# Backend - Sistema de Gestión de Ligas de Fútbol 8v8
-
-Este proyecto contiene el backend del Sistema de Gestión de Ligas de Fútbol 8v8, desarrollado con Node.js, Express, TypeScript y MongoDB.
-
-## Requisitos
-
-- Node.js 14.x o superior
-- npm 6.x o superior
-- MongoDB 4.4 o superior
-
-## Instalación
-
-1. Clona el repositorio
-2. Navega a la carpeta del backend:
-   ```bash
-   cd backend
-   ```
-3. Instala las dependencias:
-   ```bash
-   npm install
-   ```
-4. Copia el archivo de variables de entorno:
-   ```bash
-   cp .env.example .env
-   ```
-5. Edita el archivo `.env` con tus variables de entorno
-
-## Desarrollo
-
-Para iniciar el servidor de desarrollo:
-
-```bash
-npm run dev
-```
-
-El servidor estará disponible en [http://localhost:5000](http://localhost:5000).
-
-## Comandos disponibles
-
-- `npm run dev`: Inicia el servidor de desarrollo con hot-reload
-- `npm start`: Inicia el servidor en modo producción
-- `npm run build`: Compila el código TypeScript
-- `npm test`: Ejecuta los tests
-- `npm run lint`: Ejecuta el linter
-- `npm run format`: Formatea el código
-
-## Estructura del proyecto
-
-- `/src/controllers`: Controladores por entidad
-- `/src/models`: Modelos de MongoDB/Mongoose
-- `/src/routes`: Definición de rutas
-- `/src/middleware`: Middleware personalizado
-- `/src/utils`: Funciones utilitarias
-
-## API Endpoints
-
-La documentación detallada de la API estará disponible en `/api/docs` una vez que el servidor esté en funcionamiento.
-````
-
-## File: backend/src/models/index.ts
-````typescript
-import User from './User';
-import Team from './Team';
-import Player from './Player';
-import Match from './Match';
-import League from './League';
-````
-
-## File: backend/src/models/League.ts
-````typescript
-import mongoose, { Document, Schema } from 'mongoose';
-⋮----
-export interface ILeague extends Document {
-  nombre: string;
-  temporada: string;
-  fechaInicio: Date;
-  fechaFin?: Date;
-  descripcion?: string;
-  logo?: string;
-  equipos: mongoose.Types.ObjectId[];
-  estado: 'preparacion' | 'en_curso' | 'finalizada' | 'cancelada';
-  tipoCompeticion: 'liga' | 'copa' | 'torneo';
-  configuracion: {
-    puntosPorVictoria: number;
-    puntosPorEmpate: number;
-    puntosPorDerrota: number;
-    criteriosDesempate: string[];
-  };
-  creador: mongoose.Types.ObjectId;
-  activo: boolean;
-}
-⋮----
-// Índices para búsquedas más rápidas
-````
-
-## File: backend/src/models/Match.ts
-````typescript
-import mongoose, { Document, Schema } from 'mongoose';
-⋮----
-export interface IMatch extends Document {
-  fecha: Date;
-  equipoLocal: mongoose.Types.ObjectId;
-  equipoVisitante: mongoose.Types.ObjectId;
-  estado: 'programado' | 'en_curso' | 'finalizado' | 'suspendido' | 'cancelado';
-  resultadoLocal?: number;
-  resultadoVisitante?: number;
-  ubicacion?: string;
-  liga: mongoose.Types.ObjectId;
-  temporada?: string;
-  jornada?: number;
-  arbitros?: mongoose.Types.ObjectId[];
-  eventos?: {
-    tipo: 'gol' | 'amarilla' | 'roja' | 'sustitucion' | 'otro';
-    minuto: number;
-    jugador: mongoose.Types.ObjectId;
-    equipoId: mongoose.Types.ObjectId;
-    descripcion?: string;
-    jugadorSustituto?: mongoose.Types.ObjectId; // Solo para sustituciones
-  }[];
-  alineacionLocal?: mongoose.Types.ObjectId[];
-  alineacionVisitante?: mongoose.Types.ObjectId[];
-  destacados?: {
-    jugador: mongoose.Types.ObjectId;
-    razon: string;
-  }[];
-  observaciones?: string;
-}
-⋮----
-jugadorSustituto?: mongoose.Types.ObjectId; // Solo para sustituciones
-⋮----
-// Índices para mejorar la búsqueda y consultas frecuentes
-````
-
-## File: backend/src/models/Player.ts
-````typescript
-import mongoose, { Document, Schema } from 'mongoose';
-⋮----
-export interface IPlayer extends Document {
-  nombre: string;
-  apellido: string;
-  fechaNacimiento?: Date;
-  fotoPerfil?: string;
-  numeroIdentificacion: string;
-  posicion: 'portero' | 'defensa' | 'mediocampista' | 'delantero';
-  numeroCamiseta?: number;
-  equipo?: mongoose.Types.ObjectId;
-  equiposAnteriores?: mongoose.Types.ObjectId[];
-  activo: boolean;
-  altura?: number; // en cm
-  peso?: number; // en kg
-  piePreferido?: 'izquierdo' | 'derecho' | 'ambos';
-  estadisticas?: {
-    goles: number;
-    asistencias: number;
-    tarjetasAmarillas: number;
-    tarjetasRojas: number;
-    partidosJugados: number;
-    minutos: number;
-  };
-}
-⋮----
-altura?: number; // en cm
-peso?: number; // en kg
-⋮----
-// Índices para mejorar la búsqueda
-````
-
-## File: backend/src/tests/controllers/userController.test.ts
-````typescript
-
-````
-
-## File: backend/src/tests/middleware/auth.test.ts
-````typescript
-
-````
-
-## File: backend/src/tests/mocks/services.mock.ts
-````typescript
-// Mock para servicios externos utilizados en la aplicación
-⋮----
-interface FileUpload {
-  originalname: string;
-  [key: string]: unknown;
-}
-⋮----
-/**
- * Mock para servicios de almacenamiento de archivos
- */
-⋮----
-// Mock para subida de archivos
-⋮----
-// Mock para eliminación de archivos
-⋮----
-// Mock para generación de URL firmadas
-⋮----
-/**
- * Mock para servicios de envío de emails
- */
-⋮----
-// Mock para envío de emails genéricos
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-⋮----
-// Mock para envío de emails de recuperación de contraseña
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-⋮----
-// Mock para envío de emails de bienvenida
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-⋮----
-/**
- * Mock para servicios de notificaciones push
- */
-⋮----
-// Mock para envío de notificaciones push
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-⋮----
-// Mock para envío de notificaciones a múltiples usuarios
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-⋮----
-/**
- * Mock para servicios de pago
- */
-⋮----
-// Mock para procesar pagos
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-⋮----
-// Mock para reembolsos
-⋮----
-/**
- * Utilidad para resetear todos los mocks
- */
-export const resetAllMocks = () =>
-⋮----
-// Resetear contadores y comportamiento de los mocks
-````
-
-## File: backend/src/types/index.d.ts
-````typescript
-// Declaraciones de tipos para la aplicación de backend
-⋮----
-export interface Request {
-    usuario?: {
-      id: string;
-      [key: string]: any;
-    };
-  }
-````
-
-## File: backend/tsconfig.eslint.json
-````json
-{
-  "extends": "./tsconfig.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx",
-    "src/**/*.json",
-    "src/tests/**/*.ts"
-  ]
-}
-````
-
-## File: backend/tsconfig.json
-````json
-{
-  "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-}
-````
-
 ## File: frontend/eslint.config.js
 ````javascript
 export default tseslint.config(
@@ -1098,6 +1560,73 @@ export default tseslint.config(
 </html>
 ````
 
+## File: frontend/src/api/playerService.ts
+````typescript
+import axios from 'axios';
+import { 
+  Player, 
+  PlayersResponse, 
+  CreatePlayerData, 
+  UpdatePlayerData, 
+  PlayerFilters,
+  UpdatePlayerStatsData
+} from '../types';
+⋮----
+/**
+ * Servicio para gestionar jugadores en el backend
+ */
+⋮----
+/**
+   * Obtiene un listado paginado de jugadores con filtros
+   * @param filters Filtros de búsqueda y paginación
+   * @returns Respuesta con listado de jugadores
+   */
+async getPlayers(filters: PlayerFilters =
+⋮----
+/**
+   * Obtiene un jugador por su ID
+   * @param playerId ID del jugador
+   * @returns Datos del jugador
+   */
+async getPlayerById(playerId: string): Promise<Player>
+⋮----
+/**
+   * Crea un nuevo jugador
+   * @param playerData Datos del jugador
+   * @returns Datos del jugador creado
+   */
+async createPlayer(playerData: CreatePlayerData): Promise<Player>
+⋮----
+/**
+   * Actualiza un jugador existente
+   * @param playerId ID del jugador
+   * @param playerData Datos a actualizar
+   * @returns Datos del jugador actualizado
+   */
+async updatePlayer(
+    playerId: string,
+    playerData: UpdatePlayerData
+): Promise<Player>
+⋮----
+/**
+   * Actualiza las estadísticas de un jugador
+   * @param playerId ID del jugador
+   * @param statsData Datos de estadísticas a actualizar
+   * @returns Datos del jugador con estadísticas actualizadas
+   */
+async updatePlayerStats(
+    playerId: string,
+    statsData: UpdatePlayerStatsData
+): Promise<Player>
+⋮----
+/**
+   * Elimina un jugador (baja lógica)
+   * @param playerId ID del jugador
+   * @returns Mensaje de confirmación
+   */
+async deletePlayer(playerId: string): Promise<
+````
+
 ## File: frontend/src/components/layout/Footer.tsx
 ````typescript
 import React from 'react';
@@ -1114,6 +1643,138 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 ⋮----
 const handleDrawerToggle = () =>
+````
+
+## File: frontend/src/components/players/index.ts
+````typescript
+
+````
+
+## File: frontend/src/components/players/PlayerForm.tsx
+````typescript
+import { useState, useEffect } from 'react';
+import { 
+  Grid, 
+  TextField, 
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem, 
+  FormHelperText, 
+  Button, 
+  Box, 
+  CircularProgress, 
+  Switch,
+  Avatar,
+  IconButton,
+  SelectChangeEvent,
+  Typography
+} from '@mui/material';
+import { PhotoCamera } from '@mui/icons-material';
+import { useTeams } from '../../hooks/useTeams';
+import { usePlayers } from '../../hooks/usePlayers';
+import { CreatePlayerData, UpdatePlayerData } from '../../types';
+⋮----
+interface PlayerFormProps {
+  playerId?: string;
+  onClose: () => void;
+  onSaved?: () => void; // Callback opcional para notificar cuando se guarda exitosamente
+}
+⋮----
+onSaved?: () => void; // Callback opcional para notificar cuando se guarda exitosamente
+⋮----
+// Estados iniciales para el formulario
+⋮----
+// Estado para errores de validación
+⋮----
+// Estado para foto de perfil
+⋮----
+// Cargar equipos al montar
+⋮----
+// Si es edición, cargar datos del jugador
+⋮----
+// Actualizar formulario cuando se carga un jugador
+⋮----
+// Si el equipo es un objeto, extraer su ID
+⋮----
+// Si hay foto de perfil, establecer la preview
+⋮----
+// Manejar cambios en el formulario para inputs de texto
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+// Limpiar error cuando se modifica un campo
+⋮----
+// Manejar cambios en selects
+const handleSelectChange = (e: SelectChangeEvent) =>
+⋮----
+// Limpiar error cuando se modifica un campo
+⋮----
+// Manejar cambio en checkbox
+const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+// Manejar cambio de foto
+const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+// Generar preview
+⋮----
+// Validar campos del formulario
+const validateForm = (): boolean =>
+⋮----
+// Manejar envío del formulario
+const handleSubmit = async (e: React.FormEvent) =>
+⋮----
+// Aquí se manejaría la lógica para subir la foto y obtener URL
+// Para este ejemplo, solo simulamos que se guarda la URL actual si existe
+⋮----
+// Eliminar el campo equipo si está vacío para evitar error de conversión a ObjectId
+⋮----
+// Si hay foto nueva, simular que tenemos una URL (en un caso real, se subiría)
+⋮----
+// En un caso real, aquí subiríamos la foto a un servicio como S3
+// Y luego asignaríamos la URL resultante
+playerData.fotoPerfil = fotoPreview; // Simulación
+⋮----
+// Mantener la foto existente
+⋮----
+// Actualizar jugador existente
+⋮----
+// Notificar al componente padre antes de cerrar
+⋮----
+// Cerrar el formulario después de guardar exitosamente
+⋮----
+// Crear nuevo jugador
+// Eliminar activo para crear jugador (solo se usa en actualización)
+⋮----
+// Usar type assertion para asegurarse de que se puede acceder a 'activo'
+⋮----
+// Notificar al componente padre antes de cerrar
+⋮----
+// Cerrar el formulario después de guardar exitosamente
+⋮----
+{/* Foto de perfil */}
+⋮----
+accept="image/*"
+                id="foto-input"
+                type="file"
+                style={{ display: 'none' }}
+                onChange={handleFotoChange}
+              />
+              <IconButton color="primary" component="span" aria-label="subir foto">
+                <PhotoCamera />
+              </IconButton>
+            </label>
+          </Box>
+        </Grid>
+        
+        {/* Datos personales */}
+⋮----
+{/* Datos deportivos */}
+⋮----
+{/* Datos físicos */}
+⋮----
+{/* Estado (solo en edición) */}
+⋮----
+{/* Botones de acción */}
 ````
 
 ## File: frontend/src/components/teams/__tests__/TeamForm.test.tsx
@@ -1251,6 +1912,41 @@ const createWrapper = (initialState:
 // 'usuario' del backend debería mapearse a 'player' en el frontend
 ````
 
+## File: frontend/src/hooks/usePlayers.ts
+````typescript
+import { useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '../store';
+import { playersSelectors, playersThunks } from '../store/slices/players';
+import {
+  PlayerFilters,
+  CreatePlayerData,
+  UpdatePlayerData,
+  UpdatePlayerStatsData
+} from '../types';
+⋮----
+/**
+ * Hook personalizado para gestionar jugadores
+ * @returns Métodos y estado relacionados con jugadores
+ */
+export const usePlayers = () =>
+⋮----
+// Seleccionar datos del estado
+⋮----
+// Métodos memorizados para reducir re-renderizados
+⋮----
+// Filtrar jugadores por equipo (memorizado)
+⋮----
+// Filtrar jugadores por posición (memorizado)
+⋮----
+// Filtrar jugadores activos (memorizado)
+⋮----
+// Estado
+⋮----
+// Acciones principales
+⋮----
+// Utilidades de filtrado
+````
+
 ## File: frontend/src/hooks/useUsers.ts
 ````typescript
 import { useCallback } from 'react';
@@ -1359,6 +2055,112 @@ import { Link as RouterLink } from 'react-router-dom';
 {/* Hero Section */}
 ⋮----
 {/* Features Section */}
+````
+
+## File: frontend/src/pages/Players.tsx
+````typescript
+import { useEffect, useState, useCallback } from 'react';
+import { 
+  Container, 
+  Grid, 
+  Paper, 
+  Typography, 
+  Box, 
+  Button, 
+  TextField, 
+  IconButton, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  CircularProgress
+} from '@mui/material';
+import { 
+  Add as AddIcon, 
+  Delete as DeleteIcon, 
+  Edit as EditIcon, 
+  Info as InfoIcon
+} from '@mui/icons-material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { usePlayers } from '../hooks/usePlayers';
+import { useTeams } from '../hooks/useTeams';
+import { PlayerFilters } from '../types';
+import { TeamListItem } from '../types/teams';
+import { useNavigate } from 'react-router-dom';
+import { esESGrid } from '../utils/dataGridLocale';
+import { PlayerForm } from '../components/players';
+⋮----
+// Función para aplicar los filtros a la petición - ahora memoizada
+⋮----
+// Intentamos determinar si es nombre o apellido
+⋮----
+// Solo aplicamos el filtro de activo cuando queremos ver específicamente los activos
+⋮----
+// Si soloActivos es false, no enviamos el parámetro activo para que el backend devuelva todos
+⋮----
+// Manejar cambios de paginación
+const handlePageChange = (page: number) =>
+⋮----
+// Manejar cambios en el tamaño de página
+const handlePageSizeChange = (pageSize: number) =>
+⋮----
+// Manejar búsqueda
+const handleSearch = () =>
+⋮----
+// Manejar cambios en filtros
+const handlePosicionChange = (event: SelectChangeEvent) =>
+⋮----
+const handleEquipoChange = (event: SelectChangeEvent) =>
+⋮----
+const handleActivosChange = (event: SelectChangeEvent) =>
+⋮----
+// Manejar creación de jugador
+const handleCreatePlayer = () =>
+⋮----
+// Manejar edición de jugador
+const handleEditPlayer = (id: string) =>
+⋮----
+// Manejar cierre de formulario
+const handleCloseForm = () =>
+⋮----
+// Manejar confirmación de eliminación
+const handleConfirmDelete = (id: string) =>
+⋮----
+// Manejar eliminación de jugador
+const handleDeletePlayer = () =>
+⋮----
+// Recargar datos después de eliminar
+⋮----
+// Marcar la actualización como completada
+⋮----
+// Función para capitalizar texto
+const capitalizeFirstLetter = (str: string | null | undefined): string =>
+⋮----
+// Manejar vista detallada del jugador
+const handleViewPlayerDetail = (id: string) =>
+⋮----
+// Obtener el nombre del equipo dado un ID o un objeto de equipo
+const getTeamName = (teamId: string | TeamListItem | null | undefined) =>
+⋮----
+// Definir columnas para la tabla
+⋮----
+// Cargar jugadores y equipos al montar el componente
+⋮----
+fetchTeams({ page: 1, limit: 100 }); // Cargamos todos los equipos para los filtros
+⋮----
+{/* Modal de confirmación para eliminar */}
+⋮----
+{/* Aquí iría el formulario de creación/edición de jugadores */}
+⋮----
+// Recargar datos después de crear/editar
+⋮----
+// Desactivar el estado de actualización después de un tiempo
 ````
 
 ## File: frontend/src/pages/TeamDetail.tsx
@@ -1861,6 +2663,144 @@ interface AuthState {
 // Exportar acciones y reducer
 ````
 
+## File: frontend/src/store/slices/players/index.ts
+````typescript
+import playersReducer, { 
+  playersLoading, 
+  playersLoadSuccess, 
+  playerLoadSuccess, 
+  playerCreateSuccess, 
+  playerUpdateSuccess,
+  playerStatsUpdateSuccess,
+  playerDeleteSuccess, 
+  playersFail, 
+  clearSelectedPlayer, 
+  clearErrors,
+  resetPlayers
+} from './playersSlice';
+````
+
+## File: frontend/src/store/slices/players/playersSlice.ts
+````typescript
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Player, PlayersState } from '../../../types';
+⋮----
+// Estado inicial
+⋮----
+// Crear slice
+⋮----
+// Iniciar carga de datos
+⋮----
+// Carga de lista de jugadores exitosa
+⋮----
+// Carga de un solo jugador exitosa
+⋮----
+// Creación de jugador exitosa
+⋮----
+// Añadir el nuevo jugador a la lista si ya hay jugadores cargados
+⋮----
+// Actualización de jugador exitosa
+⋮----
+// Asegurarse de que el jugador actualizado reemplace completamente al anterior en la lista
+⋮----
+// Creamos una nueva referencia del array completo para forzar la actualización en React
+⋮----
+// Reemplazamos el jugador con una nueva referencia para asegurar re-render
+⋮----
+// Actualizamos el estado con el nuevo array
+⋮----
+// Actualización de estadísticas de jugador exitosa
+⋮----
+// Actualizar el jugador en la lista si ya está cargado
+⋮----
+// Eliminación de jugador exitosa
+⋮----
+// Si el jugador eliminado es el que está seleccionado, limpiarlo
+⋮----
+// Eliminar el jugador de la lista o marcarlo como inactivo
+⋮----
+// Error en operaciones de jugadores
+⋮----
+// Limpiar jugador seleccionado
+⋮----
+// Limpiar errores
+⋮----
+// Resetear estado
+⋮----
+// Exportar acciones y reducer
+````
+
+## File: frontend/src/store/slices/players/selectors.ts
+````typescript
+import { RootState } from '../../index';
+import { createSelector } from '@reduxjs/toolkit';
+⋮----
+// Selector para obtener la lista de jugadores
+export const selectPlayers = (state: RootState)
+⋮----
+// Selector para obtener el jugador seleccionado
+export const selectSelectedPlayer = (state: RootState)
+⋮----
+// Selector para verificar si se están cargando datos
+export const selectLoading = (state: RootState)
+⋮----
+// Selector para obtener errores
+export const selectError = (state: RootState)
+⋮----
+// Selector para obtener el estado de éxito
+export const selectSuccess = (state: RootState)
+⋮----
+// Selector para obtener la paginación
+export const selectPagination = (state: RootState)
+⋮----
+// Selector para verificar si existen jugadores
+export const selectHasPlayers = (state: RootState)
+⋮----
+// Selector para obtener jugador por ID
+export const selectPlayerById = (state: RootState, playerId: string)
+⋮----
+// Selector para obtener jugadores por equipo
+⋮----
+// Selector para obtener jugadores por posición
+⋮----
+// Selector para obtener jugadores activos
+````
+
+## File: frontend/src/store/slices/players/thunks.ts
+````typescript
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { playerService } from '../../../api';
+import { 
+  PlayerFilters, 
+  CreatePlayerData, 
+  UpdatePlayerData,
+  UpdatePlayerStatsData 
+} from '../../../types';
+import {
+  playersLoading,
+  playersLoadSuccess,
+  playerLoadSuccess,
+  playerCreateSuccess,
+  playerUpdateSuccess,
+  playerStatsUpdateSuccess,
+  playerDeleteSuccess,
+  playersFail
+} from './playersSlice';
+import { AppDispatch } from '../../index';
+⋮----
+// Obtener listado de jugadores
+⋮----
+// Obtener un jugador por ID
+⋮----
+// Crear un nuevo jugador
+⋮----
+// Actualizar un jugador existente
+⋮----
+// Actualizar estadísticas de un jugador
+⋮----
+// Eliminar un jugador
+````
+
 ## File: frontend/src/store/slices/teams/index.ts
 ````typescript
 import teamsReducer, { 
@@ -2229,6 +3169,99 @@ testTimeout: 5000, // Reducir el timeout por defecto a 5 segundos
 ## File: frontend/src/types/css.d.ts
 ````typescript
 
+````
+
+## File: frontend/src/types/players.ts
+````typescript
+import { TeamListItem } from './teams';
+⋮----
+export interface PlayerStats {
+  goles: number;
+  asistencias: number;
+  tarjetasAmarillas: number;
+  tarjetasRojas: number;
+  partidosJugados: number;
+  minutos: number;
+}
+⋮----
+export interface Player {
+  _id: string;
+  nombre: string;
+  apellido: string;
+  fechaNacimiento?: string;
+  fotoPerfil?: string;
+  numeroIdentificacion: string;
+  posicion: 'indefinida' | 'portero' | 'defensa' | 'mediocampista' | 'delantero';
+  numeroCamiseta?: number;
+  equipo?: string | TeamListItem;
+  equiposAnteriores?: string[] | TeamListItem[];
+  activo: boolean;
+  altura?: number;
+  peso?: number;
+  piePreferido?: 'izquierdo' | 'derecho' | 'ambos';
+  estadisticas?: PlayerStats;
+  createdAt?: string;
+  updatedAt?: string;
+}
+⋮----
+export interface PlayersState {
+  players: Player[];
+  player: Player | null;
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+  pagination: {
+    totalPlayers: number;
+    totalPages: number;
+    currentPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  } | null;
+}
+⋮----
+export interface PlayersResponse {
+  players: Player[];
+  pagination: {
+    totalPlayers: number;
+    totalPages: number;
+    currentPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+}
+⋮----
+export interface PlayerFilters {
+  nombre?: string;
+  apellido?: string;
+  posicion?: string;
+  equipo?: string;
+  activo?: boolean;
+  page?: number;
+  limit?: number;
+}
+⋮----
+export interface CreatePlayerData {
+  nombre: string;
+  apellido: string;
+  fechaNacimiento?: string;
+  fotoPerfil?: string;
+  numeroIdentificacion: string;
+  posicion: 'indefinida' | 'portero' | 'defensa' | 'mediocampista' | 'delantero';
+  numeroCamiseta?: number;
+  equipo?: string;
+  altura?: number;
+  peso?: number;
+  piePreferido?: 'izquierdo' | 'derecho' | 'ambos';
+}
+⋮----
+export interface UpdatePlayerData extends Partial<CreatePlayerData> {
+  activo?: boolean;
+  estadisticas?: PlayerStats;
+}
+⋮----
+export interface UpdatePlayerStatsData {
+  estadisticas: PlayerStats;
+}
 ````
 
 ## File: frontend/src/utils/dataGridLocale.ts
@@ -3285,18 +4318,38 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) =>
 // Exportar controlador como objeto
 ````
 
-## File: backend/src/routes/index.ts
+## File: backend/src/models/Player.ts
 ````typescript
-import express from 'express';
-import authRoutes from './authRoutes';
-import userRoutes from './userRoutes';
-import teamRoutes from './teamRoutes';
+import mongoose, { Document, Schema } from 'mongoose';
 ⋮----
-// Rutas de autenticación
+export interface IPlayer extends Document {
+  nombre: string;
+  apellido: string;
+  fechaNacimiento?: Date;
+  fotoPerfil?: string;
+  numeroIdentificacion: string;
+  posicion: 'indefinida' | 'portero' | 'defensa' | 'mediocampista' | 'delantero';
+  numeroCamiseta?: number;
+  equipo?: mongoose.Types.ObjectId;
+  equiposAnteriores?: mongoose.Types.ObjectId[];
+  activo: boolean;
+  altura?: number; // en cm
+  peso?: number; // en kg
+  piePreferido?: 'izquierdo' | 'derecho' | 'ambos';
+  estadisticas?: {
+    goles: number;
+    asistencias: number;
+    tarjetasAmarillas: number;
+    tarjetasRojas: number;
+    partidosJugados: number;
+    minutos: number;
+  };
+}
 ⋮----
-// Rutas de usuarios
+altura?: number; // en cm
+peso?: number; // en kg
 ⋮----
-// Rutas de equipos
+// Índices para mejorar la búsqueda
 ````
 
 ## File: backend/src/routes/teamRoutes.ts
@@ -4043,81 +5096,6 @@ keepMounted: true, // Better open performance on mobile
 
 ````
 
-## File: frontend/src/components/teams/TeamForm.tsx
-````typescript
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Switch,
-  TextField,
-  Typography,
-  Paper
-} from '@mui/material';
-import BrokenImageIcon from '@mui/icons-material/BrokenImage';
-import ImageIcon from '@mui/icons-material/Image';
-import { useTeams, useUsers } from '../../hooks';
-import { TeamFormData } from '../../types';
-⋮----
-interface TeamFormProps {
-  open: boolean;
-  onClose: () => void;
-  teamId?: string;
-}
-⋮----
-// Cargar equipo si se está editando
-⋮----
-// Cargar usuarios para selector de entrenador
-⋮----
-// Actualizar formulario cuando se carga el equipo seleccionado
-⋮----
-// Función para obtener la URL con proxy si es necesario
-const getProxiedUrl = (url: string): string =>
-⋮----
-// Usar un servicio proxy de imágenes que permite CORS
-⋮----
-// Efecto para actualizar la previsualización cuando cambia la URL del logo
-⋮----
-// Resetear el estado de validez de la imagen cuando cambia la URL
-⋮----
-// Pre-cargar la imagen para probar si es válida
-⋮----
-// Alternar el uso del proxy
-const toggleProxy = () =>
-⋮----
-const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
-) =>
-⋮----
-// Limpiar error del campo
-⋮----
-const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-⋮----
-// Manejador para validar la imagen cuando carga
-const handleImageLoad = () =>
-⋮----
-// Manejador para cuando la imagen falla al cargar
-const handleImageError = () =>
-⋮----
-const validateForm = (): boolean =>
-⋮----
-const handleSubmit = () =>
-⋮----
-{/* Previsualización del logo */}
-````
-
 ## File: frontend/src/components/users/UserForm.tsx
 ````typescript
 import React, { useEffect } from 'react';
@@ -4359,97 +5337,6 @@ import { ThemeProvider, createTheme } from '@mui/material';
 // Verificar botones principales
 ⋮----
 // Verificar elementos de características
-````
-
-## File: frontend/src/pages/Teams.tsx
-````typescript
-import { useEffect, useState } from 'react';
-import { 
-  Container, 
-  Grid, 
-  Paper, 
-  Typography, 
-  Box, 
-  Button, 
-  TextField, 
-  IconButton, 
-  Dialog, 
-  DialogActions, 
-  DialogContent, 
-  DialogContentText, 
-  DialogTitle,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  CircularProgress
-} from '@mui/material';
-import { 
-  Add as AddIcon, 
-  Delete as DeleteIcon, 
-  Edit as EditIcon, 
-  Info as InfoIcon
-} from '@mui/icons-material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useTeams } from '../hooks/useTeams';
-import TeamForm from '../components/teams/TeamForm';
-import { TeamPaginationParams } from '../types';
-import { RandomTeamsGenerator } from '../components/teams';
-import { useNavigate } from 'react-router-dom';
-import { esESGrid } from '../utils/dataGridLocale';
-⋮----
-// Cargar equipos al montar el componente
-⋮----
-// Manejar cambios de paginación
-const handlePageChange = (page: number) =>
-⋮----
-// Manejar cambios en el tamaño de página
-const handlePageSizeChange = (pageSize: number) =>
-⋮----
-// Manejar búsqueda
-const handleSearch = () =>
-⋮----
-// Manejar cambios en filtros
-const handleCategoriaChange = (event: SelectChangeEvent) =>
-⋮----
-const handleTipoChange = (event: SelectChangeEvent) =>
-⋮----
-// Manejar creación de equipo
-const handleCreateTeam = () =>
-⋮----
-// Manejar edición de equipo
-const handleEditTeam = (id: string) =>
-⋮----
-// Manejar cierre de formulario
-const handleCloseForm = () =>
-⋮----
-// Recargar datos después de crear/editar
-⋮----
-// Manejar confirmación de eliminación
-const handleConfirmDelete = (id: string) =>
-⋮----
-// Manejar eliminación de equipo
-const handleDeleteTeam = () =>
-⋮----
-// Función para capitalizar primera letra
-const capitalizeFirstLetter = (str: string): string =>
-⋮----
-// Función para ver detalle del equipo
-const handleViewTeamDetail = (id: string) =>
-⋮----
-// Definir columnas para la tabla
-⋮----
-{/* Filtros de búsqueda */}
-⋮----
-{/* Tabla de equipos */}
-⋮----
-handlePageChange(model.page);
-handlePageSizeChange(model.pageSize);
-⋮----
-{/* Formulario de creación/edición */}
-⋮----
-{/* Diálogo de confirmación de eliminación */}
 ````
 
 ## File: frontend/src/reportWebVitals.ts
@@ -4791,16 +5678,6 @@ import { AppDispatch } from '../../index';
 // Cambiar contraseña
 ⋮----
 // Logout
-````
-
-## File: frontend/src/store/slices/index.ts
-````typescript
-import authReducer from './auth/authSlice';
-import usersReducer from './users';
-// Importar futuros reducers
-// import teamsReducer from './teams/teamsSlice';
-⋮----
-// teamsReducer
 ````
 
 ## File: frontend/src/store/slices/teams/thunks.ts
@@ -5264,9 +6141,21 @@ import { authenticate } from '../middleware/auth';
  */
 ````
 
-## File: frontend/src/api/index.ts
+## File: backend/src/routes/index.ts
 ````typescript
-
+import express from 'express';
+import authRoutes from './authRoutes';
+import userRoutes from './userRoutes';
+import teamRoutes from './teamRoutes';
+import playerRoutes from './playerRoutes';
+⋮----
+// Rutas de autenticación
+⋮----
+// Rutas de usuarios
+⋮----
+// Rutas de equipos
+⋮----
+// Rutas de jugadores
 ````
 
 ## File: frontend/src/api/userService.ts
@@ -5331,9 +6220,75 @@ const handleProfile = () =>
 const handleLogout = () =>
 ````
 
-## File: frontend/src/hooks/index.ts
+## File: frontend/src/components/teams/TeamForm.tsx
 ````typescript
-
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Switch,
+  TextField,
+  Typography,
+  Paper
+} from '@mui/material';
+import BrokenImageIcon from '@mui/icons-material/BrokenImage';
+import ImageIcon from '@mui/icons-material/Image';
+import { useTeams, useUsers } from '../../hooks';
+import { TeamFormData } from '../../types';
+⋮----
+interface TeamFormProps {
+  open: boolean;
+  onClose: () => void;
+  teamId?: string;
+}
+⋮----
+// Cargar equipo si se está editando
+⋮----
+// Cargar usuarios para selector de entrenador
+⋮----
+// Actualizar formulario cuando se carga el equipo seleccionado
+⋮----
+// Función para obtener la URL con proxy si es necesario
+const getProxiedUrl = (url: string): string =>
+⋮----
+// Usar un servicio proxy de imágenes que permite CORS
+⋮----
+// Efecto para actualizar la previsualización cuando cambia la URL del logo
+⋮----
+// Alternar el uso del proxy
+const toggleProxy = () =>
+⋮----
+const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
+) =>
+⋮----
+// Limpiar error del campo
+⋮----
+const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+// Manejador para validar la imagen cuando carga
+const handleImageLoad = () =>
+⋮----
+// Manejador para cuando la imagen falla al cargar
+const handleImageError = () =>
+⋮----
+const validateForm = (): boolean =>
+⋮----
+const handleSubmit = () =>
+⋮----
+{/* Previsualización del logo */}
 ````
 
 ## File: frontend/src/hooks/useAuth.ts
@@ -5486,6 +6441,97 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>
 // Mostrar error (validación del formulario o error de autenticación)
 ````
 
+## File: frontend/src/pages/Teams.tsx
+````typescript
+import { useEffect, useState } from 'react';
+import { 
+  Container, 
+  Grid, 
+  Paper, 
+  Typography, 
+  Box, 
+  Button, 
+  TextField, 
+  IconButton, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  CircularProgress
+} from '@mui/material';
+import { 
+  Add as AddIcon, 
+  Delete as DeleteIcon, 
+  Edit as EditIcon, 
+  Info as InfoIcon
+} from '@mui/icons-material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useTeams } from '../hooks/useTeams';
+import TeamForm from '../components/teams/TeamForm';
+import { TeamPaginationParams } from '../types';
+import { RandomTeamsGenerator } from '../components/teams';
+import { useNavigate } from 'react-router-dom';
+import { esESGrid } from '../utils/dataGridLocale';
+⋮----
+// Cargar equipos al montar el componente
+⋮----
+// Manejar cambios de paginación
+const handlePageChange = (page: number) =>
+⋮----
+// Manejar cambios en el tamaño de página
+const handlePageSizeChange = (pageSize: number) =>
+⋮----
+// Manejar búsqueda
+const handleSearch = () =>
+⋮----
+// Manejar cambios en filtros
+const handleCategoriaChange = (event: SelectChangeEvent) =>
+⋮----
+const handleTipoChange = (event: SelectChangeEvent) =>
+⋮----
+// Manejar creación de equipo
+const handleCreateTeam = () =>
+⋮----
+// Manejar edición de equipo
+const handleEditTeam = (id: string) =>
+⋮----
+// Manejar cierre de formulario
+const handleCloseForm = () =>
+⋮----
+// Recargar datos después de crear/editar
+⋮----
+// Manejar confirmación de eliminación
+const handleConfirmDelete = (id: string) =>
+⋮----
+// Manejar eliminación de equipo
+const handleDeleteTeam = () =>
+⋮----
+// Función para capitalizar primera letra
+const capitalizeFirstLetter = (str: string): string =>
+⋮----
+// Función para ver detalle del equipo
+const handleViewTeamDetail = (id: string) =>
+⋮----
+// Definir columnas para la tabla
+⋮----
+{/* Filtros de búsqueda */}
+⋮----
+{/* Tabla de equipos */}
+⋮----
+handlePageChange(model.page);
+handlePageSizeChange(model.pageSize);
+⋮----
+{/* Formulario de creación/edición */}
+⋮----
+{/* Diálogo de confirmación de eliminación */}
+````
+
 ## File: frontend/src/store/__tests__/slices/teams/thunks.test.ts
 ````typescript
 import { describe, test, expect, beforeEach } from 'vitest';
@@ -5596,6 +6642,18 @@ import { vi } from 'vitest';
 // Verificar que se llama a las acciones correctas
 ````
 
+## File: frontend/src/store/slices/index.ts
+````typescript
+import authReducer from './auth/authSlice';
+import usersReducer from './users';
+import teamsReducer from './teams';
+import playersReducer from './players';
+// Importar futuros reducers
+// import teamsReducer from './teams/teamsSlice';
+⋮----
+// teamsReducer
+````
+
 ## File: frontend/src/store/slices/teams/teamsSlice.ts
 ````typescript
 import { createSlice } from '@reduxjs/toolkit';
@@ -5634,11 +6692,6 @@ const adaptTeamResponse = (team: unknown): TeamListItem =>
 // Acciones para manejar estados de carga y resultados
 ⋮----
 // Exportar acciones y reducer
-````
-
-## File: frontend/src/types/index.ts
-````typescript
-
 ````
 
 ## File: frontend/src/types/teams.ts
@@ -6646,6 +7699,11 @@ const transformRole = (role: string): string =>
 // Verificar si el usuario está autenticado
 ````
 
+## File: frontend/src/api/index.ts
+````typescript
+
+````
+
 ## File: frontend/src/api/teamService.ts
 ````typescript
 import axios from 'axios';
@@ -6746,6 +7804,11 @@ const renderAppHeader = (isAuthenticated = false, user: MockUser | null = null) 
 // Verificar que los botones de inicio de sesión y registro NO están presentes
 ⋮----
 // Verificar que se llama a la función logout
+````
+
+## File: frontend/src/hooks/index.ts
+````typescript
+
 ````
 
 ## File: frontend/src/pages/Register.tsx
@@ -6880,6 +7943,11 @@ setPageSize(model.pageSize);
 {/* Modal para editar usuario */}
 ⋮----
 {/* Modal de confirmación para eliminar usuario */}
+````
+
+## File: frontend/src/types/index.ts
+````typescript
+
 ````
 
 ## File: tracking/NOTAS-DESARROLLO.md
@@ -7334,36 +8402,6 @@ export const generateToken = (user: IUser): string =>
 export const verifyToken = (token: string): JwtPayload | null =>
 ````
 
-## File: frontend/src/store/index.ts
-````typescript
-import { configureStore } from '@reduxjs/toolkit';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-⋮----
-// Importar reducers
-// Nota: Estos serán implementados en los próximos pasos
-import authReducer from './slices/auth/authSlice';
-import usersReducer from './slices/users';
-import teamsReducer from './slices/teams';
-⋮----
-// Importar middlewares personalizados
-import middlewares from './middleware';
-⋮----
-// Configuración del store
-⋮----
-// Aquí se añadirán los demás reducers a medida que se implementen
-⋮----
-// Middleware configurados por defecto + middlewares personalizados
-⋮----
-// Ignorar ciertos campos en acciones específicas si es necesario
-⋮----
-// Tipos para dispatch y state
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-⋮----
-// Hooks tipados
-export const useAppDispatch = ()
-````
-
 ## File: frontend/vite.config.ts
 ````typescript
 import { defineConfig } from 'vite'
@@ -7429,6 +8467,37 @@ import { configDefaults } from 'vitest/config'
 }
 ````
 
+## File: frontend/src/store/index.ts
+````typescript
+import { configureStore } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+⋮----
+// Importar reducers
+// Nota: Estos serán implementados en los próximos pasos
+import authReducer from './slices/auth/authSlice';
+import usersReducer from './slices/users';
+import teamsReducer from './slices/teams';
+import playersReducer from './slices/players';
+⋮----
+// Importar middlewares personalizados
+import middlewares from './middleware';
+⋮----
+// Configuración del store
+⋮----
+// Aquí se añadirán los demás reducers a medida que se implementen
+⋮----
+// Middleware configurados por defecto + middlewares personalizados
+⋮----
+// Ignorar ciertos campos en acciones específicas si es necesario
+⋮----
+// Tipos para dispatch y state
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+⋮----
+// Hooks tipados
+export const useAppDispatch = ()
+````
+
 ## File: tracking/TRACKING.md
 ````markdown
 # Seguimiento del Proyecto: Sistema de Gestión de Ligas de Fútbol 8v8
@@ -7485,6 +8554,7 @@ import UsersPage from './pages/Users';
 import TeamsPage from './pages/Teams';
 import TeamDetail from './pages/TeamDetail';
 import UserProfile from './pages/UserProfile';
+import PlayersPage from './pages/Players';
 ⋮----
 // Tema personalizado
 ⋮----
@@ -7501,10 +8571,6 @@ import UserProfile from './pages/UserProfile';
 {/* Rutas con roles específicos */}
 ⋮----
 </Route>
-⋮----
-<Route path="/players" element=
-⋮----
-<Route path="/standings" element=
 ⋮----
 {/* Ruta para acceso no autorizado */}
 ⋮----
@@ -7527,44 +8593,44 @@ import UserProfile from './pages/UserProfile';
 
 ### 1. Implementar CRUD completo de jugadores
 #### Backend
-- [ ] Desarrollar modelo de datos para jugadores
-  - [ ] Diseñar esquema con campos básicos (nombre, posición, edad, etc.)
-  - [ ] Añadir campos para estadísticas individuales
-  - [ ] Implementar relaciones con equipos y usuarios
-- [ ] Crear controlador con métodos CRUD
-  - [ ] Implementar método de creación (POST)
-  - [ ] Desarrollar método de consulta (GET) con filtros
-  - [ ] Añadir método de actualización (PUT)
-  - [ ] Implementar método de eliminación (DELETE)
-- [ ] Configurar rutas REST para jugadores
-  - [ ] Definir endpoints básicos CRUD
-  - [ ] Configurar middleware de autenticación
-  - [ ] Implementar validación de permisos por rol
-- [ ] Implementar validación avanzada
-  - [ ] Validar datos obligatorios y tipos
-  - [ ] Añadir validación personalizada para campos específicos
-  - [ ] Configurar mensajes de error descriptivos
+- [x] Desarrollar modelo de datos para jugadores
+  - [x] Diseñar esquema con campos básicos (nombre, posición, edad, etc.)
+  - [x] Añadir campos para estadísticas individuales
+  - [x] Implementar relaciones con equipos y usuarios
+- [x] Crear controlador con métodos CRUD
+  - [x] Implementar método de creación (POST)
+  - [x] Desarrollar método de consulta (GET) con filtros
+  - [x] Añadir método de actualización (PUT)
+  - [x] Implementar método de eliminación (DELETE)
+- [x] Configurar rutas REST para jugadores
+  - [x] Definir endpoints básicos CRUD
+  - [x] Configurar middleware de autenticación
+  - [x] Implementar validación de permisos por rol
+- [x] Implementar validación avanzada
+  - [x] Validar datos obligatorios y tipos
+  - [x] Añadir validación personalizada para campos específicos
+  - [x] Configurar mensajes de error descriptivos
 
 #### Frontend
-- [ ] Crear slice de Redux para jugadores
-  - [ ] Implementar acciones para operaciones CRUD
-  - [ ] Desarrollar reducers para estado de jugadores
-  - [ ] Añadir selectores para filtrado eficiente
-  - [ ] Implementar thunks para operaciones asíncronas
-- [ ] Implementar hook personalizado useJugadores
-  - [ ] Crear métodos para acciones comunes
-  - [ ] Implementar manejo de estado de carga y errores
-  - [ ] Añadir funciones para filtrado y búsqueda
-- [ ] Desarrollar página de administración
-  - [ ] Crear tabla de listado con paginación
-  - [ ] Implementar filtros avanzados por posición, equipo, etc.
-  - [ ] Añadir acciones de gestión (editar, eliminar, ver detalle)
-  - [ ] Desarrollar modal de confirmación para eliminación
-- [ ] Implementar formulario de creación/edición
-  - [ ] Crear campos con validación (nombre, posición, número, etc.)
-  - [ ] Añadir selector de equipo
-  - [ ] Implementar subida de foto de perfil
-  - [ ] Manejar errores de API y feedback visual
+- [x] Crear slice de Redux para jugadores
+  - [x] Implementar acciones para operaciones CRUD
+  - [x] Desarrollar reducers para estado de jugadores
+  - [x] Añadir selectores para filtrado eficiente
+  - [x] Implementar thunks para operaciones asíncronas
+- [x] Implementar hook personalizado useJugadores
+  - [x] Crear métodos para acciones comunes
+  - [x] Implementar manejo de estado de carga y errores
+  - [x] Añadir funciones para filtrado y búsqueda
+- [x] Desarrollar página de administración
+  - [x] Crear tabla de listado con paginación
+  - [x] Implementar filtros avanzados por posición, equipo, etc.
+  - [x] Añadir acciones de gestión (editar, eliminar, ver detalle)
+  - [x] Desarrollar modal de confirmación para eliminación
+- [x] Implementar formulario de creación/edición
+  - [x] Crear campos con validación (nombre, posición, número, etc.)
+  - [x] Añadir selector de equipo
+  - [x] Implementar subida de foto de perfil
+  - [x] Manejar errores de API y feedback visual
 
 ### 2. Desarrollar sistema de asignación de jugadores a equipos
 #### Backend
@@ -7666,13 +8732,26 @@ import UserProfile from './pages/UserProfile';
 ## Registro Diario
 
 ### Día 1 [14-04-2025]
-- Por completar
+- Implementado el modelo de datos para jugadores
+- Desarrollado el controlador con métodos CRUD completos para jugadores
+- Configuradas las rutas REST con autenticación y autorización
+- Creado documento de pruebas manuales para la API de jugadores
+- Pendiente: Implementación del frontend para jugadores
 
 ### Día 2 [15-04-2025]
-- Por completar
+- Creado el servicio de API para jugadores en el frontend
+- Implementado el slice de Redux para jugadores (acciones, reducers, selectores y thunks)
+- Desarrollado el hook personalizado usePlayers para facilitar la interacción con el estado
+- Integrado el módulo de jugadores en el store global
+- Pendiente: Implementación de las páginas de administración y formularios
 
 ### Día 3 [16-04-2025]
-- Por completar
+- Implementada la página de administración de jugadores con tabla de listado y paginación 
+- Desarrollados filtros avanzados por posición, equipo y estado
+- Implementadas acciones de gestión (editar, eliminar, ver detalle)
+- Creado formulario completo para creación/edición de jugadores
+- Implementada validación de datos y manejo de errores
+- Añadida funcionalidad para gestionar fotos de jugadores
 
 ### Día 4 [17-04-2025]
 - Por completar
@@ -7696,16 +8775,16 @@ import UserProfile from './pages/UserProfile';
 - Por completar
 
 ## Progreso general
-- **Tareas completadas:** 0/50 (0%)
-- **Puntos de historia:** 0/60 (0%)
+- **Tareas completadas:** 26/50 (52%)
+- **Puntos de historia:** 38/60 (63%)
 - **Bloqueantes:** Ninguno por el momento
-- **Próximos pasos:** Comenzar con el modelo de datos de jugadores y su controlador CRUD
+- **Próximos pasos:** Implementar el sistema de asignación de jugadores a equipos y comenzar con el perfil de jugador con estadísticas básicas
 
 ## Métricas del Sprint
-- **Completado:** 0%
-- **Velocidad:** Por determinar
-- **Calidad de código:** Por evaluar
-- **Cobertura de pruebas:** Por medir
+- **Completado:** 45%
+- **Velocidad:** Buena, avance según lo planificado
+- **Calidad de código:** Buena, siguiendo patrones establecidos
+- **Cobertura de pruebas:** Pendiente de implementar pruebas para los nuevos componentes
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**

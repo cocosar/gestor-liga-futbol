@@ -1,33 +1,26 @@
+import playersReducer from './playersSlice';
 import * as playersSelectors from './selectors';
-import * as playersThunks from './thunks';
-import playersReducer, { 
-  playersLoading, 
-  playersLoadSuccess, 
-  playerLoadSuccess, 
-  playerCreateSuccess, 
-  playerUpdateSuccess,
-  playerStatsUpdateSuccess,
-  playerDeleteSuccess, 
-  playersFail, 
-  clearSelectedPlayer, 
-  clearErrors,
-  resetPlayers
-} from './playersSlice';
+import { 
+  fetchPlayers, 
+  fetchPlayerById, 
+  createPlayer, 
+  updatePlayer, 
+  updatePlayerStats, 
+  deletePlayer,
+  assignPlayerToTeam,
+  removePlayerFromTeam
+} from './thunks';
 
-export {
-  playersSelectors,
-  playersThunks,
-  playersLoading, 
-  playersLoadSuccess, 
-  playerLoadSuccess, 
-  playerCreateSuccess, 
-  playerUpdateSuccess,
-  playerStatsUpdateSuccess,
-  playerDeleteSuccess, 
-  playersFail, 
-  clearSelectedPlayer, 
-  clearErrors,
-  resetPlayers
+const playersThunks = {
+  fetchPlayers,
+  fetchPlayerById,
+  createPlayer,
+  updatePlayer,
+  updatePlayerStats,
+  deletePlayer,
+  assignPlayerToTeam,
+  removePlayerFromTeam
 };
 
+export { playersSelectors, playersThunks };
 export default playersReducer; 

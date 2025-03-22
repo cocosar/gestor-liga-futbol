@@ -25,28 +25,37 @@ export const usePlayers = () => {
   const hasPlayers = useAppSelector(playersSelectors.selectHasPlayers);
   
   // Métodos memorizados para reducir re-renderizados
-  const fetchPlayers = useCallback((filters: PlayerFilters = {}) => {
-    dispatch(playersThunks.fetchPlayers(filters));
+  const fetchPlayers = useCallback((filters?: PlayerFilters) => {
+    return dispatch(playersThunks.fetchPlayers(filters || {}));
   }, [dispatch]);
   
-  const fetchPlayerById = useCallback((playerId: string) => {
-    dispatch(playersThunks.fetchPlayerById(playerId));
+  const fetchPlayerById = useCallback((id: string) => {
+    return dispatch(playersThunks.fetchPlayerById(id));
   }, [dispatch]);
   
-  const createPlayer = useCallback((playerData: CreatePlayerData) => {
-    dispatch(playersThunks.createPlayer(playerData));
+  const createPlayer = useCallback((data: CreatePlayerData) => {
+    return dispatch(playersThunks.createPlayer(data));
   }, [dispatch]);
   
-  const updatePlayer = useCallback((playerId: string, playerData: UpdatePlayerData) => {
-    dispatch(playersThunks.updatePlayer({ playerId, playerData }));
+  const updatePlayer = useCallback((id: string, data: UpdatePlayerData) => {
+    return dispatch(playersThunks.updatePlayer({ playerId: id, playerData: data }));
   }, [dispatch]);
   
-  const updatePlayerStats = useCallback((playerId: string, statsData: UpdatePlayerStatsData) => {
-    dispatch(playersThunks.updatePlayerStats({ playerId, statsData }));
+  const updatePlayerStats = useCallback((id: string, data: UpdatePlayerStatsData) => {
+    return dispatch(playersThunks.updatePlayerStats({ playerId: id, statsData: data }));
   }, [dispatch]);
   
-  const deletePlayer = useCallback((playerId: string) => {
-    dispatch(playersThunks.deletePlayer(playerId));
+  const deletePlayer = useCallback((id: string) => {
+    return dispatch(playersThunks.deletePlayer(id));
+  }, [dispatch]);
+  
+  // Nuevos métodos para asignación de jugadores a equipos
+  const assignPlayerToTeam = useCallback((playerId: string, equipoId: string) => {
+    return dispatch(playersThunks.assignPlayerToTeam(playerId, equipoId));
+  }, [dispatch]);
+  
+  const removePlayerFromTeam = useCallback((playerId: string) => {
+    return dispatch(playersThunks.removePlayerFromTeam(playerId));
   }, [dispatch]);
   
   // Filtrar jugadores por equipo (memorizado)
@@ -83,6 +92,8 @@ export const usePlayers = () => {
     updatePlayer,
     updatePlayerStats,
     deletePlayer,
+    assignPlayerToTeam,
+    removePlayerFromTeam,
     
     // Utilidades de filtrado
     getPlayersByTeam,

@@ -172,6 +172,63 @@ const playerService = {
       throw new Error('Error al eliminar el jugador');
     }
   },
+
+  /**
+   * Asigna un jugador a un equipo
+   * @param playerId ID del jugador
+   * @param equipoId ID del equipo
+   * @returns Datos del jugador actualizado
+   */
+  async assignPlayerToTeam(playerId: string, equipoId: string): Promise<Player> {
+    try {
+      const response = await axios.post(
+        `${API_URL}/jugadores/${playerId}/asignar`, 
+        { equipoId },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data.player;
+    } catch (error) {
+      console.error('Error en assignPlayerToTeam:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || 'Error al asignar jugador al equipo'
+        );
+      }
+      throw new Error('Error al asignar jugador al equipo');
+    }
+  },
+
+  /**
+   * Elimina un jugador de un equipo
+   * @param playerId ID del jugador
+   * @returns Datos del jugador actualizado
+   */
+  async removePlayerFromTeam(playerId: string): Promise<Player> {
+    try {
+      const response = await axios.delete(
+        `${API_URL}/jugadores/${playerId}/asignar`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      return response.data.player;
+    } catch (error) {
+      console.error('Error en removePlayerFromTeam:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message || 'Error al eliminar jugador del equipo'
+        );
+      }
+      throw new Error('Error al eliminar jugador del equipo');
+    }
+  },
 };
 
 export default playerService; 
