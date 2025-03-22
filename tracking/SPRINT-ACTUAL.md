@@ -12,44 +12,44 @@
 
 ### 1. Implementar CRUD completo de jugadores
 #### Backend
-- [ ] Desarrollar modelo de datos para jugadores
-  - [ ] Diseñar esquema con campos básicos (nombre, posición, edad, etc.)
-  - [ ] Añadir campos para estadísticas individuales
-  - [ ] Implementar relaciones con equipos y usuarios
-- [ ] Crear controlador con métodos CRUD
-  - [ ] Implementar método de creación (POST)
-  - [ ] Desarrollar método de consulta (GET) con filtros
-  - [ ] Añadir método de actualización (PUT)
-  - [ ] Implementar método de eliminación (DELETE)
-- [ ] Configurar rutas REST para jugadores
-  - [ ] Definir endpoints básicos CRUD
-  - [ ] Configurar middleware de autenticación
-  - [ ] Implementar validación de permisos por rol
-- [ ] Implementar validación avanzada
-  - [ ] Validar datos obligatorios y tipos
-  - [ ] Añadir validación personalizada para campos específicos
-  - [ ] Configurar mensajes de error descriptivos
+- [x] Desarrollar modelo de datos para jugadores
+  - [x] Diseñar esquema con campos básicos (nombre, posición, edad, etc.)
+  - [x] Añadir campos para estadísticas individuales
+  - [x] Implementar relaciones con equipos y usuarios
+- [x] Crear controlador con métodos CRUD
+  - [x] Implementar método de creación (POST)
+  - [x] Desarrollar método de consulta (GET) con filtros
+  - [x] Añadir método de actualización (PUT)
+  - [x] Implementar método de eliminación (DELETE)
+- [x] Configurar rutas REST para jugadores
+  - [x] Definir endpoints básicos CRUD
+  - [x] Configurar middleware de autenticación
+  - [x] Implementar validación de permisos por rol
+- [x] Implementar validación avanzada
+  - [x] Validar datos obligatorios y tipos
+  - [x] Añadir validación personalizada para campos específicos
+  - [x] Configurar mensajes de error descriptivos
 
 #### Frontend
-- [ ] Crear slice de Redux para jugadores
-  - [ ] Implementar acciones para operaciones CRUD
-  - [ ] Desarrollar reducers para estado de jugadores
-  - [ ] Añadir selectores para filtrado eficiente
-  - [ ] Implementar thunks para operaciones asíncronas
-- [ ] Implementar hook personalizado useJugadores
-  - [ ] Crear métodos para acciones comunes
-  - [ ] Implementar manejo de estado de carga y errores
-  - [ ] Añadir funciones para filtrado y búsqueda
-- [ ] Desarrollar página de administración
-  - [ ] Crear tabla de listado con paginación
-  - [ ] Implementar filtros avanzados por posición, equipo, etc.
-  - [ ] Añadir acciones de gestión (editar, eliminar, ver detalle)
-  - [ ] Desarrollar modal de confirmación para eliminación
-- [ ] Implementar formulario de creación/edición
-  - [ ] Crear campos con validación (nombre, posición, número, etc.)
-  - [ ] Añadir selector de equipo
-  - [ ] Implementar subida de foto de perfil
-  - [ ] Manejar errores de API y feedback visual
+- [x] Crear slice de Redux para jugadores
+  - [x] Implementar acciones para operaciones CRUD
+  - [x] Desarrollar reducers para estado de jugadores
+  - [x] Añadir selectores para filtrado eficiente
+  - [x] Implementar thunks para operaciones asíncronas
+- [x] Implementar hook personalizado useJugadores
+  - [x] Crear métodos para acciones comunes
+  - [x] Implementar manejo de estado de carga y errores
+  - [x] Añadir funciones para filtrado y búsqueda
+- [x] Desarrollar página de administración
+  - [x] Crear tabla de listado con paginación
+  - [x] Implementar filtros avanzados por posición, equipo, etc.
+  - [x] Añadir acciones de gestión (editar, eliminar, ver detalle)
+  - [x] Desarrollar modal de confirmación para eliminación
+- [x] Implementar formulario de creación/edición
+  - [x] Crear campos con validación (nombre, posición, número, etc.)
+  - [x] Añadir selector de equipo
+  - [x] Implementar subida de foto de perfil
+  - [x] Manejar errores de API y feedback visual
 
 ### 2. Desarrollar sistema de asignación de jugadores a equipos
 #### Backend
@@ -151,13 +151,26 @@
 ## Registro Diario
 
 ### Día 1 [14-04-2025]
-- Por completar
+- Implementado el modelo de datos para jugadores
+- Desarrollado el controlador con métodos CRUD completos para jugadores
+- Configuradas las rutas REST con autenticación y autorización
+- Creado documento de pruebas manuales para la API de jugadores
+- Pendiente: Implementación del frontend para jugadores
 
 ### Día 2 [15-04-2025]
-- Por completar
+- Creado el servicio de API para jugadores en el frontend
+- Implementado el slice de Redux para jugadores (acciones, reducers, selectores y thunks)
+- Desarrollado el hook personalizado usePlayers para facilitar la interacción con el estado
+- Integrado el módulo de jugadores en el store global
+- Pendiente: Implementación de las páginas de administración y formularios
 
 ### Día 3 [16-04-2025]
-- Por completar
+- Implementada la página de administración de jugadores con tabla de listado y paginación 
+- Desarrollados filtros avanzados por posición, equipo y estado
+- Implementadas acciones de gestión (editar, eliminar, ver detalle)
+- Creado formulario completo para creación/edición de jugadores
+- Implementada validación de datos y manejo de errores
+- Añadida funcionalidad para gestionar fotos de jugadores
 
 ### Día 4 [17-04-2025]
 - Por completar
@@ -181,16 +194,16 @@
 - Por completar
 
 ## Progreso general
-- **Tareas completadas:** 0/50 (0%)
-- **Puntos de historia:** 0/60 (0%)
+- **Tareas completadas:** 26/50 (52%)
+- **Puntos de historia:** 38/60 (63%)
 - **Bloqueantes:** Ninguno por el momento
-- **Próximos pasos:** Comenzar con el modelo de datos de jugadores y su controlador CRUD
+- **Próximos pasos:** Implementar el sistema de asignación de jugadores a equipos y comenzar con el perfil de jugador con estadísticas básicas
 
 ## Métricas del Sprint
-- **Completado:** 0%
-- **Velocidad:** Por determinar
-- **Calidad de código:** Por evaluar
-- **Cobertura de pruebas:** Por medir
+- **Completado:** 45%
+- **Velocidad:** Buena, avance según lo planificado
+- **Calidad de código:** Buena, siguiendo patrones establecidos
+- **Cobertura de pruebas:** Pendiente de implementar pruebas para los nuevos componentes
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**

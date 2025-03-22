@@ -16,6 +16,7 @@ import UsersPage from './pages/Users';
 import TeamsPage from './pages/Teams';
 import TeamDetail from './pages/TeamDetail';
 import UserProfile from './pages/UserProfile';
+import PlayersPage from './pages/Players';
 
 // Tema personalizado
 const theme = createTheme({
@@ -80,7 +81,7 @@ function App() {
               </Route>
               
               <Route element={<ProtectedRoute allowedRoles={['admin', 'coach']} />}>
-                <Route path="/players" element={<div>Gestión de Jugadores (En desarrollo)</div>} />
+                <Route path="/players" element={<PlayersPage />} />
               </Route>
               
               <Route path="/matches" element={<div>Gestión de Partidos (En desarrollo)</div>} />

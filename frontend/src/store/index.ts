@@ -6,6 +6,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from './slices/auth/authSlice';
 import usersReducer from './slices/users';
 import teamsReducer from './slices/teams';
+import playersReducer from './slices/players';
 
 // Importar middlewares personalizados
 import middlewares from './middleware';
@@ -16,6 +17,7 @@ export const store = configureStore({
     auth: authReducer,
     users: usersReducer,
     teams: teamsReducer,
+    players: playersReducer,
     // Aquí se añadirán los demás reducers a medida que se implementen
   },
   // Middleware configurados por defecto + middlewares personalizados

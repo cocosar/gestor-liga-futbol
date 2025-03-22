@@ -6,7 +6,7 @@ export interface IPlayer extends Document {
   fechaNacimiento?: Date;
   fotoPerfil?: string;
   numeroIdentificacion: string;
-  posicion: 'portero' | 'defensa' | 'mediocampista' | 'delantero';
+  posicion: 'indefinida' | 'portero' | 'defensa' | 'mediocampista' | 'delantero';
   numeroCamiseta?: number;
   equipo?: mongoose.Types.ObjectId;
   equiposAnteriores?: mongoose.Types.ObjectId[];
@@ -51,7 +51,7 @@ const PlayerSchema = new Schema<IPlayer>(
     },
     posicion: {
       type: String,
-      enum: ['portero', 'defensa', 'mediocampista', 'delantero'],
+      enum: ['indefinida', 'portero', 'defensa', 'mediocampista', 'delantero'],
       required: [true, 'La posición es obligatoria'],
     },
     numeroCamiseta: {
@@ -119,7 +119,6 @@ const PlayerSchema = new Schema<IPlayer>(
 
 // Índices para mejorar la búsqueda
 PlayerSchema.index({ apellido: 1, nombre: 1 });
-PlayerSchema.index({ numeroIdentificacion: 1 });
 PlayerSchema.index({ equipo: 1 });
 
 export default mongoose.model<IPlayer>('Player', PlayerSchema); 

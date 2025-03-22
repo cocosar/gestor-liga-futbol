@@ -107,32 +107,17 @@ const TeamForm: React.FC<TeamFormProps> = ({ open, onClose, teamId }) => {
   
   // Efecto para actualizar la previsualización cuando cambia la URL del logo
   useEffect(() => {
-    if (formData.logoUrl && formData.logoUrl.trim() !== '') {
-      let logoUrl = formData.logoUrl.trim();
-      if (!logoUrl.startsWith('http://') && !logoUrl.startsWith('https://')) {
-        logoUrl = `https://${logoUrl}`;
-      }
-      setPreviewUrl(logoUrl);
-      // Resetear el estado de validez de la imagen cuando cambia la URL
-      setIsValidImage(false);
-      console.log('URL de previsualización actualizada:', logoUrl);
-      
-      // Pre-cargar la imagen para probar si es válida
+    if (formData.logoUrl) {
+      const logoUrl = formData.logoUrl;
       const img = new Image();
-      img.onload = () => {
-        console.log('Pre-carga exitosa:', logoUrl);
-        setIsValidImage(true);
-      };
-      img.onerror = () => {
-        console.log('Error en pre-carga:', logoUrl);
-        setIsValidImage(false);
-      };
+      img.onload = handleImageLoad;
+      img.onerror = handleImageError;
       img.src = getProxiedUrl(logoUrl);
     } else {
       setPreviewUrl('');
       setIsValidImage(false);
     }
-  }, [formData.logoUrl, useProxy]);
+  }, [formData.logoUrl, useProxy, getProxiedUrl]);
   
   // Alternar el uso del proxy
   const toggleProxy = () => {

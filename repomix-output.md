@@ -67,6 +67,7 @@ backend/src/tests/auth.test.ts
 backend/src/tests/controllers/authController.test.ts
 backend/src/tests/controllers/userController.test.ts
 backend/src/tests/middleware/auth.test.ts
+backend/src/tests/mocks/services.mock.ts
 backend/src/types/index.d.ts
 backend/src/utils/jwt.ts
 backend/tsconfig.eslint.json
@@ -113,7 +114,9 @@ frontend/src/pages/Dashboard.tsx
 frontend/src/pages/Home.tsx
 frontend/src/pages/Login.tsx
 frontend/src/pages/Register.tsx
+frontend/src/pages/TeamDetail.tsx
 frontend/src/pages/Teams.tsx
+frontend/src/pages/UserProfile.tsx
 frontend/src/pages/Users.tsx
 frontend/src/reportWebVitals.ts
 frontend/src/setupTests.ts
@@ -965,6 +968,65 @@ peso?: number; // en kg
 
 ````
 
+## File: backend/src/tests/mocks/services.mock.ts
+````typescript
+// Mock para servicios externos utilizados en la aplicación
+⋮----
+interface FileUpload {
+  originalname: string;
+  [key: string]: unknown;
+}
+⋮----
+/**
+ * Mock para servicios de almacenamiento de archivos
+ */
+⋮----
+// Mock para subida de archivos
+⋮----
+// Mock para eliminación de archivos
+⋮----
+// Mock para generación de URL firmadas
+⋮----
+/**
+ * Mock para servicios de envío de emails
+ */
+⋮----
+// Mock para envío de emails genéricos
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+// Mock para envío de emails de recuperación de contraseña
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+// Mock para envío de emails de bienvenida
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+/**
+ * Mock para servicios de notificaciones push
+ */
+⋮----
+// Mock para envío de notificaciones push
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+// Mock para envío de notificaciones a múltiples usuarios
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+/**
+ * Mock para servicios de pago
+ */
+⋮----
+// Mock para procesar pagos
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+⋮----
+// Mock para reembolsos
+⋮----
+/**
+ * Utilidad para resetear todos los mocks
+ */
+export const resetAllMocks = () =>
+⋮----
+// Resetear contadores y comportamiento de los mocks
+````
+
 ## File: backend/src/types/index.d.ts
 ````typescript
 // Declaraciones de tipos para la aplicación de backend
@@ -1093,11 +1155,6 @@ expect(entrenadorElements.length).toBeGreaterThan(0);
 // Verificar que existe un elemento dialog para el formulario
 ````
 
-## File: frontend/src/components/teams/index.ts
-````typescript
-
-````
-
 ## File: frontend/src/components/teams/RandomTeamsGenerator.tsx
 ````typescript
 import React, { useState } from 'react';
@@ -1131,55 +1188,6 @@ const cantidad = 5; // Generamos 5 equipos como solicitó el usuario
 // Contamos cuántos equipos se crearon con éxito
 ⋮----
 {/* Notificaciones */}
-````
-
-## File: frontend/src/components/teams/TeamForm.tsx
-````typescript
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Switch,
-  TextField,
-} from '@mui/material';
-import { useTeams, useUsers } from '../../hooks';
-import { TeamFormData } from '../../types';
-⋮----
-interface TeamFormProps {
-  open: boolean;
-  onClose: () => void;
-  teamId?: string;
-}
-⋮----
-// Cargar equipo si se está editando
-⋮----
-// Cargar usuarios para selector de entrenador
-⋮----
-// Actualizar formulario cuando se carga el equipo seleccionado
-⋮----
-const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
-) =>
-⋮----
-// Limpiar error del campo
-⋮----
-const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-⋮----
-const validateForm = (): boolean =>
-⋮----
-const handleSubmit = () =>
 ````
 
 ## File: frontend/src/hooks/__tests__/useAuth.test.tsx
@@ -1353,97 +1361,177 @@ import { Link as RouterLink } from 'react-router-dom';
 {/* Features Section */}
 ````
 
-## File: frontend/src/pages/Teams.tsx
+## File: frontend/src/pages/TeamDetail.tsx
 ````typescript
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CircularProgress,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  SelectChangeEvent,
-  TextField,
-  Typography,
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { 
+  Box, 
+  Typography, 
+  Card, 
+  CardContent, 
+  Grid, 
+  Divider, 
+  Avatar, 
+  Chip, 
+  Button, 
+  Paper, 
+  IconButton, 
+  CircularProgress, 
+  Alert, 
+  Tab, 
+  Tabs,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from '@mui/material';
 import { 
-  DataGrid, 
-  GridColDef, 
-  GridRenderCellParams,
-} from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
-import { useTeams } from '../hooks';
-import TeamForm from '../components/teams/TeamForm';
-import RandomTeamsGenerator from '../components/teams/RandomTeamsGenerator';
-import { TeamPaginationParams } from '../types';
-import { esESGrid } from '../utils/dataGridLocale';
+  ArrowBack as ArrowBackIcon, 
+  Edit as EditIcon, 
+  Person as PersonIcon,
+  Group as GroupIcon,
+  EmojiEvents as EmojiEventsIcon,
+  DataUsage as DataUsageIcon
+} from '@mui/icons-material';
+import { useTeams } from '../hooks/useTeams';
 ⋮----
-// Cargar equipos al montar el componente
+// Tipo de pestañas disponibles
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
 ⋮----
-// Manejar cambios de paginación
-const handlePageChange = (page: number) =>
+// Componente para el contenido de las pestañas
 ⋮----
-// Manejar cambios en el tamaño de página
-const handlePageSizeChange = (pageSize: number) =>
+// Datos ficticios para estadísticas (se reemplazarían con datos reales del API)
 ⋮----
-// Manejar búsqueda
-const handleSearch = () =>
-⋮----
-// Manejar cambios en filtros
-const handleCategoriaChange = (event: SelectChangeEvent) =>
-⋮----
-const handleTipoChange = (event: SelectChangeEvent) =>
-⋮----
-// Manejar creación de equipo
-const handleCreateTeam = () =>
-⋮----
-// Manejar edición de equipo
-const handleEditTeam = (id: string) =>
-⋮----
-// Manejar cierre de formulario
-const handleCloseForm = () =>
-⋮----
-// Recargar datos después de crear/editar
-⋮----
-// Manejar confirmación de eliminación
-const handleConfirmDelete = (id: string) =>
-⋮----
-// Manejar eliminación de equipo
-const handleDeleteTeam = () =>
+// Datos ficticios para jugadores (se reemplazarían con datos reales del API)
 ⋮----
 // Función para capitalizar primera letra
-const capitalizeFirstLetter = (str: string): string =>
 ⋮----
-// Definir columnas para la tabla
+// Función para formatear el tipo
+const formatTipo = (tipo: string): string =>
 ⋮----
-// Implementar vista detalle en el futuro
+const handleTabChange = (_event: React.SyntheticEvent, newValue: number) =>
 ⋮----
-{/* Filtros de búsqueda */}
+const handleBackClick = () =>
 ⋮----
-{/* Tabla de equipos */}
+const handleEditClick = () =>
 ⋮----
-handlePageChange(model.page);
-handlePageSizeChange(model.pageSize);
+{/* Cabecera */}
 ⋮----
-{/* Formulario de creación/edición */}
+{/* Tarjeta de información general */}
 ⋮----
-{/* Diálogo de confirmación de eliminación */}
+{/* Pestañas para diferentes secciones */}
+⋮----
+{/* Panel de Jugadores */}
+⋮----
+{/* Panel de Estadísticas */}
+⋮----
+{/* Panel de Partidos */}
+````
+
+## File: frontend/src/pages/UserProfile.tsx
+````typescript
+import React, { useState, useEffect } from 'react';
+import { 
+  Container, 
+  Box, 
+  Typography, 
+  TextField, 
+  Button, 
+  Paper, 
+  Grid,
+  Avatar,
+  Divider,
+  Alert,
+  Tab,
+  Tabs,
+  LinearProgress
+} from '@mui/material';
+import { Person, Edit, Save, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks';
+import { UpdateProfileData, ChangePasswordData } from '../types';
+⋮----
+// Componente TabPanel para pestañas
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+⋮----
+// Función para crear props de accesibilidad para tabs
+⋮----
+// Función para calcular la fortaleza de la contraseña
+const calculatePasswordStrength = (password: string): number =>
+⋮----
+// Longitud mínima
+⋮----
+// Contiene números
+⋮----
+// Contiene letras minúsculas y mayúsculas
+⋮----
+// Contiene caracteres especiales
+⋮----
+// Componente de Perfil de Usuario
+⋮----
+// Estado para las pestañas
+⋮----
+// Estados para el formulario de perfil
+⋮----
+// Estados para el formulario de contraseña
+⋮----
+// Calcular fortaleza de la contraseña
+⋮----
+// Efecto para cargar datos del usuario
+⋮----
+// Manejadores para cambios en las pestañas
+const handleTabChange = (_event: React.SyntheticEvent, newValue: number) =>
+⋮----
+// Resetear mensajes de éxito al cambiar de pestaña
+⋮----
+// Manejadores para el formulario de perfil
+const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+// Limpiar mensaje de éxito al editar
+⋮----
+const handleEditProfile = () =>
+⋮----
+const handleSaveProfile = async () =>
+⋮----
+const handleCancelEdit = () =>
+⋮----
+// Restaurar valores originales
+⋮----
+// Manejadores para el formulario de contraseña
+const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+// Validar que las contraseñas coincidan
+⋮----
+// Si se está cambiando la nueva contraseña, verificar que coincida con la confirmación
+⋮----
+// Limpiar mensaje de éxito al editar
+⋮----
+const handleChangePassword = async () =>
+⋮----
+// Validar que las contraseñas coincidan
+⋮----
+// Validar fortaleza mínima de la contraseña
+⋮----
+// Limpiar el formulario
+⋮----
+// Si no hay usuario autenticado, redirigir al login
+⋮----
+{/* Pestaña de Información Personal */}
+⋮----
+{/* Pestaña de Cambio de Contraseña */}
+⋮----
+{/* Indicador de fortaleza de contraseña */}
 ````
 
 ## File: frontend/src/setupTests.ts
@@ -1771,25 +1859,6 @@ interface AuthState {
 // Limpiar errores
 ⋮----
 // Exportar acciones y reducer
-````
-
-## File: frontend/src/store/slices/auth/thunks.ts
-````typescript
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { authService } from '../../../api';
-import { LoginData, RegisterData } from '../../../types';
-import { authStart, authSuccess, authFail, logout as logoutAction } from './authSlice';
-import { AppDispatch } from '../../index';
-⋮----
-// Login
-⋮----
-// Registro
-⋮----
-// Obtener perfil del usuario
-⋮----
-// Aquí asumimos que el token ya está almacenado (lo está si el usuario ya inició sesión)
-⋮----
-// Logout
 ````
 
 ## File: frontend/src/store/slices/teams/index.ts
@@ -2155,44 +2224,6 @@ testTimeout: 5000, // Reducir el timeout por defecto a 5 segundos
 // Esto mejora significativamente el rendimiento al reutilizar los mocks
 ⋮----
 // Sobrescribir solo los componentes/funciones que necesitamos mockear
-````
-
-## File: frontend/src/types/auth.ts
-````typescript
-// Interfaz para el usuario
-export interface Usuario {
-  _id: string;
-  nombre: string;
-  apellido: string;
-  email: string;
-  rol: string;
-  activo: boolean;
-  fechaCreacion: string;
-  ultimoAcceso?: string;
-}
-⋮----
-// Interfaz para datos de registro
-export interface RegisterData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  role: string;
-}
-⋮----
-// Interfaz para datos de login
-export interface LoginData {
-  email: string;
-  password: string;
-}
-⋮----
-// Interfaz para respuesta de autenticación
-export interface AuthResponse {
-  success: boolean;
-  token?: string;
-  usuario?: Usuario;
-  message?: string;
-}
 ````
 
 ## File: frontend/src/types/css.d.ts
@@ -3254,32 +3285,6 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) =>
 // Exportar controlador como objeto
 ````
 
-## File: backend/src/routes/authRoutes.ts
-````typescript
-import express from 'express';
-import { body } from 'express-validator';
-import authController from '../controllers/authController';
-import { authenticate } from '../middleware/auth';
-⋮----
-/**
- * @route POST /api/auth/register
- * @desc Registrar un nuevo usuario
- * @access Public
- */
-⋮----
-/**
- * @route POST /api/auth/login
- * @desc Iniciar sesión de usuario
- * @access Public
- */
-⋮----
-/**
- * @route GET /api/auth/me
- * @desc Obtener el perfil del usuario actual
- * @access Private
- */
-````
-
 ## File: backend/src/routes/index.ts
 ````typescript
 import express from 'express';
@@ -3982,32 +3987,6 @@ const renderSidebar = (isMobile = false) =>
 // En vista desktop no debería llamar a onDrawerClose
 ````
 
-## File: frontend/src/components/layout/AppHeader.tsx
-````typescript
-import React from 'react';
-import {
-  AppBar,
-  Box,
-  Button,
-  IconButton,
-  Toolbar,
-  Typography,
-  useTheme
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-⋮----
-interface AppHeaderProps {
-  drawerWidth: number;
-  onDrawerToggle: () => void;
-}
-⋮----
-const handleLogout = () =>
-````
-
 ## File: frontend/src/components/layout/Sidebar.tsx
 ````typescript
 import React from 'react';
@@ -4057,6 +4036,86 @@ interface MenuItem {
 keepMounted: true, // Better open performance on mobile
 ⋮----
 {/* Desktop drawer */}
+````
+
+## File: frontend/src/components/teams/index.ts
+````typescript
+
+````
+
+## File: frontend/src/components/teams/TeamForm.tsx
+````typescript
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Switch,
+  TextField,
+  Typography,
+  Paper
+} from '@mui/material';
+import BrokenImageIcon from '@mui/icons-material/BrokenImage';
+import ImageIcon from '@mui/icons-material/Image';
+import { useTeams, useUsers } from '../../hooks';
+import { TeamFormData } from '../../types';
+⋮----
+interface TeamFormProps {
+  open: boolean;
+  onClose: () => void;
+  teamId?: string;
+}
+⋮----
+// Cargar equipo si se está editando
+⋮----
+// Cargar usuarios para selector de entrenador
+⋮----
+// Actualizar formulario cuando se carga el equipo seleccionado
+⋮----
+// Función para obtener la URL con proxy si es necesario
+const getProxiedUrl = (url: string): string =>
+⋮----
+// Usar un servicio proxy de imágenes que permite CORS
+⋮----
+// Efecto para actualizar la previsualización cuando cambia la URL del logo
+⋮----
+// Resetear el estado de validez de la imagen cuando cambia la URL
+⋮----
+// Pre-cargar la imagen para probar si es válida
+⋮----
+// Alternar el uso del proxy
+const toggleProxy = () =>
+⋮----
+const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
+) =>
+⋮----
+// Limpiar error del campo
+⋮----
+const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+⋮----
+// Manejador para validar la imagen cuando carga
+const handleImageLoad = () =>
+⋮----
+// Manejador para cuando la imagen falla al cargar
+const handleImageError = () =>
+⋮----
+const validateForm = (): boolean =>
+⋮----
+const handleSubmit = () =>
+⋮----
+{/* Previsualización del logo */}
 ````
 
 ## File: frontend/src/components/users/UserForm.tsx
@@ -4233,44 +4292,6 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 // Verificar que se llama al thunk con los parámetros correctos
 ````
 
-## File: frontend/src/hooks/useAuth.ts
-````typescript
-import { useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '../store';
-import { 
-  selectUser, 
-  selectIsAuthenticated, 
-  selectLoading, 
-  selectError, 
-  selectUserRole
-} from '../store/slices/auth/selectors';
-import { 
-  login, 
-  register, 
-  logout, 
-  getCurrentUser 
-} from '../store/slices/auth/thunks';
-import { clearErrors } from '../store/slices/auth/authSlice';
-import { LoginData, RegisterData } from '../types';
-⋮----
-// Hook personalizado para la autenticación
-export const useAuth = () =>
-⋮----
-// Estado
-⋮----
-// Acciones
-⋮----
-// Función para verificar si el usuario tiene un rol específico
-⋮----
-// Mapear roles del backend al frontend si es necesario
-⋮----
-// Retornar todo lo necesario
-⋮----
-// Estado
-⋮----
-// Acciones
-````
-
 ## File: frontend/src/hooks/useTeams.ts
 ````typescript
 import { useCallback, useMemo } from 'react';
@@ -4338,6 +4359,97 @@ import { ThemeProvider, createTheme } from '@mui/material';
 // Verificar botones principales
 ⋮----
 // Verificar elementos de características
+````
+
+## File: frontend/src/pages/Teams.tsx
+````typescript
+import { useEffect, useState } from 'react';
+import { 
+  Container, 
+  Grid, 
+  Paper, 
+  Typography, 
+  Box, 
+  Button, 
+  TextField, 
+  IconButton, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  CircularProgress
+} from '@mui/material';
+import { 
+  Add as AddIcon, 
+  Delete as DeleteIcon, 
+  Edit as EditIcon, 
+  Info as InfoIcon
+} from '@mui/icons-material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useTeams } from '../hooks/useTeams';
+import TeamForm from '../components/teams/TeamForm';
+import { TeamPaginationParams } from '../types';
+import { RandomTeamsGenerator } from '../components/teams';
+import { useNavigate } from 'react-router-dom';
+import { esESGrid } from '../utils/dataGridLocale';
+⋮----
+// Cargar equipos al montar el componente
+⋮----
+// Manejar cambios de paginación
+const handlePageChange = (page: number) =>
+⋮----
+// Manejar cambios en el tamaño de página
+const handlePageSizeChange = (pageSize: number) =>
+⋮----
+// Manejar búsqueda
+const handleSearch = () =>
+⋮----
+// Manejar cambios en filtros
+const handleCategoriaChange = (event: SelectChangeEvent) =>
+⋮----
+const handleTipoChange = (event: SelectChangeEvent) =>
+⋮----
+// Manejar creación de equipo
+const handleCreateTeam = () =>
+⋮----
+// Manejar edición de equipo
+const handleEditTeam = (id: string) =>
+⋮----
+// Manejar cierre de formulario
+const handleCloseForm = () =>
+⋮----
+// Recargar datos después de crear/editar
+⋮----
+// Manejar confirmación de eliminación
+const handleConfirmDelete = (id: string) =>
+⋮----
+// Manejar eliminación de equipo
+const handleDeleteTeam = () =>
+⋮----
+// Función para capitalizar primera letra
+const capitalizeFirstLetter = (str: string): string =>
+⋮----
+// Función para ver detalle del equipo
+const handleViewTeamDetail = (id: string) =>
+⋮----
+// Definir columnas para la tabla
+⋮----
+{/* Filtros de búsqueda */}
+⋮----
+{/* Tabla de equipos */}
+⋮----
+handlePageChange(model.page);
+handlePageSizeChange(model.pageSize);
+⋮----
+{/* Formulario de creación/edición */}
+⋮----
+{/* Diálogo de confirmación de eliminación */}
 ````
 
 ## File: frontend/src/reportWebVitals.ts
@@ -4658,6 +4770,29 @@ export const selectHasRole = (state: RootState, role: string) =>
 // Mapear roles del backend al frontend si es necesario
 ````
 
+## File: frontend/src/store/slices/auth/thunks.ts
+````typescript
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { authService } from '../../../api';
+import { LoginData, RegisterData, UpdateProfileData, ChangePasswordData } from '../../../types';
+import { authStart, authSuccess, authFail, logout as logoutAction, clearErrors } from './authSlice';
+import { AppDispatch } from '../../index';
+⋮----
+// Login
+⋮----
+// Registro
+⋮----
+// Obtener perfil del usuario
+⋮----
+// Aquí asumimos que el token ya está almacenado (lo está si el usuario ya inició sesión)
+⋮----
+// Actualizar perfil de usuario
+⋮----
+// Cambiar contraseña
+⋮----
+// Logout
+````
+
 ## File: frontend/src/store/slices/index.ts
 ````typescript
 import authReducer from './auth/authSlice';
@@ -4666,43 +4801,6 @@ import usersReducer from './users';
 // import teamsReducer from './teams/teamsSlice';
 ⋮----
 // teamsReducer
-````
-
-## File: frontend/src/store/slices/teams/teamsSlice.ts
-````typescript
-import { createSlice } from '@reduxjs/toolkit';
-import { TeamListItem } from '../../../types';
-⋮----
-// Definir interfaces para el estado
-interface TeamsState {
-  teams: TeamListItem[];
-  selectedTeam: TeamListItem | null;
-  loading: boolean;
-  error: string | null;
-  total: number;
-  page: number;
-  limit: number;
-}
-⋮----
-// Estado inicial
-⋮----
-// Interfaces para los payloads
-interface FetchTeamsPayload {
-  teams: TeamListItem[];
-  total: number;
-  page: number;
-  limit: number;
-}
-⋮----
-// Crear slice
-⋮----
-// Limpiar equipo seleccionado
-⋮----
-// Limpiar errores
-⋮----
-// Acciones para manejar estados de carga y resultados
-⋮----
-// Exportar acciones y reducer
 ````
 
 ## File: frontend/src/store/slices/teams/thunks.ts
@@ -4777,53 +4875,54 @@ export const selectHasUsers = (state: RootState)
 export const selectUserById = (state: RootState, userId: string)
 ````
 
-## File: frontend/src/types/teams.ts
+## File: frontend/src/types/auth.ts
 ````typescript
-// Interfaz para objetos de equipo en listados
-export interface TeamListItem {
+// Interfaz para el usuario
+export interface Usuario {
   _id: string;
   nombre: string;
-  categoria: string;
-  tipo: string;
-  entrenador?: string;
-  logoUrl?: string;
+  apellido: string;
+  email: string;
+  rol: string;
   activo: boolean;
+  fechaCreacion: string;
+  ultimoAcceso?: string;
 }
 ⋮----
-// Interfaz para la respuesta de listado de equipos
-export interface TeamsResponse {
+// Interfaz para datos de registro
+export interface RegisterData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+}
+⋮----
+// Interfaz para datos de login
+export interface LoginData {
+  email: string;
+  password: string;
+}
+⋮----
+// Interfaz para actualización de perfil
+export interface UpdateProfileData {
+  nombre?: string;
+  apellido?: string;
+  email?: string;
+}
+⋮----
+// Interfaz para cambio de contraseña
+export interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+}
+⋮----
+// Interfaz para respuesta de autenticación
+export interface AuthResponse {
   success: boolean;
-  equipos?: TeamListItem[];
-  totalEquipos?: number;
+  token?: string;
+  usuario?: Usuario;
   message?: string;
-}
-⋮----
-// Interfaz para la respuesta de un solo equipo
-export interface TeamResponse {
-  success: boolean;
-  equipo?: TeamListItem;
-  message?: string;
-}
-⋮----
-// Interfaz para parámetros de paginación en solicitudes de equipos
-export interface TeamPaginationParams {
-  page: number;
-  limit: number;
-  sort?: string;
-  order?: 'asc' | 'desc';
-  search?: string;
-  categoria?: string;
-  tipo?: string;
-}
-⋮----
-// Interfaz para datos para crear/actualizar equipo
-export interface TeamFormData {
-  nombre: string;
-  categoria: string;
-  tipo: string;
-  entrenador?: string;
-  logoUrl?: string;
-  activo?: boolean;
 }
 ````
 
@@ -5127,89 +5226,47 @@ export interface IUser extends Document {
 // Método para comparar contraseñas
 ````
 
-## File: frontend/src/api/authService.ts
+## File: backend/src/routes/authRoutes.ts
 ````typescript
-import axios from 'axios';
-import { RegisterData, LoginData, AuthResponse } from '../types';
+import express from 'express';
+import { body } from 'express-validator';
+import authController from '../controllers/authController';
+import { authenticate } from '../middleware/auth';
 ⋮----
-// Configuración base para axios
+/**
+ * @route POST /api/auth/register
+ * @desc Registrar un nuevo usuario
+ * @access Public
+ */
 ⋮----
-// Transformar datos de registro para adaptarlos al backend
-const transformRegisterData = (data: RegisterData) =>
+/**
+ * @route POST /api/auth/login
+ * @desc Iniciar sesión de usuario
+ * @access Public
+ */
 ⋮----
-// Mapeo de roles del frontend al backend
-const transformRole = (role: string): string =>
+/**
+ * @route GET /api/auth/me
+ * @desc Obtener el perfil del usuario actual
+ * @access Private
+ */
 ⋮----
-// Servicio de autenticación
+/**
+ * @route PATCH /api/auth/profile
+ * @desc Actualizar datos del perfil de usuario
+ * @access Private
+ */
 ⋮----
-// Registrar usuario
-⋮----
-// Iniciar sesión
-⋮----
-// Cerrar sesión
-⋮----
-// Obtener perfil del usuario
-⋮----
-// Verificar si el usuario está autenticado
+/**
+ * @route POST /api/auth/change-password
+ * @desc Cambiar contraseña del usuario
+ * @access Private
+ */
 ````
 
 ## File: frontend/src/api/index.ts
 ````typescript
 
-````
-
-## File: frontend/src/api/teamService.ts
-````typescript
-import axios from 'axios';
-import { TeamFormData, TeamResponse, TeamsResponse, TeamPaginationParams } from '../types';
-⋮----
-/**
- * Servicio para gestionar equipos en el backend
- */
-⋮----
-/**
-   * Obtiene un listado paginado de equipos
-   * @param params Parámetros de paginación
-   * @returns Respuesta con listado de equipos
-   */
-async getTeams(params: TeamPaginationParams): Promise<TeamsResponse>
-⋮----
-/**
-   * Obtiene un equipo por su ID
-   * @param teamId ID del equipo
-   * @returns Respuesta con datos del equipo
-   */
-async getTeamById(teamId: string): Promise<TeamResponse>
-⋮----
-/**
-   * Crea un nuevo equipo
-   * @param teamData Datos del equipo a crear
-   * @returns Respuesta con el equipo creado
-   */
-async createTeam(teamData: TeamFormData): Promise<TeamResponse>
-⋮----
-/**
-   * Actualiza un equipo existente
-   * @param teamId ID del equipo a actualizar
-   * @param teamData Datos actualizados del equipo
-   * @returns Respuesta con el equipo actualizado
-   */
-async updateTeam(teamId: string, teamData: TeamFormData): Promise<TeamResponse>
-⋮----
-// Crear un nuevo objeto con la estructura correcta para el backend
-⋮----
-// Solo añadir entrenador si existe
-⋮----
-// Solo añadir logo si es una URL válida
-⋮----
-// No añadir el campo logo si no es una URL válida
-⋮----
-/**
-   * Elimina un equipo
-   * @param teamId ID del equipo a eliminar
-   * @returns Respuesta con resultado de la operación
-   */
-async deleteTeam(teamId: string): Promise<TeamResponse>
 ````
 
 ## File: frontend/src/api/userService.ts
@@ -5236,9 +5293,87 @@ const updateUser = async (id: string, userData: UserFormData): Promise<UserRespo
 const deleteUser = async (id: string): Promise<
 ````
 
+## File: frontend/src/components/layout/AppHeader.tsx
+````typescript
+import React, { useState } from 'react';
+import {
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  Toolbar,
+  Typography,
+  useTheme,
+  Menu,
+  MenuItem,
+  Avatar
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+⋮----
+interface AppHeaderProps {
+  drawerWidth: number;
+  onDrawerToggle: () => void;
+}
+⋮----
+// Estado para el menú desplegable de usuario
+⋮----
+const handleClick = (event: React.MouseEvent<HTMLElement>) =>
+⋮----
+const handleClose = () =>
+⋮----
+const handleProfile = () =>
+⋮----
+const handleLogout = () =>
+````
+
 ## File: frontend/src/hooks/index.ts
 ````typescript
 
+````
+
+## File: frontend/src/hooks/useAuth.ts
+````typescript
+import { useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '../store';
+import { 
+  selectUser, 
+  selectIsAuthenticated, 
+  selectLoading, 
+  selectError, 
+  selectUserRole
+} from '../store/slices/auth/selectors';
+import { 
+  login, 
+  register, 
+  logout, 
+  getCurrentUser,
+  updateUserProfile,
+  changeUserPassword
+} from '../store/slices/auth/thunks';
+import { clearErrors } from '../store/slices/auth/authSlice';
+import { LoginData, RegisterData, UpdateProfileData, ChangePasswordData } from '../types';
+⋮----
+// Hook personalizado para la autenticación
+export const useAuth = () =>
+⋮----
+// Estado
+⋮----
+// Acciones
+⋮----
+// Función para verificar si el usuario tiene un rol específico
+⋮----
+// Mapear roles del backend al frontend si es necesario
+⋮----
+// Retornar todo lo necesario
+⋮----
+// Estado
+⋮----
+// Acciones
 ````
 
 ## File: frontend/src/pages/__tests__/App.test.tsx
@@ -5461,9 +5596,100 @@ import { vi } from 'vitest';
 // Verificar que se llama a las acciones correctas
 ````
 
+## File: frontend/src/store/slices/teams/teamsSlice.ts
+````typescript
+import { createSlice } from '@reduxjs/toolkit';
+import { TeamListItem } from '../../../types';
+⋮----
+// Definir interfaces para el estado
+interface TeamsState {
+  teams: TeamListItem[];
+  selectedTeam: TeamListItem | null;
+  loading: boolean;
+  error: string | null;
+  total: number;
+  page: number;
+  limit: number;
+}
+⋮----
+// Estado inicial
+⋮----
+// Interfaces para los payloads
+interface FetchTeamsPayload {
+  teams: TeamListItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+⋮----
+// Función para adaptar el objeto del servidor al formato del frontend
+const adaptTeamResponse = (team: unknown): TeamListItem =>
+⋮----
+// Crear slice
+⋮----
+// Limpiar equipo seleccionado
+⋮----
+// Limpiar errores
+⋮----
+// Acciones para manejar estados de carga y resultados
+⋮----
+// Exportar acciones y reducer
+````
+
 ## File: frontend/src/types/index.ts
 ````typescript
 
+````
+
+## File: frontend/src/types/teams.ts
+````typescript
+// Interfaz para objetos de equipo en listados
+export interface TeamListItem {
+  _id: string;
+  nombre: string;
+  categoria: string;
+  tipo: string;
+  entrenador?: string | { _id: string; nombre: string; apellido: string; email: string };
+  logoUrl?: string;
+  logo?: string;
+  activo: boolean;
+}
+⋮----
+// Interfaz para la respuesta de listado de equipos
+export interface TeamsResponse {
+  success: boolean;
+  equipos?: TeamListItem[];
+  totalEquipos?: number;
+  message?: string;
+}
+⋮----
+// Interfaz para la respuesta de un solo equipo
+export interface TeamResponse {
+  success: boolean;
+  equipo?: TeamListItem;
+  message?: string;
+}
+⋮----
+// Interfaz para parámetros de paginación en solicitudes de equipos
+export interface TeamPaginationParams {
+  page: number;
+  limit: number;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  search?: string;
+  categoria?: string;
+  tipo?: string;
+}
+⋮----
+// Interfaz para datos para crear/actualizar equipo
+export interface TeamFormData {
+  nombre: string;
+  categoria: string;
+  tipo: string;
+  entrenador?: string;
+  logoUrl?: string;
+  activo?: boolean;
+}
 ````
 
 ## File: frontend/vitest.config.ts
@@ -5880,70 +6106,6 @@ repomix.config.json
     "typescript": "^5.3.3"
   }
 }
-````
-
-## File: backend/src/controllers/authController.ts
-````typescript
-import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import { generateToken } from '../utils/jwt';
-import User from '../models/User';
-import { AuthenticatedRequest } from '../middleware/auth';
-⋮----
-/**
- * Registrar un nuevo usuario
- * @route POST /api/auth/register
- * @access Public
- */
-export const register = async (req: Request, res: Response) =>
-⋮----
-// Validar errores de la solicitud
-⋮----
-// Verificar si el usuario ya existe
-⋮----
-// Si se especifica un rol, verificar que sea válido
-⋮----
-// Crear el usuario
-⋮----
-password, // La contraseña será hasheada en el pre-save hook del modelo
-rol: rol || 'usuario', // Por defecto es 'usuario'
-⋮----
-// Generar token JWT
-⋮----
-// Responder con el token y los datos del usuario (sin la contraseña)
-⋮----
-/**
- * Iniciar sesión de usuario
- * @route POST /api/auth/login
- * @access Public
- */
-export const login = async (req: Request, res: Response) =>
-⋮----
-// Verificar si email o password están presentes
-⋮----
-// Validar errores de la solicitud
-⋮----
-// Buscar el usuario
-⋮----
-// Verificar si el usuario está activo
-// Solo verificamos si la propiedad activo existe y es explícitamente false
-⋮----
-// Verificar la contraseña
-⋮----
-// Actualizar último acceso
-⋮----
-// Generar token JWT
-⋮----
-// Responder con el token y los datos del usuario (sin la contraseña)
-⋮----
-/**
- * Obtener el perfil del usuario actual
- * @route GET /api/auth/me
- * @access Private
- */
-export const getMe = async (req: AuthenticatedRequest, res: Response) =>
-⋮----
-// El usuario ya está en req.user gracias al middleware de autenticación
 ````
 
 ## File: backend/src/index.ts
@@ -6452,6 +6614,104 @@ Este plan de implementación está diseñado específicamente para un desarrolla
 Siguiendo este plan, se espera lograr un desarrollo eficiente y sistemático del Sistema de Gestión de Ligas de Fútbol 8v8, entregando un producto de calidad a pesar de las limitaciones de recursos.
 ````
 
+## File: frontend/src/api/authService.ts
+````typescript
+import axios from 'axios';
+import { RegisterData, LoginData, AuthResponse, UpdateProfileData, ChangePasswordData } from '../types';
+⋮----
+// Configuración base para axios
+⋮----
+// Transformar datos de registro para adaptarlos al backend
+const transformRegisterData = (data: RegisterData) =>
+⋮----
+// Mapeo de roles del frontend al backend
+const transformRole = (role: string): string =>
+⋮----
+// Servicio de autenticación
+⋮----
+// Registrar usuario
+⋮----
+// Iniciar sesión
+⋮----
+// Cerrar sesión
+⋮----
+// Obtener perfil del usuario
+⋮----
+// Actualizar datos del perfil
+⋮----
+// Actualizamos los datos en localStorage
+⋮----
+// Cambiar contraseña
+⋮----
+// Verificar si el usuario está autenticado
+````
+
+## File: frontend/src/api/teamService.ts
+````typescript
+import axios from 'axios';
+import { TeamFormData, TeamResponse, TeamsResponse, TeamPaginationParams } from '../types';
+⋮----
+/**
+ * Servicio para gestionar equipos en el backend
+ */
+⋮----
+/**
+   * Obtiene un listado paginado de equipos
+   * @param params Parámetros de paginación
+   * @returns Respuesta con listado de equipos
+   */
+async getTeams(params: TeamPaginationParams): Promise<TeamsResponse>
+⋮----
+/**
+   * Obtiene un equipo por su ID
+   * @param teamId ID del equipo
+   * @returns Respuesta con datos del equipo
+   */
+async getTeamById(teamId: string): Promise<TeamResponse>
+⋮----
+/**
+   * Crea un nuevo equipo
+   * @param teamData Datos del equipo a crear
+   * @returns Respuesta con el equipo creado
+   */
+async createTeam(teamData: TeamFormData): Promise<TeamResponse>
+⋮----
+// Crear un nuevo objeto con la estructura correcta para el backend
+⋮----
+// Solo añadir entrenador si existe
+⋮----
+// Solo añadir logo si existe
+⋮----
+// Asegurarse de que la URL tenga un protocolo
+⋮----
+// No añadir el campo logo si no es una URL válida incluso con el protocolo
+⋮----
+/**
+   * Actualiza un equipo existente
+   * @param teamId ID del equipo a actualizar
+   * @param teamData Datos actualizados del equipo
+   * @returns Respuesta con el equipo actualizado
+   */
+async updateTeam(teamId: string, teamData: TeamFormData): Promise<TeamResponse>
+⋮----
+// Crear un nuevo objeto con la estructura correcta para el backend
+⋮----
+// Solo añadir entrenador si existe
+⋮----
+// Solo añadir logo si existe
+⋮----
+// Asegurarse de que la URL tenga un protocolo
+⋮----
+// No añadir el campo logo si no es una URL válida incluso con el protocolo
+⋮----
+/**
+   * Elimina un equipo
+   * @param teamId ID del equipo a eliminar
+   * @returns Respuesta con resultado de la operación
+   */
+async deleteTeam(teamId: string): Promise<TeamResponse>
+````
+
 ## File: frontend/src/components/layout/__tests__/AppHeader.test.tsx
 ````typescript
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -6953,6 +7213,102 @@ Este documento contiene notas técnicas, decisiones de diseño, problemas encont
 - Ninguno por el momento
 ````
 
+## File: backend/src/controllers/authController.ts
+````typescript
+import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
+import { generateToken } from '../utils/jwt';
+import User from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth';
+⋮----
+/**
+ * Registrar un nuevo usuario
+ * @route POST /api/auth/register
+ * @access Public
+ */
+export const register = async (req: Request, res: Response) =>
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Verificar si el usuario ya existe
+⋮----
+// Si se especifica un rol, verificar que sea válido
+⋮----
+// Crear el usuario
+⋮----
+password, // La contraseña será hasheada en el pre-save hook del modelo
+rol: rol || 'usuario', // Por defecto es 'usuario'
+⋮----
+// Generar token JWT
+⋮----
+// Responder con el token y los datos del usuario (sin la contraseña)
+⋮----
+/**
+ * Iniciar sesión de usuario
+ * @route POST /api/auth/login
+ * @access Public
+ */
+export const login = async (req: Request, res: Response) =>
+⋮----
+// Verificar si email o password están presentes
+⋮----
+// Validar errores de la solicitud
+⋮----
+// Buscar el usuario
+⋮----
+// Verificar si el usuario está activo
+// Solo verificamos si la propiedad activo existe y es explícitamente false
+⋮----
+// Verificar la contraseña
+⋮----
+// Actualizar último acceso
+⋮----
+// Generar token JWT
+⋮----
+// Responder con el token y los datos del usuario (sin la contraseña)
+⋮----
+/**
+ * Obtener el perfil del usuario actual
+ * @route GET /api/auth/me
+ * @access Private
+ */
+export const getMe = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// El usuario ya está en req.user gracias al middleware de autenticación
+⋮----
+/**
+ * Actualizar perfil de usuario
+ * @route PATCH /api/auth/profile
+ * @access Private
+ */
+export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Verificar si el email ya está en uso por otro usuario
+⋮----
+// Actualizar solo los campos proporcionados
+⋮----
+// Actualizar usuario
+⋮----
+// Generar nuevo token con la información actualizada
+⋮----
+/**
+ * Cambiar contraseña de usuario
+ * @route POST /api/auth/change-password
+ * @access Private
+ */
+export const changePassword = async (req: AuthenticatedRequest, res: Response) =>
+⋮----
+// Verificar que ambas contraseñas estén presentes
+⋮----
+// Obtener usuario con contraseña
+⋮----
+// Verificar contraseña actual
+⋮----
+// Actualizar contraseña
+⋮----
+await user.save(); // Esto ejecutará el pre-save hook para hashear la contraseña
+````
+
 ## File: backend/src/utils/jwt.ts
 ````typescript
 import jwt, { SignOptions, JwtPayload } from 'jsonwebtoken';
@@ -7073,47 +7429,6 @@ import { configDefaults } from 'vitest/config'
 }
 ````
 
-## File: frontend/src/App.tsx
-````typescript
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useAuth } from './hooks/useAuth';
-⋮----
-// Importar layout principal
-import MainLayout from './components/layout/MainLayout';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-⋮----
-// Importar páginas
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import UsersPage from './pages/Users';
-import TeamsPage from './pages/Teams';
-⋮----
-// Tema personalizado
-⋮----
-// Componente principal
-⋮----
-// Verificar el estado de autenticación al iniciar la aplicación
-⋮----
-{/* Rutas públicas */}
-⋮----
-{/* Rutas protegidas con layout principal */}
-⋮----
-{/* Rutas con roles específicos */}
-⋮----
-<Route path="/players" element=
-⋮----
-<Route path="/matches" element=
-<Route path="/standings" element=
-⋮----
-{/* Ruta para acceso no autorizado */}
-⋮----
-{/* Ruta por defecto (404) */}
-````
-
 ## File: tracking/TRACKING.md
 ````markdown
 # Seguimiento del Proyecto: Sistema de Gestión de Ligas de Fútbol 8v8
@@ -7150,228 +7465,247 @@ import TeamsPage from './pages/Teams';
 - **Referencias:** Ver `tracking/SPRINT-ACTUAL.md` y `tracking/NOTAS-DESARROLLO.md`
 ````
 
+## File: frontend/src/App.tsx
+````typescript
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from './hooks/useAuth';
+⋮----
+// Importar layout principal
+import MainLayout from './components/layout/MainLayout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+⋮----
+// Importar páginas
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import UsersPage from './pages/Users';
+import TeamsPage from './pages/Teams';
+import TeamDetail from './pages/TeamDetail';
+import UserProfile from './pages/UserProfile';
+⋮----
+// Tema personalizado
+⋮----
+// Componente principal
+⋮----
+// Verificar el estado de autenticación al iniciar la aplicación
+⋮----
+{/* Rutas públicas */}
+⋮----
+{/* Rutas protegidas con layout principal */}
+⋮----
+{/* Perfil de usuario - accesible para cualquier usuario autenticado */}
+⋮----
+{/* Rutas con roles específicos */}
+⋮----
+</Route>
+⋮----
+<Route path="/players" element=
+⋮----
+<Route path="/standings" element=
+⋮----
+{/* Ruta para acceso no autorizado */}
+⋮----
+{/* Ruta por defecto (404) */}
+````
+
 ## File: tracking/SPRINT-ACTUAL.md
 ````markdown
-# Sprint 2: Gestión de Usuarios y Equipos
-**Período:** [31-03-2025] - [11-04-2025]
+# Sprint 3: Gestión de Jugadores
+**Período:** [14-04-2025] - [25-04-2025]
 
 ## Objetivos del Sprint
-1. Implementar Redux para gestión de estado global
-2. Desarrollar CRUD completo de usuarios
-3. Implementar gestión de equipos
-4. Añadir página de perfil de usuario
-5. Mejorar cobertura de pruebas
+1. Implementar CRUD completo de jugadores
+2. Desarrollar sistema de asignación de jugadores a equipos
+3. Crear perfil de jugador con estadísticas básicas
+4. Implementar gestión de fichajes
+5. Mejorar la documentación de API
 
 ## Tareas Específicas
 
-### 1. Implementar Redux para gestión de estado global [FRONTEND]
-- [x] Configurar Redux Toolkit
-  - [x] Instalar dependencias (redux, react-redux, @reduxjs/toolkit)
-  - [x] Crear archivo de configuración de store
-  - [x] Implementar provider en componente raíz
-- [x] Implementar slices para autenticación
-  - [x] Crear acciones para login, logout y registro
-  - [x] Implementar reducers para manejo de estado de autenticación
-  - [x] Configurar persistencia del token JWT en localStorage
-- [x] Implementar funcionalidad UI de autenticación
-  - [x] Actualizar AppHeader para mostrar botones de autenticación dinámicamente (login/register o logout)
-  - [x] Implementar funcionalidad de cierre de sesión en la interfaz de usuario
-- [x] Implementar slices para usuarios
-  - [x] Crear acciones para gestión de usuarios (CRUD)
-  - [x] Implementar reducers para manejo del estado de usuarios
-  - [x] Crear selectores para acceso eficiente a datos de usuarios
-- [x] Implementar slices para equipos
-  - [x] Crear acciones para gestión de equipos (CRUD)
-  - [x] Implementar reducers para manejo del estado de equipos
-  - [x] Crear selectores para acceso eficiente a datos de equipos
-- [x] Crear middlewares personalizados
-  - [x] Middleware para manejo de errores de API
-  - [x] Middleware para logging de acciones (desarrollo)
-- [x] Implementar hooks personalizados para Redux
-  - [x] Crear useAppSelector y useAppDispatch tipados
-  - [x] Crear hooks para operaciones comunes (useAuth, useUsers, etc.)
-- **Estado:** En progreso
-- **Notas:** Se ha implementado la configuración base de Redux Toolkit, el slice de autenticación y el slice de usuarios con acciones, thunks y selectores. Se han creado hooks personalizados para la autenticación y gestión de usuarios. El slice de equipos y su hook personalizado también han sido implementados. Se han desarrollado middlewares personalizados para el manejo de errores de API y logging de acciones en desarrollo.
-
-### 2. Desarrollar CRUD completo de usuarios
+### 1. Implementar CRUD completo de jugadores
 #### Backend
-- [x] Implementar endpoints para gestión de usuarios
-  - [x] Crear controlador para usuarios con métodos CRUD
-  - [x] Implementar validación de datos con middleware
-  - [x] Configurar rutas REST para usuarios
-  - [x] Implementar paginación y filtrado en listados
-  - [x] Añadir manejo de roles y permisos
+- [ ] Desarrollar modelo de datos para jugadores
+  - [ ] Diseñar esquema con campos básicos (nombre, posición, edad, etc.)
+  - [ ] Añadir campos para estadísticas individuales
+  - [ ] Implementar relaciones con equipos y usuarios
+- [ ] Crear controlador con métodos CRUD
+  - [ ] Implementar método de creación (POST)
+  - [ ] Desarrollar método de consulta (GET) con filtros
+  - [ ] Añadir método de actualización (PUT)
+  - [ ] Implementar método de eliminación (DELETE)
+- [ ] Configurar rutas REST para jugadores
+  - [ ] Definir endpoints básicos CRUD
+  - [ ] Configurar middleware de autenticación
+  - [ ] Implementar validación de permisos por rol
+- [ ] Implementar validación avanzada
+  - [ ] Validar datos obligatorios y tipos
+  - [ ] Añadir validación personalizada para campos específicos
+  - [ ] Configurar mensajes de error descriptivos
 
 #### Frontend
-- [x] Crear página de administración de usuarios
-  - [x] Implementar tabla de listado con paginación y filtros
-  - [x] Añadir acciones de edición/eliminación en la tabla
-  - [x] Implementar modal de confirmación para eliminación
-- [x] Implementar formularios para creación/edición de usuarios
-  - [x] Crear formulario con validación de campos
-  - [x] Implementar manejo de errores de API
-  - [x] Añadir feedback visual durante operaciones (loading, success, error)
-- [x] Añadir funcionalidad para cambio de contraseña
-  - [x] Crear formulario específico para cambio de contraseña
-  - [x] Implementar validación de contraseña segura
-- [x] Implementar gestión de roles de usuario
-  - [x] Crear selector de roles en formularios
-  - [x] Añadir comprobación de permisos en UI
-- **Estado:** Completado
-- **Notas:** Se ha implementado el CRUD completo de usuarios tanto en el backend como en el frontend. Se ha creado una página de administración de usuarios con una tabla de listado, filtros y acciones para crear, editar y eliminar usuarios. También se ha implementado un formulario para la creación y edición de usuarios con validación de campos y manejo de errores. La funcionalidad de cambio de contraseña se ha integrado en el formulario de edición de usuarios.
+- [ ] Crear slice de Redux para jugadores
+  - [ ] Implementar acciones para operaciones CRUD
+  - [ ] Desarrollar reducers para estado de jugadores
+  - [ ] Añadir selectores para filtrado eficiente
+  - [ ] Implementar thunks para operaciones asíncronas
+- [ ] Implementar hook personalizado useJugadores
+  - [ ] Crear métodos para acciones comunes
+  - [ ] Implementar manejo de estado de carga y errores
+  - [ ] Añadir funciones para filtrado y búsqueda
+- [ ] Desarrollar página de administración
+  - [ ] Crear tabla de listado con paginación
+  - [ ] Implementar filtros avanzados por posición, equipo, etc.
+  - [ ] Añadir acciones de gestión (editar, eliminar, ver detalle)
+  - [ ] Desarrollar modal de confirmación para eliminación
+- [ ] Implementar formulario de creación/edición
+  - [ ] Crear campos con validación (nombre, posición, número, etc.)
+  - [ ] Añadir selector de equipo
+  - [ ] Implementar subida de foto de perfil
+  - [ ] Manejar errores de API y feedback visual
 
-### 3. Implementar gestión de equipos
+### 2. Desarrollar sistema de asignación de jugadores a equipos
 #### Backend
-- [x] Desarrollar endpoints para equipos
-  - [x] Crear modelo de datos para equipos
-  - [x] Implementar controlador con métodos CRUD
-  - [x] Configurar rutas REST para equipos
-  - [x] Añadir relaciones con usuarios (entrenadores/manager)
-  - [x] Implementar paginación y filtrado
+- [ ] Implementar endpoints para gestión de plantillas
+  - [ ] Crear endpoint para añadir jugadores a equipos
+  - [ ] Desarrollar endpoint para eliminar jugadores de equipos
+  - [ ] Añadir validación de límites de jugadores por equipo
+- [ ] Implementar lógica de asignación
+  - [ ] Validar que un jugador solo pertenezca a un equipo
+  - [ ] Añadir verificación de categoría y edad
+  - [ ] Implementar control de fechas de asignación
 
 #### Frontend
-- [x] Crear página de listado de equipos
-  - [x] Implementar tabla con paginación y filtros
-  - [x] Añadir acciones de gestión (editar, eliminar, ver detalle)
-  - [x] Implementar búsqueda avanzada
-- [x] Implementar formulario para creación/edición de equipos
-  - [x] Crear campos con validación
-  - [x] Añadir selector de categoría y tipo
-  - [x] Implementar subida de logo/imagen del equipo
-- [ ] Crear página de detalle de equipo
-  - [ ] Mostrar información general del equipo
-  - [ ] Listar jugadores asociados
-  - [ ] Implementar estadísticas básicas
-- [x] Implementar asignación de entrenadores a equipos
-  - [x] Crear selector de entrenadores disponibles
-  - [x] Implementar gestión de roles en el equipo
-- **Estado:** En progreso
-- **Notas:** Se ha completado la mayor parte de la gestión de equipos. Se ha creado una página de listado con tabla paginada y filtros, así como un formulario para la creación y edición de equipos con validación de campos. También se ha implementado la asignación de entrenadores y managers a los equipos. Falta implementar la página de detalle de equipo.
+- [ ] Crear componente de gestión de plantilla
+  - [ ] Desarrollar listado de jugadores en equipo
+  - [ ] Implementar búsqueda de jugadores disponibles
+  - [ ] Añadir funcionalidad de arrastrar y soltar para asignación
+- [ ] Implementar interfaz de administración de plantillas
+  - [ ] Crear vista de plantilla por equipo
+  - [ ] Añadir acciones para añadir/eliminar jugadores
+  - [ ] Implementar visualización por posiciones
+  - [ ] Desarrollar filtros por características
 
-### 4. Añadir página de perfil de usuario
+### 3. Crear perfil de jugador con estadísticas básicas
 #### Backend
-- [ ] Mejorar endpoints de perfil
-  - [ ] Implementar endpoint para actualización parcial de datos
-  - [ ] Crear endpoint específico para cambio de contraseña
-  - [ ] Añadir validación de datos avanzada
+- [ ] Desarrollar endpoints para perfil de jugador
+  - [ ] Crear endpoint para consulta detallada de jugador
+  - [ ] Implementar endpoint para historial de equipos
+  - [ ] Añadir endpoint para estadísticas acumuladas
+- [ ] Implementar sistema de estadísticas básicas
+  - [ ] Diseñar modelo para almacenar estadísticas
+  - [ ] Crear endpoints para actualizar estadísticas
+  - [ ] Desarrollar métodos para cálculos automáticos
 
 #### Frontend
-- [ ] Diseñar e implementar página de perfil
-  - [ ] Crear layout responsivo con información del usuario
-  - [ ] Implementar vista de datos personales
-  - [ ] Añadir sección de preferencias
-- [ ] Crear formulario para edición de datos de perfil
-  - [ ] Implementar campos editables con validación
-  - [ ] Añadir previsualización de cambios
-  - [ ] Implementar feedback visual (loading, success, error)
-- [ ] Implementar funcionalidad de cambio de contraseña
-  - [ ] Crear formulario específico con validación
-  - [ ] Implementar comprobación de contraseña actual
-  - [ ] Añadir medidor de seguridad de contraseña
-- [ ] Añadir historial de actividad del usuario
-  - [ ] Implementar timeline de acciones recientes
-  - [ ] Añadir filtros por tipo de actividad
-- **Estado:** Pendiente
-- **Notas:** Esta página debe ser accesible para todos los usuarios autenticados.
+- [ ] Diseñar página de perfil de jugador
+  - [ ] Crear layout responsivo con secciones principales
+  - [ ] Implementar cabecera con datos personales y foto
+  - [ ] Añadir sección de estadísticas con gráficos
+  - [ ] Desarrollar visualización de historial de equipos
+- [ ] Implementar componentes visuales para estadísticas
+  - [ ] Crear gráficos para visualización de datos
+  - [ ] Implementar comparativas con promedios
+  - [ ] Añadir filtros por temporada/período
 
-### 5. Mejorar cobertura de pruebas
-#### Frontend
-- [x] Añadir pruebas para componentes de UI principales
-  - [x] Implementar tests para componentes de autenticación
-  - [x] Crear tests para formularios
-  - [x] Añadir tests para componentes de listado
-- [x] Implementar pruebas para slices de Redux
-  - [x] Crear tests para reducers
-  - [x] Implementar tests para selectores
-  - [x] Añadir tests para thunks
-- [x] Crear pruebas para hooks personalizados
-  - [x] Implementar tests para useAuth
-  - [x] Crear tests para useUsers
-  - [x] Añadir tests para useTeams
-- [x] Implementar pruebas para middlewares personalizados
-  - [x] Crear tests para middleware de manejo de errores
-  - [x] Implementar tests para middleware de logging
-- [x] Añadir pruebas para componentes de equipos
-  - [x] Implementar tests para el componente TeamForm
-  - [x] Crear tests para la página Teams
-  - [x] Probar funcionalidades de filtrado y paginación
-  - [x] Verificar el correcto funcionamiento de modales y diálogos
-
+### 4. Implementar gestión de fichajes
 #### Backend
-- [ ] Mejorar cobertura de pruebas en backend
-  - [ ] Implementar tests para controladores
-  - [ ] Crear tests para middleware
-  - [ ] Añadir tests de integración para rutas principales
-  - [ ] Implementar mocks para servicios externos
-- **Estado:** En progreso
-- **Notas:** Se han implementado pruebas para los slices de Redux, hooks personalizados y middlewares. Se han añadido tests específicos para los componentes de equipos, cubriendo tanto el formulario como la página de listado. Actualmente la cobertura de pruebas en el frontend es del 87%.
+- [ ] Desarrollar sistema de fichajes
+  - [ ] Crear modelo para registrar transferencias
+  - [ ] Implementar endpoints para proceso de fichaje
+  - [ ] Añadir validación de fechas y períodos
+- [ ] Implementar lógica de negocio
+  - [ ] Desarrollar proceso de solicitud y aprobación
+  - [ ] Crear sistema de notificaciones básicas
+  - [ ] Implementar registro histórico de movimientos
+
+#### Frontend
+- [ ] Crear interfaz para gestión de fichajes
+  - [ ] Desarrollar página de mercado de fichajes
+  - [ ] Implementar proceso de solicitud paso a paso
+  - [ ] Añadir panel de solicitudes pendientes
+  - [ ] Crear visualización de historial de transferencias
+- [ ] Implementar componentes de interacción
+  - [ ] Desarrollar modales de confirmación
+  - [ ] Crear indicadores de estado del proceso
+  - [ ] Implementar notificaciones visuales
+
+### 5. Mejorar documentación de API
+- [ ] Implementar Swagger/OpenAPI
+  - [ ] Configurar integración con Express
+  - [ ] Documentar endpoints principales
+  - [ ] Añadir ejemplos de uso y respuestas
+- [ ] Crear documentación para desarrolladores
+  - [ ] Desarrollar guía de uso de la API
+  - [ ] Documentar modelos de datos
+  - [ ] Añadir explicación de flujos principales
+
+### 6. Mejorar cobertura de pruebas
+#### Backend
+- [ ] Implementar pruebas para controladores
+  - [ ] Crear tests para controlador de jugadores
+  - [ ] Desarrollar tests para endpoints de asignación
+  - [ ] Añadir pruebas para validación de datos
+- [ ] Añadir pruebas de integración
+  - [ ] Desarrollar tests para flujo completo de jugadores
+  - [ ] Implementar pruebas para asignación a equipos
+  - [ ] Crear tests para proceso de fichajes
+
+#### Frontend
+- [ ] Implementar pruebas para componentes UI
+  - [ ] Crear tests para formulario de jugadores
+  - [ ] Desarrollar pruebas para tabla de listado
+  - [ ] Añadir tests para perfil de jugador
+- [ ] Añadir pruebas para slices de Redux
+  - [ ] Implementar tests para reducers de jugadores
+  - [ ] Crear pruebas para selectores
+  - [ ] Desarrollar tests para thunks
 
 ## Registro Diario
 
-### Día 1 [31-03-2025]
-- Configuración inicial de Redux Toolkit
-- Creación de store y configuración de provider
-- Implementación de slice para autenticación
+### Día 1 [14-04-2025]
+- Por completar
 
-### Día 2 [01-04-2025]
-- Desarrollo de middleware para manejo de errores
-- Creación de acciones y reducers para autenticación
-- Implementación de funcionalidad de login/logout
+### Día 2 [15-04-2025]
+- Por completar
 
-### Día 3 [02-04-2025]
-- Implementación de slice para usuarios
-- Creación de hooks personalizados
-- Inicio de desarrollo de página de usuarios
+### Día 3 [16-04-2025]
+- Por completar
 
-### Día 4 [03-04-2025]
-- Completado de página de administración de usuarios
-- Implementación de formularios para creación/edición
-- Añadido de funcionalidad de eliminación
+### Día 4 [17-04-2025]
+- Por completar
 
-### Día 5 [04-04-2025]
-- Ajustes en endpoints de backend para usuarios
-- Implementación de filtros y paginación
-- Mejoras en validación de formularios
+### Día 5 [18-04-2025]
+- Por completar
 
-### Día 6 [05-04-2025]
-- Creación de modelo y controladores para equipos en backend
-- Configuración de rutas REST para equipos
-- Implementación de relaciones con usuarios
+### Día 6 [21-04-2025]
+- Por completar
 
-### Día 7 [06-04-2025]
-- Desarrollo de slice para equipos
-- Implementación de hook personalizado useTeams
-- Pruebas unitarias para reducers y selectores
+### Día 7 [22-04-2025]
+- Por completar
 
-### Día 8 [07-04-2025]
-- Creación de página de listado de equipos
-- Implementación de tabla con filtros y paginación
-- Añadido de acciones de gestión
+### Día 8 [23-04-2025]
+- Por completar
 
-### Día 9 [08-04-2025]
-- Desarrollo de formulario para equipos
-- Implementación de validaciones
-- Ajustes en endpoints de backend
+### Día 9 [24-04-2025]
+- Por completar
 
-### Día 10 [09-04-2025]
-- Implementación de pruebas para componentes de equipos
-- Desarrollo de tests para TeamForm y página Teams
-- Corrección de errores y mejora de tipado
-- Aumento de cobertura de pruebas del frontend
+### Día 10 [25-04-2025]
+- Por completar
 
-### Progreso general
-- **Tareas completadas:** 36/45 (80%)
-- **Puntos de historia:** 42/55 (76%)
-- **Bloqueantes:** Ninguno actual
-- **Próximos pasos:** Implementar página de detalle de equipo y página de perfil de usuario
-
-## Retrospectiva (pendiente)
+## Progreso general
+- **Tareas completadas:** 0/50 (0%)
+- **Puntos de historia:** 0/60 (0%)
+- **Bloqueantes:** Ninguno por el momento
+- **Próximos pasos:** Comenzar con el modelo de datos de jugadores y su controlador CRUD
 
 ## Métricas del Sprint
-- **Completado:** 75%
-- **Velocidad:** 38 subtareas completadas en 8 días
-- **Calidad de código:** Alta - Buena estructura, bien tipado y documentado
-- **Cobertura de pruebas:** 85% en frontend
+- **Completado:** 0%
+- **Velocidad:** Por determinar
+- **Calidad de código:** Por evaluar
+- **Cobertura de pruebas:** Por medir
 
 ## Retrospectiva (al finalizar)
 - **Lo que salió bien:**

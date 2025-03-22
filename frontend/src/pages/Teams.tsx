@@ -323,7 +323,7 @@ const Teams: React.FC = () => {
                   columns={columns}
                   paginationMode="server"
                   rowCount={pagination.total}
-                  pageSizeOptions={[10, 25, 50]}
+                  pageSizeOptions={[10, 25, 50, 100]}
                   initialState={{
                     pagination: {
                       paginationModel: { 
