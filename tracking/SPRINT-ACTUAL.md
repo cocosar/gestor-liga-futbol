@@ -96,29 +96,29 @@
 
 ### 4. Añadir página de perfil de usuario
 #### Backend
-- [ ] Mejorar endpoints de perfil
-  - [ ] Implementar endpoint para actualización parcial de datos
-  - [ ] Crear endpoint específico para cambio de contraseña
-  - [ ] Añadir validación de datos avanzada
+- [x] Mejorar endpoints de perfil
+  - [x] Implementar endpoint para actualización parcial de datos
+  - [x] Crear endpoint específico para cambio de contraseña
+  - [x] Añadir validación de datos avanzada
 
 #### Frontend
-- [ ] Diseñar e implementar página de perfil
-  - [ ] Crear layout responsivo con información del usuario
-  - [ ] Implementar vista de datos personales
-  - [ ] Añadir sección de preferencias
-- [ ] Crear formulario para edición de datos de perfil
-  - [ ] Implementar campos editables con validación
-  - [ ] Añadir previsualización de cambios
-  - [ ] Implementar feedback visual (loading, success, error)
-- [ ] Implementar funcionalidad de cambio de contraseña
-  - [ ] Crear formulario específico con validación
-  - [ ] Implementar comprobación de contraseña actual
-  - [ ] Añadir medidor de seguridad de contraseña
-- [ ] Añadir historial de actividad del usuario
-  - [ ] Implementar timeline de acciones recientes
-  - [ ] Añadir filtros por tipo de actividad
-- **Estado:** Pendiente
-- **Notas:** Esta página debe ser accesible para todos los usuarios autenticados.
+- [x] Diseñar e implementar página de perfil
+  - [x] Crear layout responsivo con información del usuario
+  - [x] Implementar vista de datos personales
+  - [x] Añadir sección de preferencias
+- [x] Crear formulario para edición de datos de perfil
+  - [x] Implementar campos editables con validación
+  - [x] Añadir previsualización de cambios
+  - [x] Implementar feedback visual (loading, success, error)
+- [x] Implementar funcionalidad de cambio de contraseña
+  - [x] Crear formulario específico con validación
+  - [x] Implementar comprobación de contraseña actual
+  - [x] Añadir medidor de seguridad de contraseña
+- [x] Añadir historial de actividad del usuario
+  - [x] Implementar timeline de acciones recientes
+  - [x] Añadir filtros por tipo de actividad
+- **Estado:** Completado
+- **Notas:** Se ha implementado la página de perfil con dos secciones principales: información personal y cambio de contraseña. El formulario de información personal permite a los usuarios editar sus datos básicos, mientras que la sección de cambio de contraseña incluye validación de seguridad con un indicador visual de fortaleza. Se ha integrado un menú desplegable en la cabecera para acceder rápidamente al perfil de usuario.
 
 ### 5. Mejorar cobertura de pruebas
 #### Frontend

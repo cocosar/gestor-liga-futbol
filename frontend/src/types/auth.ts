@@ -25,6 +25,19 @@ export interface LoginData {
   password: string;
 }
 
+// Interfaz para actualización de perfil
+export interface UpdateProfileData {
+  nombre?: string;
+  apellido?: string;
+  email?: string;
+}
+
+// Interfaz para cambio de contraseña
+export interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+}
+
 // Interfaz para respuesta de autenticación
 export interface AuthResponse {
   success: boolean;

@@ -72,4 +72,59 @@ router.post(
  */
 router.get('/me', authenticate, authController.getMe);
 
+/**
+ * @route PATCH /api/auth/profile
+ * @desc Actualizar datos del perfil de usuario
+ * @access Private
+ */
+router.patch(
+  '/profile',
+  authenticate,
+  [
+    body('nombre')
+      .optional()
+      .trim()
+      .isLength({ min: 2, max: 50 })
+      .withMessage('El nombre debe tener entre 2 y 50 caracteres'),
+    body('apellido')
+      .optional()
+      .trim()
+      .isLength({ min: 2, max: 50 })
+      .withMessage('El apellido debe tener entre 2 y 50 caracteres'),
+    body('email')
+      .optional()
+      .isEmail()
+      .withMessage('Formato de email inválido')
+      .normalizeEmail(),
+  ],
+  authController.updateProfile
+);
+
+/**
+ * @route POST /api/auth/change-password
+ * @desc Cambiar contraseña del usuario
+ * @access Private
+ */
+router.post(
+  '/change-password',
+  authenticate,
+  [
+    body('currentPassword')
+      .notEmpty()
+      .withMessage('La contraseña actual es obligatoria'),
+    body('newPassword')
+      .notEmpty()
+      .withMessage('La nueva contraseña es obligatoria')
+      .isLength({ min: 6 })
+      .withMessage('La nueva contraseña debe tener al menos 6 caracteres')
+      .custom((value, { req }) => {
+        if (value === req.body.currentPassword) {
+          throw new Error('La nueva contraseña debe ser diferente a la actual');
+        }
+        return true;
+      }),
+  ],
+  authController.changePassword
+);
+
 export default router; 

@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard';
 import UsersPage from './pages/Users';
 import TeamsPage from './pages/Teams';
 import TeamDetail from './pages/TeamDetail';
+import UserProfile from './pages/UserProfile';
 
 // Tema personalizado
 const theme = createTheme({
@@ -61,6 +62,9 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              
+              {/* Perfil de usuario - accesible para cualquier usuario autenticado */}
+              <Route path="/profile" element={<UserProfile />} />
               
               {/* Rutas con roles específicos */}
               <Route element={<ProtectedRoute allowedRoles={['admin']} />}>

@@ -183,8 +183,138 @@ export const getMe = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+/**
+ * Actualizar perfil de usuario
+ * @route PATCH /api/auth/profile
+ * @access Private
+ */
+export const updateProfile = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    const { nombre, apellido, email } = req.body;
+    const userId = req.user?._id;
+
+    // Verificar si el email ya está en uso por otro usuario
+    if (email) {
+      const existingUser = await User.findOne({ email, _id: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'El email ya está siendo utilizado por otro usuario.',
+        });
+      }
+    }
+
+    // Actualizar solo los campos proporcionados
+    const updateData: Record<string, any> = {};
+    if (nombre !== undefined) updateData.nombre = nombre;
+    if (apellido !== undefined) updateData.apellido = apellido;
+    if (email !== undefined) updateData.email = email;
+
+    // Actualizar usuario
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      { new: true, select: '-password' }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado.',
+      });
+    }
+
+    // Generar nuevo token con la información actualizada
+    const token = generateToken(updatedUser);
+
+    res.status(200).json({
+      success: true,
+      token,
+      usuario: updatedUser,
+      message: 'Perfil actualizado correctamente.',
+    });
+  } catch (error) {
+    console.error('Error al actualizar perfil:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor al actualizar perfil.',
+    });
+  }
+};
+
+/**
+ * Cambiar contraseña de usuario
+ * @route POST /api/auth/change-password
+ * @access Private
+ */
+export const changePassword = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?._id;
+
+    // Verificar que ambas contraseñas estén presentes
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Se requiere la contraseña actual y la nueva contraseña.',
+      });
+    }
+
+    // Obtener usuario con contraseña
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado.',
+      });
+    }
+
+    // Verificar contraseña actual
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'La contraseña actual es incorrecta.',
+      });
+    }
+
+    // Actualizar contraseña
+    user.password = newPassword;
+    await user.save(); // Esto ejecutará el pre-save hook para hashear la contraseña
+
+    res.status(200).json({
+      success: true,
+      message: 'Contraseña actualizada correctamente.',
+    });
+  } catch (error) {
+    console.error('Error al cambiar contraseña:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor al cambiar contraseña.',
+    });
+  }
+};
+
 export default {
   register,
   login,
   getMe,
+  updateProfile,
+  changePassword
 }; 

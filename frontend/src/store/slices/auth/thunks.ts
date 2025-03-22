@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { authService } from '../../../api';
-import { LoginData, RegisterData } from '../../../types';
-import { authStart, authSuccess, authFail, logout as logoutAction } from './authSlice';
+import { LoginData, RegisterData, UpdateProfileData, ChangePasswordData } from '../../../types';
+import { authStart, authSuccess, authFail, logout as logoutAction, clearErrors } from './authSlice';
 import { AppDispatch } from '../../index';
 
 // Login
@@ -67,6 +67,47 @@ export const getCurrentUser = createAsyncThunk<
       return;
     }
     dispatch(authFail(response.message || 'Error al obtener información del usuario'));
+  } catch {
+    dispatch(authFail('Error al conectarse con el servidor'));
+  }
+});
+
+// Actualizar perfil de usuario
+export const updateUserProfile = createAsyncThunk<
+  void,
+  UpdateProfileData,
+  { dispatch: AppDispatch }
+>('auth/updateProfile', async (profileData, { dispatch }) => {
+  dispatch(authStart());
+  try {
+    const response = await authService.updateProfile(profileData);
+    if (response.success && response.usuario) {
+      dispatch(authSuccess({ 
+        token: response.token || '', 
+        user: response.usuario 
+      }));
+      return;
+    }
+    dispatch(authFail(response.message || 'Error al actualizar perfil'));
+  } catch {
+    dispatch(authFail('Error al conectarse con el servidor'));
+  }
+});
+
+// Cambiar contraseña
+export const changeUserPassword = createAsyncThunk<
+  void,
+  ChangePasswordData,
+  { dispatch: AppDispatch }
+>('auth/changePassword', async (passwordData, { dispatch }) => {
+  dispatch(authStart());
+  try {
+    const response = await authService.changePassword(passwordData);
+    if (response.success) {
+      dispatch(clearErrors());
+      return;
+    }
+    dispatch(authFail(response.message || 'Error al cambiar contraseña'));
   } catch {
     dispatch(authFail('Error al conectarse con el servidor'));
   }

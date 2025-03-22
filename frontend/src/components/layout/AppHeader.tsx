@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Box,
@@ -6,11 +6,15 @@ import {
   IconButton,
   Toolbar,
   Typography,
-  useTheme
+  useTheme,
+  Menu,
+  MenuItem,
+  Avatar
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -23,8 +27,26 @@ const AppHeader: React.FC<AppHeaderProps> = ({ drawerWidth, onDrawerToggle }) =>
   const theme = useTheme();
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
+  
+  // Estado para el menú desplegable de usuario
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  
+  const handleProfile = () => {
+    handleClose();
+    navigate('/profile');
+  };
 
   const handleLogout = () => {
+    handleClose();
     logout();
     navigate('/');
   };
@@ -62,19 +84,53 @@ const AppHeader: React.FC<AppHeaderProps> = ({ drawerWidth, onDrawerToggle }) =>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {isAuthenticated ? (
             <>
-              <Typography variant="body2" sx={{ mr: 1, display: { xs: 'none', sm: 'block' } }}>
-                {user?.nombre} {user?.apellido}
-              </Typography>
-              <Button 
-                color="inherit" 
-                onClick={handleLogout}
-                startIcon={<LogoutIcon />}
-                sx={{ display: { xs: 'flex', sm: 'flex' } }}
-              >
-                <Typography sx={{ display: { xs: 'none', sm: 'block' } }}>
-                  Cerrar Sesión
-                </Typography>
-              </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Button
+                  onClick={handleClick}
+                  color="inherit"
+                  sx={{ 
+                    textTransform: 'none', 
+                    display: 'flex', 
+                    alignItems: 'center' 
+                  }}
+                  aria-controls={open ? 'profile-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                >
+                  <Avatar 
+                    sx={{ 
+                      width: 32, 
+                      height: 32, 
+                      mr: 1,
+                      bgcolor: 'primary.dark'
+                    }}
+                  >
+                    {user?.nombre ? user.nombre.charAt(0).toUpperCase() : 'U'}
+                  </Avatar>
+                  <Typography sx={{ display: { xs: 'none', sm: 'block' } }}>
+                    {user?.nombre} {user?.apellido}
+                  </Typography>
+                </Button>
+                
+                <Menu
+                  id="profile-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'profile-button',
+                  }}
+                >
+                  <MenuItem onClick={handleProfile}>
+                    <PersonIcon fontSize="small" sx={{ mr: 1 }} />
+                    Mi Perfil
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
+                    Cerrar Sesión
+                  </MenuItem>
+                </Menu>
+              </Box>
             </>
           ) : (
             <>

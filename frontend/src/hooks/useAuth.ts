@@ -11,10 +11,12 @@ import {
   login, 
   register, 
   logout, 
-  getCurrentUser 
+  getCurrentUser,
+  updateUserProfile,
+  changeUserPassword
 } from '../store/slices/auth/thunks';
 import { clearErrors } from '../store/slices/auth/authSlice';
-import { LoginData, RegisterData } from '../types';
+import { LoginData, RegisterData, UpdateProfileData, ChangePasswordData } from '../types';
 
 // Hook personalizado para la autenticación
 export const useAuth = () => {
@@ -42,6 +44,14 @@ export const useAuth = () => {
   
   const fetchCurrentUser = useCallback(() => {
     dispatch(getCurrentUser());
+  }, [dispatch]);
+  
+  const updateProfile = useCallback((data: UpdateProfileData) => {
+    dispatch(updateUserProfile(data));
+  }, [dispatch]);
+  
+  const changePassword = useCallback((data: ChangePasswordData) => {
+    dispatch(changeUserPassword(data));
   }, [dispatch]);
   
   const resetErrors = useCallback(() => {
@@ -79,6 +89,8 @@ export const useAuth = () => {
     register: registerUser,
     logout: logoutUser,
     getCurrentUser: fetchCurrentUser,
+    updateProfile,
+    changePassword,
     clearErrors: resetErrors,
     hasRole: checkRole
   };

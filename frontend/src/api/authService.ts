@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RegisterData, LoginData, AuthResponse } from '../types';
+import { RegisterData, LoginData, AuthResponse, UpdateProfileData, ChangePasswordData } from '../types';
 
 // Configuración base para axios
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -93,6 +93,60 @@ const authService = {
       const message = axios.isAxiosError(error) && error.response?.data?.message 
         ? error.response.data.message 
         : 'Error al obtener perfil de usuario';
+      return { success: false, message };
+    }
+  },
+  
+  // Actualizar datos del perfil
+  updateProfile: async (profileData: UpdateProfileData): Promise<AuthResponse> => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        return { success: false, message: 'No hay usuario autenticado' };
+      }
+      
+      const response = await axios.patch(`${API_URL}/auth/profile`, profileData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      if (response.data.success) {
+        // Actualizamos los datos en localStorage
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.usuario));
+      }
+      
+      return response.data;
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error) && error.response?.data?.message 
+        ? error.response.data.message 
+        : 'Error al actualizar perfil de usuario';
+      return { success: false, message };
+    }
+  },
+  
+  // Cambiar contraseña
+  changePassword: async (passwordData: ChangePasswordData): Promise<AuthResponse> => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        return { success: false, message: 'No hay usuario autenticado' };
+      }
+      
+      const response = await axios.post(`${API_URL}/auth/change-password`, passwordData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      return response.data;
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error) && error.response?.data?.message 
+        ? error.response.data.message 
+        : 'Error al cambiar la contraseña';
       return { success: false, message };
     }
   },
